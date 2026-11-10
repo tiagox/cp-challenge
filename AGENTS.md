@@ -19,8 +19,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 3. `sessions/00-design-decisions.md` — why the specs look the way they do
 4. `sessions/01-plan-grilling.md` — decisions that refine session 00
 5. `sessions/02-theme-palette.md` — palette, font and theme fallback
-6. The spec you are assigned
-7. The specs it depends on, especially their “Contracts” and “Files owned” sections
+6. `sessions/03-agent-setup-and-handoff.md` — agent setup and hand-off notes for spec 00
+7. The spec you are assigned
+8. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
