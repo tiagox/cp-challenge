@@ -9,7 +9,7 @@
 
 ## 1. Goal
 
-Create the application shell and the reusable UI layer so feature specs 03–06 can be implemented in parallel.
+Create the application shell and the reusable UI layer so feature specs 03–06 only add their own feature code.
 
 Deliver:
 
@@ -197,17 +197,20 @@ Add to `index.html`, before the module script:
 
       var lang = localStorage.getItem('ccs.lang')
       if (lang !== 'en' && lang !== 'es') {
-        var languages = navigator.languages || [navigator.language || 'en']
-        lang = languages.some(function (value) {
-          return String(value).toLowerCase().indexOf('es') === 0
-        })
-          ? 'es'
-          : 'en'
+        var languages = navigator.languages || [navigator.language || '']
+        lang = 'es'
+        for (var i = 0; i < languages.length; i++) {
+          var value = String(languages[i]).toLowerCase()
+          if (value.indexOf('es') === 0 || value.indexOf('en') === 0) {
+            lang = value.slice(0, 2)
+            break
+          }
+        }
       }
       document.documentElement.lang = lang
     } catch (error) {
       document.documentElement.dataset.theme = 'dark'
-      document.documentElement.lang = 'en'
+      document.documentElement.lang = 'es'
     }
   })()
 </script>

@@ -28,11 +28,11 @@ Create or modify only:
 ```text
 README.md
 docs/qa/manual-checklist.md
+vercel.json
 
 src/test/critical-flows.test.tsx
 src/test/persistence.test.tsx
 src/test/error-boundary.test.tsx
-src/test/copy-audit.test.ts
 ```
 
 You may make minimal supporting edits in earlier specs’ files **only** when they fix a failing test, a stub left behind, a broken translation key, an accessibility defect or an accidental API-client violation. Record every such edit in the final hand-off message.
@@ -114,16 +114,7 @@ Assert loading, empty and error states at least once each across the suite; feat
 - retry resets the boundary and renders the child again
 - the error is not shown as an empty screen
 
-### `src/test/copy-audit.test.ts`
-
-Static test using `fs` + `path` (Node environment is available in Vitest) over `src/**/*.tsx`:
-
-- fail on common user-facing literals in JSX attributes or text that are not wrapped by `t(`, `Trans`, or a non-copy constant
-- allowlist: `EN`, `ES`, `ARS`, ticker symbols, CSS class names, `aria-*` technical values, test ids and lucide icon names
-- assert every `t('...')` key exists in both `en` and `es`
-- assert no translation value is an empty string
-
-If a full static scan is too noisy to maintain, narrow it to the known copy-heavy folders (`src/app/layout`, `src/pages`, `src/features`) and document the limitation. Do not ship a permanently failing test.
+There is no static copy-audit test (see `sessions/01-plan-grilling.md`). Hardcoded copy is caught by review, typed `t()` keys and the EN/ES parity test from spec 01.
 
 ## 5. EN/ES audit
 
@@ -208,7 +199,7 @@ Check both themes at 375, 768 and 1280 px:
 Replace the skeleton `README.md` with a complete document. Required sections:
 
 1. **Title and one-paragraph overview** — what the app does, which challenge it solves.
-2. **Live demo / local preview** — how to run it; a deployment link only if one exists.
+2. **Live demo** — at the top of the README, a Vercel link placeholder (`<!-- vercel-url -->`) that the user fills after connecting the repo, plus how to run a local preview.
 3. **Tech stack** — React, TypeScript, Vite, TanStack Query, Sass, React Router, i18next, Radix, Vitest/MSW.
 4. **Getting started**
    ```bash
@@ -217,12 +208,12 @@ Replace the skeleton `README.md` with a complete document. Required sections:
    cp .env.example .env
    npm run dev
    ```
-5. **Environment variables** — `VITE_API_BASE_URL`, `VITE_CANDIDATE_ID`, `VITE_API_BUG_MODE`; state that the candidate ID is optional and an anonymous UUID is generated and persisted.
+5. **Environment variables** — `VITE_API_BASE_URL`, `VITE_CANDIDATE_ID`, `VITE_API_BUG_MODE`; state that the candidate ID is optional and an anonymous UUID is generated and persisted. Explain that a first visit starts with an empty portfolio, and that `VITE_CANDIDATE_ID` can be pinned to a candidate that already has holdings.
 6. **Scripts table** — `dev`, `build`, `preview`, `lint`, `format`, `typecheck`, `test`, `test:coverage`, `api:types`, `api:types:check`.
 7. **API notes** — base URL, required headers (`X-Enable-Bugs`, `X-Candidate-Id`), candidate semantics, bug-mode warning, links to `docs/api/openapi.yaml` and `docs/api/README.md`.
 8. **Architecture** — the `app → pages → features → entities → shared` rule, feature list, state ownership table (TanStack Query vs context vs URL vs local state), and a short directory tree.
-9. **Product behavior** — instruments return, portfolio metrics, search, order ticket quantity/amount linking, LIMIT vs MARKET, validation rules.
-10. **i18n** — EN default, ES support, detection order, persistence, formatting behavior.
+9. **Product behavior** — instruments return, portfolio metrics, search, order ticket quantity/amount linking, LIMIT vs MARKET, validation rules. Note that the brief describes rejections as a `REJECTED` status while the API returns `400 { error }`; the app blocks invalid orders client-side and shows server `400`s as a localized rejection.
+10. **i18n** — ES default, EN support, detection order, persistence, formatting behavior.
 11. **Theming** — dark/light, detection order, persistence, no-flash boot script.
 12. **Testing** — what is covered, how to run, MSW usage, the critical-flow suite, coverage command.
 13. **Accessibility and responsiveness** — key guarantees and manual checklist link.
@@ -301,7 +292,7 @@ Expected:
 
 - Every stub is replaced; no placeholder copy remains.
 - `src/test/critical-flows.test.tsx` covers the instruments → order and portfolio → sell paths.
-- Persistence, error boundary and copy-audit tests pass.
+- Persistence and error boundary tests pass.
 - EN/ES parity and interpolation checks pass.
 - Both themes pass the manual contrast/focus audit.
 - No horizontal overflow at 375, 768 or 1280 px.
@@ -310,6 +301,7 @@ Expected:
 - No feature-to-feature imports.
 - No hardcoded user-facing copy.
 - `README.md` is complete and accurate.
+- `vercel.json` rewrites every route to `index.html`, and `npm run build` produces a deployable `dist/`.
 - `docs/qa/manual-checklist.md` exists and matches the shipped app.
 - The final command set in section 12 passes from a clean install.
 - No known critical or high-severity defect is left undocumented.
@@ -322,6 +314,7 @@ Expected:
 - Charts, sorting, filtering or pagination
 - Server-side changes
 - CI/CD provisioning (document the commands, do not assume a CI provider)
+- Connecting the repository to Vercel (the user does this without setting `VITE_CANDIDATE_ID`)
 - Rewriting earlier specs
 - Large refactors that are not required to pass QA
 
@@ -330,5 +323,5 @@ Expected:
 - Prefer fixing the smallest possible surface when a QA item fails; do not redesign a feature in this spec.
 - If a manual-only check cannot be automated reliably (contrast, bottom-sheet keyboard behavior), keep it in `docs/qa/manual-checklist.md` and state that it was verified manually.
 - Do not weaken tests to make them pass. Fix the behavior or narrow the assertion for a documented reason.
-- Keep `sessions/` append-only. If this session changes an earlier decision, add `sessions/01-hardening.md` instead of editing `sessions/00-design-decisions.md`.
+- Keep `sessions/` append-only. If this session changes an earlier decision, add a new `sessions/NN-hardening.md` (next free number) instead of editing earlier session notes.
 - The final hand-off message must list: commands run, results, manual checks completed, remaining limitations and any files edited outside this spec’s ownership.

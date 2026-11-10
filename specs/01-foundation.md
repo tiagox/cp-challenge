@@ -9,7 +9,7 @@
 
 ## 1. Goal
 
-Complete the project foundation so feature specs can run in parallel without touching shared configuration again.
+Complete the project foundation so feature specs do not need to touch shared configuration again.
 
 Deliver:
 
@@ -313,8 +313,8 @@ export async function changeLanguage(locale: AppLocale): Promise<void>
 Detection order:
 
 1. `stored` if it is `en` or `es`
-2. first `navigatorLanguages` entry starting with `es` → `es`
-3. fallback `en`
+2. first `navigatorLanguages` entry starting with `es` or `en` → that locale
+3. fallback `es`
 
 `changeLanguage` must:
 
@@ -326,7 +326,7 @@ Do not persist a detected language automatically.
 
 ### 8.2 Resources
 
-One namespace file per feature so parallel specs never edit the same file.
+One namespace file per feature so each feature spec owns its own copy.
 
 `en/index.ts`:
 
@@ -418,7 +418,7 @@ Feature namespace files (`instruments`, `portfolio`, `search`, `orders`, `valida
 - initialize synchronously with bundled resources:
   - `resources: { en: { translation: en }, es: { translation: es } }`
   - `lng: resolveInitialLanguage()`
-  - `fallbackLng: 'en'`
+  - `fallbackLng: 'es'`
   - `supportedLngs: ['en', 'es']`
   - `interpolation: { escapeValue: false }`
   - `returnNull: false`
@@ -460,7 +460,7 @@ Implementation binds `shared/lib/format` functions to `i18n.language`.
 
 ### 8.9 Tests
 
-- `language.test.ts`: stored choice wins; `es-AR` browser → `es`; French browser → `en`; missing data → `en`.
+- `language.test.ts`: stored choice wins; `es-AR` browser → `es`; `en-US` browser → `en`; `['fr-FR', 'en-US']` → `en`; French-only browser → `es`; missing data → `es`.
 - `locales.parity.test.ts`: flatten EN and ES keys, assert identical sorted key sets.
 - No empty translation values for non-empty namespaces.
 
@@ -645,14 +645,19 @@ Export typed fixtures using `satisfies` against API types.
 
 ```tsx
 export function createTestQueryClient(): QueryClient
-export function renderWithProviders(ui: ReactNode, options?: { route?: string }): RenderResult
+export function renderWithProviders(
+  ui: ReactNode,
+  options?: { route?: string; lang?: AppLocale },
+): RenderResult
 ```
 
 Wrap with:
 
 - `QueryClientProvider` using a test client with `retry: false`
 - `MemoryRouter` at `options.route ?? '/'`
-- `I18nextProvider` with the app i18n instance
+- `I18nextProvider` with the app i18n instance, switched to `options.lang ?? 'en'` before rendering
+
+The app defaults to `es`, but tests default to `en` so assertions read naturally. Feature specs pass `{ lang: 'es' }` for their Spanish coverage.
 
 Spec 02 extends this helper with theme and order-ticket providers.
 
