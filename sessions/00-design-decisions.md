@@ -213,7 +213,7 @@ The API needs `X-Candidate-Id`, but the app has no authentication and the challe
 Resolution order:
 
 1. `VITE_CANDIDATE_ID` if non-empty
-2. `localStorage["ccs.candidateId"]` if non-empty
+2. `localStorage["cp.candidateId"]` if non-empty
 3. generated `crypto.randomUUID()` (with a timestamp/random fallback), persisted
 
 The ID is an API session key only. It is never shown in the UI. This gives stable portfolio data across reloads and a clean slate for a new browser profile. Reviewers can pin a candidate through `.env` without code changes.
@@ -224,7 +224,7 @@ Decision: EN is the default and fallback; ES is fully supported.
 
 Detection order:
 
-1. stored `ccs.lang`
+1. stored `cp.lang`
 2. browser language starting with `es` → `es`
 3. `en`
 
@@ -257,7 +257,7 @@ Decision: dark and light themes driven by CSS custom properties.
 
 Resolution order:
 
-1. stored `ccs.theme`
+1. stored `cp.theme`
 2. `prefers-color-scheme`
 3. fallback `dark`
 

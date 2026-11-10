@@ -410,7 +410,7 @@ export type BugMode = 'off' | 'easy' | 'medium' | 'hard'
 
 export const API_BASE_URL: string
 export const API_BUG_MODE: BugMode
-export const CANDIDATE_STORAGE_KEY = 'ccs.candidateId'
+export const CANDIDATE_STORAGE_KEY = 'cp.candidateId'
 
 export function resolveCandidateId(options?: {
   envValue?: string
@@ -425,8 +425,8 @@ Requirements:
 - Default bug mode: `off`. Invalid values fall back to `off`.
 - Candidate resolution order:
   1. non-empty `envValue` / `import.meta.env.VITE_CANDIDATE_ID`
-  2. `storage.getItem('ccs.candidateId')` if non-empty
-  3. `crypto.randomUUID()` (fallback: `ccs-${Date.now()}-${Math.random().toString(36).slice(2)}`), then `storage.setItem(...)`
+  2. `storage.getItem('cp.candidateId')` if non-empty
+  3. `crypto.randomUUID()` (fallback: `cp-${Date.now()}-${Math.random().toString(36).slice(2)}`), then `storage.setItem(...)`
 - Functions must be testable with injected storage/env values. Do not read `localStorage` at module top level.
 
 ## 9. HTTP client

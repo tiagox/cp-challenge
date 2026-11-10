@@ -99,11 +99,11 @@ Assert loading, empty and error states at least once each across the suite; feat
 
 ### `src/test/persistence.test.tsx`
 
-- `ccs.lang` persists after an explicit switch and survives a remount.
-- `ccs.theme` persists after an explicit toggle and survives a remount.
+- `cp.lang` persists after an explicit switch and survives a remount.
+- `cp.theme` persists after an explicit toggle and survives a remount.
 - a stored language wins over the browser language on boot.
 - a stored theme wins over `prefers-color-scheme` on boot.
-- `ccs.candidateId` is created once, reused, and never rendered in the UI.
+- `cp.candidateId` is created once, reused, and never rendered in the UI.
 - `VITE_CANDIDATE_ID` takes precedence over `localStorage` when provided to the config helper.
 - the boot script and React providers resolve the same theme/language for the same inputs.
 

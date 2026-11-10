@@ -117,7 +117,7 @@ X-Candidate-Id: <candidate key>
 - Missing `X-Enable-Bugs` returns `400`, even though the challenge brief does not mention the header.
 - Missing `X-Candidate-Id` returns `400` on `/portfolio` and `/orders`.
 - Never expose `easy`, `medium` or `hard` bug modes in the product. `off` is the only supported mode.
-- Candidate resolution: `VITE_CANDIDATE_ID` → `localStorage["ccs.candidateId"]` → generated UUID persisted in storage. Never show it in the UI.
+- Candidate resolution: `VITE_CANDIDATE_ID` → `localStorage["cp.candidateId"]` → generated UUID persisted in storage. Never show it in the UI.
 - `/portfolio` returns `{ cash, holdings }`. A new candidate starts at `{ "cash": 1000000, "holdings": [] }`.
 - `/search` matches ticker case-insensitively by substring. Empty query returns all; the app must not call it for empty input.
 - `POST /orders` returns `201` with the full order. Validation failures are `400 { "error": "..." }`, not a `201` with `REJECTED`.
@@ -141,7 +141,7 @@ Guard every division against `0`, `null`, `undefined`, `NaN` and `Infinity`. Ren
 ## i18n rules
 
 - Languages: `es` (default/fallback) and `en`.
-- Detection: stored `ccs.lang` → first browser language starting with `es` or `en` → `es`.
+- Detection: stored `cp.lang` → first browser language starting with `es` or `en` → `es`.
 - Only an explicit switch is persisted.
 - All UI copy goes through `t()`, including `aria-label`, titles, empty states, hints and errors. No hardcoded user-facing strings.
 - Translation resources are type-safe; `es` files use `satisfies typeof en`.
@@ -154,7 +154,7 @@ Guard every division against `0`, `null`, `undefined`, `NaN` and `Infinity`. Ren
 ## Theme rules
 
 - Dark and light themes via CSS custom properties.
-- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `light`.
+- Initial theme: stored `cp.theme` → `prefers-color-scheme` → `light`.
 - Palette and font follow cocos.capital (light) with a dark theme derived from its navy; exact tokens live in spec 01. Borrow the palette and font only: no Cocos logo, name or imagery.
 - Use `--color-accent` only as a fill; accent-coloured text, links and focus rings use `--color-accent-text`.
 - Only an explicit toggle is persisted.
