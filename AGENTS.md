@@ -264,3 +264,16 @@ No issue tracker; specs in `specs/` define the work. See `docs/agents/issue-trac
 ### Domain docs
 
 Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### React best practices
+
+Load the `react-best-practices` skill (`.claude/skills/react-best-practices/`) before writing, reviewing or refactoring React code, from spec 02 onwards. Apply its client-side rules (`rerender-*`, `rendering-*`, `js-*`, `advanced-*`, and `async-*`/`bundle-*` where they fit a client app).
+
+The skill targets Next.js; this repo is a Vite SPA. The specs and this file win on any conflict:
+
+- `server-*`, `async-api-routes` and `rendering-hydration-no-flicker` do not apply: there is no server rendering. The `index.html` boot script already prevents theme/language flicker.
+- `client-swr-dedup`: use TanStack Query, never SWR.
+- `async-dependencies`: do not add `better-all`; use `Promise.all` or TanStack Query dependent queries.
+- `bundle-dynamic-imports`: use `React.lazy` + `Suspense` (as in spec 02), not `next/dynamic`.
+- `bundle-barrel-imports`: the specs' public `index.ts` per feature/UI component is the layer boundary and stays. Apply the rule to third-party libraries (e.g. import lucide icons by name, never the whole set).
+- Do not add memoization by reflex. Use `memo`/`useMemo`/`useCallback` only where a rule's problem actually occurs.
