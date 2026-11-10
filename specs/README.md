@@ -119,7 +119,7 @@ app → pages → features → entities → shared
 
 - All requests go through `shared/api/http.ts`. **No direct `fetch` anywhere else.**
 - Every request sends `X-Enable-Bugs` and `X-Candidate-Id`.
-- Candidate resolution: `VITE_CANDIDATE_ID` → `localStorage["ccs.candidateId"]` → generated `crypto.randomUUID()` persisted in `localStorage`. Never shown in the UI.
+- Candidate resolution: `VITE_CANDIDATE_ID` → `localStorage["cp.candidateId"]` → generated `crypto.randomUUID()` persisted in `localStorage`. Never shown in the UI.
 - Bug mode defaults to `off`. It is configurable only through `VITE_API_BUG_MODE` for manual QA.
 - Query retries: allowed for `5xx`/network failures only, max 1 retry. **Order mutations never retry.**
 - `ApiError` is the only error type thrown by the client. UI maps known server messages to i18n keys and falls back to the raw message.
@@ -141,7 +141,7 @@ Shares from amount  = floor(amount / last_price)
 ## i18n rules
 
 - Languages: `es` (default/fallback) and `en`.
-- First visit: stored `ccs.lang` → first browser language starting with `es` or `en` → `es`.
+- First visit: stored `cp.lang` → first browser language starting with `es` or `en` → `es`.
 - Only an explicit language switch is persisted.
 - All UI copy goes through `t()`. No hardcoded strings in components, including `aria-label`, `title`, empty states and errors.
 - Translation resources are type-safe. `es` files use `satisfies typeof en`.
@@ -154,7 +154,7 @@ Shares from amount  = floor(amount / last_price)
 ## Theme rules
 
 - Dark and light themes using CSS custom properties.
-- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `light`.
+- Initial theme: stored `cp.theme` → `prefers-color-scheme` → `light`.
 - Palette: cocos.capital light tokens, dark derived from their navy; font Plus Jakarta Sans. See spec 01 and `../sessions/02-theme-palette.md`.
 - Only an explicit toggle is persisted.
 - The inline boot script in `index.html` sets `data-theme` and `lang` before React renders.

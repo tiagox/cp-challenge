@@ -145,7 +145,7 @@ Do not modify feature API files, i18n namespace files owned by specs 03–06, or
 
 ```ts
 export type Theme = 'dark' | 'light'
-export const THEME_STORAGE_KEY = 'ccs.theme'
+export const THEME_STORAGE_KEY = 'cp.theme'
 
 export function isTheme(value: unknown): value is Theme
 export function resolveInitialTheme(options?: {
@@ -189,13 +189,13 @@ Add to `index.html`, before the module script:
 <script>
   (function () {
     try {
-      var theme = localStorage.getItem('ccs.theme')
+      var theme = localStorage.getItem('cp.theme')
       if (theme !== 'dark' && theme !== 'light') {
         theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
       }
       document.documentElement.dataset.theme = theme
 
-      var lang = localStorage.getItem('ccs.lang')
+      var lang = localStorage.getItem('cp.lang')
       if (lang !== 'en' && lang !== 'es') {
         var languages = navigator.languages || [navigator.language || '']
         lang = 'es'
@@ -587,7 +587,7 @@ Full-width centered spinner with `common.loading`, used by Suspense.
 ### `theme.test.tsx`
 
 - boot/default theme applies `data-theme`
-- toggle changes theme, updates `data-theme`, and persists `ccs.theme`
+- toggle changes theme, updates `data-theme`, and persists `cp.theme`
 - stored theme wins over system preference
 - no stored theme and no dark preference resolves to `light`
 - toggle has an accessible label in EN and ES
@@ -595,7 +595,7 @@ Full-width centered spinner with `common.loading`, used by Suspense.
 ### `language-switcher.test.tsx`
 
 - switches visible copy from EN to ES
-- persists `ccs.lang`
+- persists `cp.lang`
 - updates `document.documentElement.lang`
 - switches back to EN
 - tab labels remain `EN`/`ES`

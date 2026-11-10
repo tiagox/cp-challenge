@@ -54,7 +54,7 @@
       "w": 420,
       "fill": "blue",
       "size": "m",
-      "text": "Q2: Fallback theme\nWhen the browser reports no prefers-color-scheme, fall back to LIGHT instead of dark (Cocos's brand is light).\nOrder: stored ccs.theme → prefers-color-scheme → light.\nRecommended: yes."
+      "text": "Q2: Fallback theme\nWhen the browser reports no prefers-color-scheme, fall back to LIGHT instead of dark (Cocos's brand is light).\nOrder: stored cp.theme → prefers-color-scheme → light.\nRecommended: yes."
     },
     "q7": {
       "x": 2720,

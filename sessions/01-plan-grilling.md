@@ -38,7 +38,7 @@ Before any code was written, the plan from session 00 was stress-tested question
 
 **Decision:** `es` is the default and fallback; `en` is a full second language.
 
-Detection: stored `ccs.lang` → first browser language starting with `es` or `en` → `es`.
+Detection: stored `cp.lang` → first browser language starting with `es` or `en` → `es`.
 
 **Rationale:** the brief is in Spanish, the company is Argentine and prices are in ARS. The browser step now matches both supported languages; otherwise, with an `es` fallback, browser detection would never pick anything.
 

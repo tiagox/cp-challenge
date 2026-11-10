@@ -304,7 +304,7 @@ Import tokens, reset and global element styles:
 ```ts
 export type AppLocale = 'en' | 'es'
 export const SUPPORTED_LOCALES = ['en', 'es'] as const
-export const LANGUAGE_STORAGE_KEY = 'ccs.lang'
+export const LANGUAGE_STORAGE_KEY = 'cp.lang'
 ```
 
 `src/shared/i18n/language.ts`:
@@ -329,7 +329,7 @@ Detection order:
 `changeLanguage` must:
 
 - call `i18n.changeLanguage(locale)`
-- persist `ccs.lang`
+- persist `cp.lang`
 - set `document.documentElement.lang = locale`
 
 Do not persist a detected language automatically.

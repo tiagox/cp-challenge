@@ -45,7 +45,7 @@ The site has no dark mode and no red.
 ## 3. Decisions
 
 1. **Palette source.** Light theme uses the Cocos tokens as-is. Dark theme is derived from Cocos's navy sections (`#001533`, `#164583`, `#8DA7C8`). Exact token values live in spec 01 §7.
-2. **Fallback theme is `light`.** Order: stored `ccs.theme` → `prefers-color-scheme` → `light`. Boot script and `ThemeProvider` match; the boot script's error path also sets `light`.
+2. **Fallback theme is `light`.** Order: stored `cp.theme` → `prefers-color-scheme` → `light`. Boot script and `ThemeProvider` match; the boot script's error path also sets `light`.
 3. **New `--color-accent-text` token.** Brand blue as text on the dark background is 3.3:1 (fails AA). `--color-accent` is a fill only; links, accent-coloured text and the focus ring use `--color-accent-text` (`#0062DE` light, `#8AC0F6` dark).
 4. **Hover goes darker.** `--color-accent-hover` is `#0052BD` (Cocos's pressed colour, 7.1:1 with white text) instead of Cocos's lighter `#0571FF` (4.4:1).
 5. **Gains, losses and warnings.** Positive `#07785A` / `#0CB077`; negative `#C8281C` / `#FF6B6B`; warning `#8A5A00` / `#F0B90B`. All pass 4.5:1 as text on their theme's background.
