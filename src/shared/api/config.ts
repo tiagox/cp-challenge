@@ -1,7 +1,7 @@
 export type BugMode = 'off' | 'easy' | 'medium' | 'hard'
 
 export const DEFAULT_API_BASE_URL = 'https://dummy-api-topaz.vercel.app'
-export const CANDIDATE_STORAGE_KEY = 'ccs.candidateId'
+export const CANDIDATE_STORAGE_KEY = 'cp.candidateId'
 
 const BUG_MODES: readonly BugMode[] = ['off', 'easy', 'medium', 'hard']
 
@@ -34,7 +34,7 @@ function generateCandidateId(): string {
   if (typeof globalThis.crypto?.randomUUID === 'function') {
     return globalThis.crypto.randomUUID()
   }
-  return `ccs-${Date.now()}-${Math.random().toString(36).slice(2)}`
+  return `cp-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
 export function resolveCandidateId(

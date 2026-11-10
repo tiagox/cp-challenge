@@ -32,8 +32,8 @@ The challenge brief doesn't mention either custom header. The client (`src/share
 The client resolves it in this order (`src/shared/api/config.ts`):
 
 1. `VITE_CANDIDATE_ID`, if non-empty.
-2. `localStorage["ccs.candidateId"]`, if non-empty.
-3. A generated `crypto.randomUUID()` (with a timestamp/random fallback), persisted to `localStorage["ccs.candidateId"]`.
+2. `localStorage["cp.candidateId"]`, if non-empty.
+3. A generated `crypto.randomUUID()` (with a timestamp/random fallback), persisted to `localStorage["cp.candidateId"]`.
 
 The candidate is never shown in the UI. To review the app with existing holdings, set `VITE_CANDIDATE_ID` to a candidate that already placed orders.
 

@@ -50,7 +50,7 @@ describe('resolveCandidateId', () => {
     vi.stubGlobal('crypto', {})
     const storage = memoryStorage()
 
-    expect(resolveCandidateId({ envValue: '', storage })).toMatch(/^ccs-\d+-[a-z0-9]+$/)
+    expect(resolveCandidateId({ envValue: '', storage })).toMatch(/^cp-\d+-[a-z0-9]+$/)
   })
 
   it('reads VITE_CANDIDATE_ID when no env value is injected', () => {
