@@ -5,7 +5,6 @@
 | **Status** | Ready |
 | **Depends on** | [02 — App shell, theme & i18n](./02-app-shell-theme-i18n.md) |
 | **Owns** | Search feature, search page, `search` i18n namespace |
-| **Can run in parallel with** | 03, 05 |
 
 ## 1. Goal
 

@@ -5,7 +5,6 @@
 | **Status** | Ready |
 | **Depends on** | [02 — App shell, theme & i18n](./02-app-shell-theme-i18n.md), [05 — Portfolio](./05-portfolio.md) (public `usePortfolio` hook) |
 | **Owns** | Order feature, order modal, app-layer `OrderModalContainer`, `orders` and `validation` i18n namespaces |
-| **Can run in parallel with** | 03, 04 — after 05’s query hook lands |
 
 ## 1. Goal
 
@@ -318,7 +317,7 @@ interface OrderModalProps {
   - `min="0"`
   - `inputMode="decimal"`
   - label `orders.fields.amount`
-  - hint `orders.hints.amount`
+  - hint `orders.hints.amount` for MARKET, `orders.hints.amountLimit` for LIMIT (shares always come from the last price, as the brief requires; the LIMIT hint explains why the estimated total differs from the typed amount)
 - `Input` for limit price, rendered only when `type === 'LIMIT'`:
   - `type="number"`
   - `step="0.01"`
@@ -430,6 +429,7 @@ export const orders = {
   },
   hints: {
     amount: 'Whole shares are calculated using the last price.',
+    amountLimit: 'Whole shares are calculated using the last price, so the estimated total at your limit price may differ.',
     limit: 'The estimated total uses the limit price.',
   },
   actions: {
@@ -490,6 +490,7 @@ export const orders = {
   },
   hints: {
     amount: 'Las acciones se calculan con el último precio.',
+    amountLimit: 'Las acciones se calculan con el último precio, por eso el total estimado a tu precio límite puede ser distinto.',
     limit: 'El total estimado usa el precio límite.',
   },
   actions: {
@@ -619,6 +620,7 @@ The ES files must satisfy the EN namespace types.
 14. portfolio query is invalidated after success
 15. EN/ES copy switches correctly
 16. last price `0` disables submit and shows the unavailable message
+17. LIMIT shows `orders.hints.amountLimit`; amount → quantity still uses the last price
 
 Use MSW to capture requests and return fixtures. Use a test `QueryClient` and spy on `invalidateQueries`.
 

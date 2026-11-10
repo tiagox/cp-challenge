@@ -17,8 +17,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 1. `frontend-challenge.md` — what the product must do
 2. `specs/README.md` — stack, architecture, global rules, definition of done
 3. `sessions/00-design-decisions.md` — why the specs look the way they do
-4. The spec you are assigned
-5. The specs it depends on, especially their “Contracts” and “Files owned” sections
+4. `sessions/01-plan-grilling.md` — decisions that refine session 00
+5. The spec you are assigned
+6. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
@@ -29,17 +30,18 @@ Do not read only the task description. File ownership and layering rules are enf
 | 1 | `specs/00-api-contract.md` | — | OpenAPI, generated types, HTTP client, minimal scaffold |
 | 2 | `specs/01-foundation.md` | 00 | Tooling, Sass, i18n infra, entities, test infra |
 | 3 | `specs/02-app-shell-theme-i18n.md` | 01 | Providers, router, layout, theme, UI kit, stubs |
-| 4 | `specs/03-instruments.md` | 02 | Can run with 04 and 05 |
-| 4 | `specs/04-search.md` | 02 | Can run with 03 and 05 |
-| 4 | `specs/05-portfolio.md` | 02 | Can run with 03 and 04 |
-| 5 | `specs/06-orders.md` | 02, 05 | Needs `usePortfolio` from spec 05 |
-| 6 | `specs/07-hardening-docs.md` | 03–06 | Run last |
+| 4 | `specs/03-instruments.md` | 02 | Instruments list and BUY entry point |
+| 5 | `specs/04-search.md` | 02 | Ticker search with `?q=` |
+| 6 | `specs/05-portfolio.md` | 02 | Exposes `usePortfolio` |
+| 7 | `specs/06-orders.md` | 02, 05 | Needs `usePortfolio` from spec 05 |
+| 8 | `specs/07-hardening-docs.md` | 03–06 | Run last |
 
 Rules:
 
 - Do not skip specs 00–02. Every later spec assumes their files, aliases and test setup.
-- One spec per branch/commit when possible. Keep the working tree reviewable.
-- Implement only the files your spec owns. If a shared file must change, say why and keep the edit minimal.
+- A single agent runs the specs strictly in order. The stages exist to make the work easy to follow, not to parallelize it.
+- One branch and one PR per spec: `spec/NN-<name>`, branched from the updated `main`. Open the PR with `gh`, summarize what changed against the spec, then stop. The user reviews and squash-merges before the next spec starts.
+- Stay within the files your spec lists. If another file must change, say why in the PR and keep the edit minimal.
 - Do not start spec 06 before spec 05 exposes its public `usePortfolio` hook.
 - Do not build product features during spec 07. It is hardening, QA and documentation only.
 
@@ -135,8 +137,8 @@ Guard every division against `0`, `null`, `undefined`, `NaN` and `Infinity`. Ren
 
 ## i18n rules
 
-- Languages: `en` (default/fallback) and `es`.
-- Detection: stored `ccs.lang` → browser language starting with `es` → `en`.
+- Languages: `es` (default/fallback) and `en`.
+- Detection: stored `ccs.lang` → first browser language starting with `es` or `en` → `es`.
 - Only an explicit switch is persisted.
 - All UI copy goes through `t()`, including `aria-label`, titles, empty states, hints and errors. No hardcoded user-facing strings.
 - Translation resources are type-safe; `es` files use `satisfies typeof en`.
@@ -176,6 +178,7 @@ Every behavior spec includes its own required tests. In addition:
 
 - Use MSW as the network boundary. Handlers must reject missing/wrong API headers.
 - Use `renderWithProviders` from `src/test/render.tsx`. Extend it only in the spec that owns it.
+- Tests render in `en` by default even though the app defaults to `es`; pass `{ lang: 'es' }` to test Spanish. Every feature has at least one `es` test.
 - Unit-test pure calculations, validation and error mapping.
 - Feature-test loading, error, empty, localized copy and the main interaction.
 - Test integer-share enforcement and both quantity → amount directions.
@@ -222,11 +225,11 @@ Plus:
 
 ## File ownership and hand-off
 
-- Each spec lists its owned files. Treat that list as a contract.
+- Each spec lists its owned files. Treat that list as a guide to the spec's scope.
 - Spec 02 creates page stubs and the `OrderModalContainer` stub. Feature specs replace only their own stubs.
 - Spec 06 replaces the `OrderModalContainer` body but keeps its path and export name.
 - Do not rewrite earlier specs. If an implementation forces a decision change, add a new numbered note:
-  - `sessions/01-<topic>.md`
+  - `sessions/NN-<topic>.md` (next free number)
   - frontmatter: session, date, agent, mode, title, status, related specs
   - capture the decision, rationale and rejected alternatives
 - Never edit `sessions/00-design-decisions.md` after it is committed.

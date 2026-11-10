@@ -4,25 +4,25 @@ This folder contains the implementation specs for the frontend challenge. Each s
 
 ## Execution order
 
-| # | Spec | Depends on | Can run in parallel |
-|---|---|---|---|
-| 00 | [API contract](./00-api-contract.md) | — | No |
-| 01 | [Foundation](./01-foundation.md) | 00 | No |
-| 02 | [App shell, theme & i18n](./02-app-shell-theme-i18n.md) | 01 | No |
-| 03 | [Instruments](./03-instruments.md) | 02 | Yes, with 04, 05 |
-| 04 | [Search](./04-search.md) | 02 | Yes, with 03, 05 |
-| 05 | [Portfolio](./05-portfolio.md) | 02 | Yes, with 03, 04 |
-| 06 | [Orders](./06-orders.md) | 02, 05 | Yes, with 03, 04, after 05 |
-| 07 | [Hardening & docs](./07-hardening-docs.md) | 03–06 | No — run last |
+| # | Spec | Depends on |
+|---|---|---|
+| 00 | [API contract](./00-api-contract.md) | — |
+| 01 | [Foundation](./01-foundation.md) | 00 |
+| 02 | [App shell, theme & i18n](./02-app-shell-theme-i18n.md) | 01 |
+| 03 | [Instruments](./03-instruments.md) | 02 |
+| 04 | [Search](./04-search.md) | 02 |
+| 05 | [Portfolio](./05-portfolio.md) | 02 |
+| 06 | [Orders](./06-orders.md) | 02, 05 |
+| 07 | [Hardening & docs](./07-hardening-docs.md) | 03–06 |
 
-**Parallel rule:** specs 03–05 each own a separate feature, page and i18n namespace. They must not edit shared files owned by another spec. Spec 02 creates stubs for every page and for the order modal container; feature specs replace only their own stubs. Spec 06 consumes the public `usePortfolio` hook from spec 05 in the app-layer `OrderModalContainer`, so start 06 after 05’s portfolio query hook exists (it can still be worked alongside 03 and 04).
+**Sequential rule:** one agent runs the specs strictly in order, 00 → 07. Each spec gets its own branch (`spec/NN-<name>`) and PR; the user squash-merges it before the next spec branches from `main`. Spec 02 creates stubs for every page and for the order modal container so every intermediate state runs; feature specs replace their own stubs. Each feature owns its page and i18n namespace. The “Files owned” lists describe a spec’s scope for reviewers; touching another file is allowed when needed, with the reason stated in the PR.
 
 ## Source of truth
 
 - Challenge brief: `../frontend-challenge.md`
 - API contract: `../docs/api/openapi.yaml` (created in spec 00)
 - Human-readable API notes: `../docs/api/README.md` (created in spec 00)
-- Session decisions: `../sessions/00-design-decisions.md`
+- Session decisions: `../sessions/00-design-decisions.md`, refined by `../sessions/01-plan-grilling.md`
 
 The live API is `https://dummy-api-topaz.vercel.app`. It requires headers that are not documented in the challenge brief. The client always sends:
 
@@ -139,8 +139,8 @@ Shares from amount  = floor(amount / last_price)
 
 ## i18n rules
 
-- Languages: `en` (fallback) and `es`.
-- First visit: stored `ccs.lang` → browser language starting with `es` → `en`.
+- Languages: `es` (default/fallback) and `en`.
+- First visit: stored `ccs.lang` → first browser language starting with `es` or `en` → `es`.
 - Only an explicit language switch is persisted.
 - All UI copy goes through `t()`. No hardcoded strings in components, including `aria-label`, `title`, empty states and errors.
 - Translation resources are type-safe. `es` files use `satisfies typeof en`.
