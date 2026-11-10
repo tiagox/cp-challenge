@@ -18,8 +18,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 2. `specs/README.md` — stack, architecture, global rules, definition of done
 3. `sessions/00-design-decisions.md` — why the specs look the way they do
 4. `sessions/01-plan-grilling.md` — decisions that refine session 00
-5. The spec you are assigned
-6. The specs it depends on, especially their “Contracts” and “Files owned” sections
+5. `sessions/02-theme-palette.md` — palette, font and theme fallback
+6. The spec you are assigned
+7. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
@@ -60,6 +61,7 @@ Rules:
 | Styles | Sass 1.108.x + CSS Modules |
 | Modal | `@radix-ui/react-dialog` |
 | Icons | `lucide-react` |
+| Font | `@fontsource-variable/plus-jakarta-sans` (self-hosted) |
 | i18n | `i18next` + `react-i18next` |
 | HTTP | native `fetch` behind `shared/api/http.ts` |
 | Tests | Vitest + RTL + user-event + MSW |
@@ -151,7 +153,9 @@ Guard every division against `0`, `null`, `undefined`, `NaN` and `Infinity`. Ren
 ## Theme rules
 
 - Dark and light themes via CSS custom properties.
-- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `dark`.
+- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `light`.
+- Palette and font follow cocos.capital (light) with a dark theme derived from its navy; exact tokens live in spec 01. Borrow the palette and font only: no Cocos logo, name or imagery.
+- Use `--color-accent` only as a fill; accent-coloured text, links and focus rings use `--color-accent-text`.
 - Only an explicit toggle is persisted.
 - The inline boot script in `index.html` sets `data-theme` and `lang` before React renders.
 - Boot script and React providers must resolve theme/language with identical rules.

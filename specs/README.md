@@ -22,7 +22,7 @@ This folder contains the implementation specs for the frontend challenge. Each s
 - Challenge brief: `../frontend-challenge.md`
 - API contract: `../docs/api/openapi.yaml` (created in spec 00)
 - Human-readable API notes: `../docs/api/README.md` (created in spec 00)
-- Session decisions: `../sessions/00-design-decisions.md`, refined by `../sessions/01-plan-grilling.md`
+- Session decisions: `../sessions/00-design-decisions.md`, refined by `../sessions/01-plan-grilling.md` and `../sessions/02-theme-palette.md`
 
 The live API is `https://dummy-api-topaz.vercel.app`. It requires headers that are not documented in the challenge brief. The client always sends:
 
@@ -46,6 +46,7 @@ X-Candidate-Id: <anonymous session key>
 | Styles | Sass + CSS Modules | 1.108.x |
 | Modal primitive | `@radix-ui/react-dialog` | 1.3.x |
 | Icons | `lucide-react` | 1.71.x |
+| Font | `@fontsource-variable/plus-jakarta-sans` | 5.3.x |
 | i18n | `i18next` + `react-i18next` | 27.1.x / 18.0.x |
 | HTTP | native `fetch` behind `shared/api` | — |
 | Tests | Vitest + RTL + user-event + MSW | 5.1.x / 16.3.x / 14.6.x / 3.0.x |
@@ -153,7 +154,8 @@ Shares from amount  = floor(amount / last_price)
 ## Theme rules
 
 - Dark and light themes using CSS custom properties.
-- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `dark`.
+- Initial theme: stored `ccs.theme` → `prefers-color-scheme` → `light`.
+- Palette: cocos.capital light tokens, dark derived from their navy; font Plus Jakarta Sans. See spec 01 and `../sessions/02-theme-palette.md`.
 - Only an explicit toggle is persisted.
 - The inline boot script in `index.html` sets `data-theme` and `lang` before React renders.
 - Both themes must pass contrast checks and render form controls correctly.

@@ -1,0 +1,77 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-10T20:00:00Z"
+  },
+  "title": "Theme palette options",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1280,
+      "h": 1180,
+      "title": "Palette and open questions (Q1, Q3, Q4, Q5)"
+    },
+    "Type.dc.html": {
+      "x": 1360,
+      "y": 0,
+      "w": 1280,
+      "h": 560,
+      "title": "Q6: font (decided: Plus Jakarta Sans)"
+    },
+    "Light.dc.html": {
+      "x": 0,
+      "y": 1300,
+      "w": 1280,
+      "h": 860,
+      "title": "App preview: light, order modal",
+      "expand": "fill"
+    },
+    "Dark.dc.html": {
+      "x": 1360,
+      "y": 1300,
+      "w": 1280,
+      "h": 860,
+      "title": "App preview: dark, order modal",
+      "expand": "fill"
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Type.dc.html",
+    "Light.dc.html",
+    "Dark.dc.html"
+  ],
+  "notes": {
+    "q2": {
+      "x": 2720,
+      "y": 0,
+      "w": 420,
+      "fill": "blue",
+      "size": "m",
+      "text": "Q2: Fallback theme\nWhen the browser reports no prefers-color-scheme, fall back to LIGHT instead of dark (Cocos's brand is light).\nOrder: stored ccs.theme → prefers-color-scheme → light.\nRecommended: yes."
+    },
+    "q7": {
+      "x": 2720,
+      "y": 620,
+      "w": 420,
+      "fill": "orange",
+      "size": "m",
+      "text": "Q7: Branding\nBorrow the palette only. No Cocos logo, wordmark, name or imagery, so the app doesn't pass itself off as their product.\nRecommended: yes."
+    },
+    "tweaks": {
+      "x": 2720,
+      "y": 1340,
+      "w": 420,
+      "fill": "gray",
+      "size": "s",
+      "text": "The two app previews have Tweaks: switch theme (light/dark) and font (Plus Jakarta Sans / system) to compare."
+    }
+  },
+  "designSystems": []
+}

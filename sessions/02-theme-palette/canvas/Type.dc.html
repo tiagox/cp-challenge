@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Font comparison</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0062DE}a:hover{color:#0052BD}
+</style>
+</helmet>
+<div style="width: 1280px; height: 560px; box-sizing: border-box; padding: 48px 64px; background: #FFFFFF; color: #15181C; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p lang="en" style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5A6270">Q6 · Font</p>
+<h1 lang="en" style="margin: 0; font-size: 30px">System stack (no dependency) vs Plus Jakarta Sans (Cocos's font)</h1>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<sc-for list="{{ fonts }}" as="f" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 18px; padding: 28px; border-radius: 16px; background: #F2F7FD; border: 1px solid #E5E9EF; color: #00152E; font-family: {{ f.stack }}">
+<div lang="en" style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+<span style="font-size: 14px; font-weight: 700">{{ f.label }}</span>
+<span style="font-size: 12px; color: #597291">{{ f.cost }}</span>
+</div>
+<h2 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.01em">Instrumentos</h2>
+<div style="display: flex; flex-direction: column; gap: 0; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E9EF">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid #EDF2F7">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 700">CAPX</span>
+<span style="font-size: 13px; color: #597291">Capex S.A.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; align-items: flex-end">
+<span style="font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums">$ 53,68</span>
+<span style="font-size: 13px; font-weight: 600; color: #07785A; font-variant-numeric: tabular-nums">+7,99%</span>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-weight: 700">DYCA</span>
+<span style="font-size: 13px; color: #597291">Dycasa S.A.</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 2px; align-items: flex-end">
+<span style="font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums">$ 45,72</span>
+<span style="font-size: 13px; font-weight: 600; color: #C8281C; font-variant-numeric: tabular-nums">−8,69%</span>
+</div>
+</div>
+</div>
+<p style="margin: 0; font-size: 15px; line-height: 1.5; color: #4F6680">Efectivo disponible: $ 1.000.000,00</p>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":560}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+fonts: [
+{ label: 'System stack', cost: 'No dependency, no network', stack: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" },
+{ label: 'Plus Jakarta Sans', cost: 'Adds @fontsource-variable/plus-jakarta-sans', stack: "'Plus Jakarta Sans', system-ui, sans-serif" }
+]
+};
+}
+}
+</script>
+</body>
+</html>
