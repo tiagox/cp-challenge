@@ -8,7 +8,7 @@ The repository currently contains **definitions only**:
 
 - `frontend-challenge.md` — original challenge brief
 - `specs/` — implementation specs for coding agents
-- `notes/` — AI-session decision records
+- `sessions/` — AI-session decision records
 
 There is no application code yet. Do not assume `src/`, `package.json`, `docs/api/` or test infrastructure exist. They are created by the specs, starting with spec 00.
 
@@ -16,7 +16,7 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 
 1. `frontend-challenge.md` — what the product must do
 2. `specs/README.md` — stack, architecture, global rules, definition of done
-3. `notes/00-design-decisions.md` — why the specs look the way they do
+3. `sessions/00-design-decisions.md` — why the specs look the way they do
 4. The spec you are assigned
 5. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
@@ -226,10 +226,10 @@ Plus:
 - Spec 02 creates page stubs and the `OrderModalContainer` stub. Feature specs replace only their own stubs.
 - Spec 06 replaces the `OrderModalContainer` body but keeps its path and export name.
 - Do not rewrite earlier specs. If an implementation forces a decision change, add a new numbered note:
-  - `notes/01-<topic>.md`
+  - `sessions/01-<topic>.md`
   - frontmatter: session, date, agent, mode, title, status, related specs
   - capture the decision, rationale and rejected alternatives
-- Never edit `notes/00-design-decisions.md` after it is committed.
+- Never edit `sessions/00-design-decisions.md` after it is committed.
 - Keep `README.md` current as features land; spec 07 owns the final version.
 
 ## Scope discipline
@@ -247,3 +247,13 @@ Plus:
 3. Follow the API client rules.
 4. Keep the change smaller.
 5. Document the deviation in the hand-off message and, if it changes a decision, in a new note.
+
+## Agent skills
+
+### Issue tracker
+
+No issue tracker; specs in `specs/` define the work. See `docs/agents/issue-tracker.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

@@ -226,7 +226,7 @@ Replace the skeleton `README.md` with a complete document. Required sections:
 11. **Theming** — dark/light, detection order, persistence, no-flash boot script.
 12. **Testing** — what is covered, how to run, MSW usage, the critical-flow suite, coverage command.
 13. **Accessibility and responsiveness** — key guarantees and manual checklist link.
-14. **Design decisions** — link to `notes/00-design-decisions.md` and `specs/README.md`.
+14. **Design decisions** — link to `sessions/00-design-decisions.md` and `specs/README.md`.
 15. **Known limitations** — no order history, no auth, candidate identity is anonymous, server bug modes are not used, LIMIT orders are not simulated/cancelled.
 16. **Time spent** — optional short note, only if the challenge reviewer expects it.
 
@@ -330,5 +330,5 @@ Expected:
 - Prefer fixing the smallest possible surface when a QA item fails; do not redesign a feature in this spec.
 - If a manual-only check cannot be automated reliably (contrast, bottom-sheet keyboard behavior), keep it in `docs/qa/manual-checklist.md` and state that it was verified manually.
 - Do not weaken tests to make them pass. Fix the behavior or narrow the assertion for a documented reason.
-- Keep `notes/` append-only. If this session changes an earlier decision, add `notes/01-hardening.md` instead of editing `notes/00-design-decisions.md`.
+- Keep `sessions/` append-only. If this session changes an earlier decision, add `sessions/01-hardening.md` instead of editing `sessions/00-design-decisions.md`.
 - The final hand-off message must list: commands run, results, manual checks completed, remaining limitations and any files edited outside this spec’s ownership.

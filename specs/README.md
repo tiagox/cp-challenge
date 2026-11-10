@@ -22,7 +22,7 @@ This folder contains the implementation specs for the frontend challenge. Each s
 - Challenge brief: `../frontend-challenge.md`
 - API contract: `../docs/api/openapi.yaml` (created in spec 00)
 - Human-readable API notes: `../docs/api/README.md` (created in spec 00)
-- Session decisions: `../notes/00-design-decisions.md`
+- Session decisions: `../sessions/00-design-decisions.md`
 
 The live API is `https://dummy-api-topaz.vercel.app`. It requires headers that are not documented in the challenge brief. The client always sends:
 
@@ -211,10 +211,10 @@ Every spec uses this structure:
 
 ## Notes convention
 
-Design decisions are recorded in `../notes/`:
+Design decisions are recorded in `../sessions/`:
 
 ```text
-notes/NN-<topic>.md
+sessions/NN-<topic>.md
 ```
 
 - One file per AI agent session, numbered from `00`.
@@ -222,4 +222,4 @@ notes/NN-<topic>.md
 - Each note starts with frontmatter: session, date, agent, mode, title, status, related specs.
 - Notes capture decisions, rationale, rejected alternatives and API discoveries — not a transcript.
 
-The first note is `notes/00-design-decisions.md`.
+The first note is `sessions/00-design-decisions.md`.
