@@ -1,0 +1,1688 @@
+{
+  "info": {
+    "_postman_id": "c7f4f5f2-6e4b-4c2a-9b5d-2f8a1c3d7e90",
+    "name": "Cocos Challenge API",
+    "description": "# Cocos Challenge API\n\nPostman Collection v2.1 for the live challenge API at `https://dummy-api-topaz.vercel.app`.\n\n## Before you run\n\n1. Import this file into Postman.\n2. Confirm the collection variables `baseUrl` and `bugMode`. `bugMode` must be `off` for deterministic behavior.\n3. Run the collection in order with the Collection Runner.\n\nThe collection auto-generates an anonymous `candidateId` when it is empty. The `00 - Setup` folder resets it to a brand-new candidate so a full run starts from `{ \"cash\": 1000000, \"holdings\": [] }`.\n\nEvery request sends:\n\n```http\nX-Enable-Bugs: {{bugMode}}\nX-Candidate-Id: {{candidateId}}\n```\n\nNegative tests deliberately disable one required header to verify the server error. The full collection mutates the candidate portfolio; run `00 - Setup` again for a clean baseline.\n\n## Variable overrides\n\n- Set `candidateId` to reuse a specific candidate.\n- Set `instrumentId` to trade a specific instrument instead of the first result from `/instruments`.\n- Set `bugMode` only for manual QA. The application always uses `off`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Setup",
+      "description": "Reset to a fresh candidate and discover a live instrument. Run this folder before the rest of the collection.",
+      "item": [
+        {
+          "name": "New candidate (reset)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('candidateId', 'postman-' + pm.variables.replaceIn('{{$guid}}'));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Response has cash and holdings', function () {",
+                  "  pm.expect(body).to.have.property('cash');",
+                  "  pm.expect(body).to.have.property('holdings');",
+                  "});",
+                  "",
+                  "pm.test('New candidate starts with 1,000,000 cash', function () {",
+                  "  pm.expect(body.cash).to.eql(1000000);",
+                  "});",
+                  "",
+                  "pm.test('New candidate starts with no holdings', function () {",
+                  "  pm.expect(body.holdings).to.be.an('array').that.is.empty;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('startingCash', String(body.cash));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Generates a new anonymous candidate ID in the pre-request script, then reads its portfolio. A new candidate must start with 1,000,000 cash and no holdings."
+          },
+          "response": []
+        },
+        {
+          "name": "List instruments (discover)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Response is a non-empty array', function () {",
+                  "  pm.expect(body).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Every instrument has the expected fields', function () {",
+                  "  body.forEach(function (instrument) {",
+                  "    ['id', 'ticker', 'name', 'type', 'last_price', 'close_price'].forEach(function (key) {",
+                  "      pm.expect(instrument).to.have.property(key);",
+                  "    });",
+                  "    pm.expect(instrument.id).to.be.a('number');",
+                  "    pm.expect(instrument.ticker).to.be.a('string');",
+                  "    pm.expect(['ACCIONES', 'MONEDA']).to.include(instrument.type);",
+                  "    pm.expect(instrument.last_price).to.be.a('number').and.to.be.at.least(0);",
+                  "    pm.expect(instrument.close_price).to.be.a('number').and.to.be.at.least(0);",
+                  "  });",
+                  "});",
+                  "",
+                  "const first = body[0];",
+                  "pm.collectionVariables.set('instrumentId', String(first.id));",
+                  "pm.collectionVariables.set('ticker', first.ticker);",
+                  "pm.collectionVariables.set('lastPrice', String(first.last_price));",
+                  "pm.collectionVariables.set('query', first.ticker.slice(0, 3));",
+                  "",
+                  "pm.test('Discovered an instrument for the order tests', function () {",
+                  "  pm.expect(first.id).to.be.a('number');",
+                  "  pm.expect(first.ticker).to.be.a('string').and.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/instruments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ]
+            },
+            "description": "Fetches the instrument list and stores the first instrument's id, ticker and last price so later order requests use live data."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Instruments",
+      "description": "Read-only instrument checks.",
+      "item": [
+        {
+          "name": "List instruments",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Content-Type is JSON', function () {",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Response is a non-empty array', function () {",
+                  "  pm.expect(body).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Instrument shape is valid', function () {",
+                  "  const instrument = body[0];",
+                  "  ['id', 'ticker', 'name', 'type', 'last_price', 'close_price'].forEach(function (key) {",
+                  "    pm.expect(instrument).to.have.property(key);",
+                  "  });",
+                  "  pm.expect(instrument.type).to.be.a('string');",
+                  "  pm.expect(['ACCIONES', 'MONEDA']).to.include(instrument.type);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/instruments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ]
+            },
+            "description": "Smoke test for GET /instruments."
+          },
+          "response": []
+        },
+        {
+          "name": "List instruments without X-Enable-Bugs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Error explains the missing bug header', function () {",
+                  "  pm.expect(body).to.have.property('error');",
+                  "  pm.expect(body.error).to.include('X-Enable-Bugs');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/instruments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ]
+            },
+            "description": "Negative test: X-Enable-Bugs is mandatory even for read-only endpoints."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Portfolio",
+      "description": "Portfolio read and candidate-header checks.",
+      "item": [
+        {
+          "name": "Get portfolio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Portfolio shape is valid', function () {",
+                  "  pm.expect(body).to.have.property('cash');",
+                  "  pm.expect(body).to.have.property('holdings');",
+                  "  pm.expect(body.cash).to.be.a('number').and.to.be.at.least(0);",
+                  "  pm.expect(body.holdings).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Every holding has the expected fields', function () {",
+                  "  body.holdings.forEach(function (holding) {",
+                  "    ['instrument_id', 'ticker', 'quantity', 'last_price', 'close_price', 'avg_cost_price'].forEach(function (key) {",
+                  "      pm.expect(holding).to.have.property(key);",
+                  "    });",
+                  "    pm.expect(holding.quantity).to.be.a('number').and.to.be.at.least(1);",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Smoke test for GET /portfolio."
+          },
+          "response": []
+        },
+        {
+          "name": "Get portfolio without X-Candidate-Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Error explains the missing candidate header', function () {",
+                  "  pm.expect(body).to.have.property('error');",
+                  "  pm.expect(body.error).to.eql('Missing X-Candidate-Id header');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Negative test: /portfolio is scoped by X-Candidate-Id and rejects requests without it."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Search",
+      "description": "Search by ticker and edge cases.",
+      "item": [
+        {
+          "name": "Search by ticker",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "  pm.expect(body).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Result includes the discovered ticker', function () {",
+                  "  const ticker = pm.collectionVariables.get('ticker');",
+                  "  pm.expect(body.some(function (instrument) {",
+                  "    return instrument.ticker === ticker;",
+                  "  })).to.be.true;",
+                  "});",
+                  "",
+                  "pm.test('Search results use the instrument shape', function () {",
+                  "  body.forEach(function (instrument) {",
+                  "    ['id', 'ticker', 'name', 'type', 'last_price', 'close_price'].forEach(function (key) {",
+                  "      pm.expect(instrument).to.have.property(key);",
+                  "    });",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/search?query={{query}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "{{query}}"
+                }
+              ]
+            },
+            "description": "Search is a case-insensitive substring match on ticker."
+          },
+          "response": []
+        },
+        {
+          "name": "Search with no results",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an empty array', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array').that.is.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/search?query={{noResultsQuery}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": "{{noResultsQuery}}"
+                }
+              ]
+            },
+            "description": "Edge case: a query with no ticker match returns an empty array."
+          },
+          "response": []
+        },
+        {
+          "name": "Search with empty query returns all",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Empty query returns every instrument', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array').that.is.not.empty;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/search?query=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "query",
+                  "value": ""
+                }
+              ]
+            },
+            "description": "API behavior note: an empty query returns all instruments. The application never calls search with an empty query."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Orders",
+      "description": "Order success paths, portfolio effects and server validation errors. Run 00 - Setup first for a clean candidate.",
+      "item": [
+        {
+          "name": "MARKET BUY (seed position)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Order shape is valid', function () {",
+                  "  ['id', 'candidate_id', 'instrument_id', 'side', 'type', 'quantity', 'price', 'status', 'created_at'].forEach(function (key) {",
+                  "    pm.expect(body).to.have.property(key);",
+                  "  });",
+                  "  pm.expect(body.id).to.be.a('number');",
+                  "  pm.expect(body.candidate_id).to.be.a('string').and.not.empty;",
+                  "  pm.expect(body.created_at).to.be.a('string').and.not.empty;",
+                  "});",
+                  "",
+                  "pm.test('Order is a filled MARKET BUY', function () {",
+                  "  pm.expect(body.side).to.eql('BUY');",
+                  "  pm.expect(body.type).to.eql('MARKET');",
+                  "  pm.expect(body.status).to.eql('FILLED');",
+                  "  pm.expect(body.quantity).to.eql(Number(pm.collectionVariables.get('orderQuantity')));",
+                  "  pm.expect(body.price).to.be.a('number').and.to.be.above(0);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('orderId', String(body.id));",
+                  "pm.collectionVariables.set('seedOrderId', String(body.id));",
+                  "pm.collectionVariables.set('seedQuantity', String(body.quantity));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": {{orderQuantity}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Creates a MARKET BUY for the discovered instrument. MARKET orders fill immediately or are rejected; with a fresh candidate and a small quantity this must be FILLED. The response is 201."
+          },
+          "response": []
+        },
+        {
+          "name": "Portfolio after MARKET BUY",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "const instrumentId = Number(pm.collectionVariables.get('instrumentId'));",
+                  "const seedQuantity = Number(pm.collectionVariables.get('seedQuantity'));",
+                  "",
+                  "pm.test('The bought instrument appears in holdings', function () {",
+                  "  const holding = body.holdings.find(function (item) {",
+                  "    return item.instrument_id === instrumentId;",
+                  "  });",
+                  "  pm.expect(holding, 'Holding for the traded instrument should exist').to.exist;",
+                  "  pm.expect(holding.quantity).to.be.at.least(seedQuantity);",
+                  "});",
+                  "",
+                  "pm.test('Cash decreased after the purchase', function () {",
+                  "  pm.expect(body.cash).to.be.below(Number(pm.collectionVariables.get('startingCash')));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Verifies that the MARKET BUY changed cash and holdings."
+          },
+          "response": []
+        },
+        {
+          "name": "LIMIT BUY (pending)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Order is a LIMIT BUY with a price', function () {",
+                  "  pm.expect(body.side).to.eql('BUY');",
+                  "  pm.expect(body.type).to.eql('LIMIT');",
+                  "  pm.expect(body.price).to.eql(Number(pm.collectionVariables.get('limitPrice')));",
+                  "  pm.expect(['PENDING', 'REJECTED']).to.include(body.status);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('limitBuyOrderId', String(body.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"quantity\": {{orderQuantity}},\n  \"price\": {{limitPrice}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Creates a LIMIT BUY. The server returns 201 with PENDING (or REJECTED for an accepted-but-rejected order); validation failures are 400."
+          },
+          "response": []
+        },
+        {
+          "name": "MARKET SELL",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Order is a filled MARKET SELL', function () {",
+                  "  pm.expect(body.side).to.eql('SELL');",
+                  "  pm.expect(body.type).to.eql('MARKET');",
+                  "  pm.expect(body.status).to.eql('FILLED');",
+                  "  pm.expect(body.quantity).to.eql(Number(pm.collectionVariables.get('sellQuantity')));",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('sellOrderId', String(body.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"quantity\": {{sellQuantity}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Sells part of the seeded position. Requires the MARKET BUY seed request to have run."
+          },
+          "response": []
+        },
+        {
+          "name": "LIMIT SELL (pending)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () {",
+                  "  pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const body = pm.response.json();",
+                  "",
+                  "pm.test('Order is a LIMIT SELL with a price', function () {",
+                  "  pm.expect(body.side).to.eql('SELL');",
+                  "  pm.expect(body.type).to.eql('LIMIT');",
+                  "  pm.expect(body.price).to.eql(Number(pm.collectionVariables.get('limitPrice')));",
+                  "  pm.expect(['PENDING', 'REJECTED']).to.include(body.status);",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set('limitSellOrderId', String(body.id));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"SELL\",\n  \"type\": \"LIMIT\",\n  \"quantity\": {{sellQuantity}},\n  \"price\": {{limitPrice}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Creates a LIMIT SELL using the remaining seeded shares. Requires the MARKET SELL request to have left at least one share."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: insufficient cash",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error is Insufficient cash', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.eql('Insufficient cash');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 999999999\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "A MARKET BUY larger than the candidate's cash returns 400."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: LIMIT BUY over cash at limit price",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error is Insufficient cash', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.eql('Insufficient cash');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"quantity\": 20000,\n  \"price\": 60\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "LIMIT BUY validates cash against the limit price, not the last price. 20,000 shares at 60 ARS exceed the 1,000,000 starting cash."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: fractional quantity",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error requires an integer quantity', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.include('positive integer');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 1.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Fractional shares are rejected by the server; the app must prevent them before submission too."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: LIMIT without price",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error requires a limit price', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.include('LIMIT orders require a numeric price');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "The price field is required only for LIMIT orders."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: insufficient shares",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error is Insufficient shares', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.eql('Insufficient shares');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"quantity\": 999999999\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "A SELL larger than the holding quantity returns 400."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: instrument not found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error is Instrument not found', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.eql('Instrument not found');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": 999999,\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Unknown instrument IDs are rejected."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: missing X-Candidate-Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error explains the missing candidate header', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.eql('Missing X-Candidate-Id header');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Negative test: orders are scoped by candidate."
+          },
+          "response": []
+        },
+        {
+          "name": "Error: missing X-Enable-Bugs",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () {",
+                  "  pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error explains the missing bug header', function () {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.error).to.include('X-Enable-Bugs');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "X-Enable-Bugs",
+                "value": "{{bugMode}}",
+                "type": "text",
+                "disabled": true
+              },
+              {
+                "key": "X-Candidate-Id",
+                "value": "{{candidateId}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"instrument_id\": {{instrumentId}},\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "description": "Negative test: X-Enable-Bugs is mandatory even when the value would be off."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Diagnostics",
+      "description": "CORS and header checks.",
+      "item": [
+        {
+          "name": "CORS preflight allows custom headers",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 or 204', function () {",
+                  "  pm.expect([200, 204]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "pm.test('Origin is allowed', function () {",
+                  "  pm.expect(pm.response.headers.get('access-control-allow-origin')).to.exist;",
+                  "});",
+                  "",
+                  "pm.test('Custom headers are allowed', function () {",
+                  "  const allowHeaders = (pm.response.headers.get('access-control-allow-headers') || '').toLowerCase();",
+                  "  const allowsCustomHeaders = allowHeaders === '*' || (allowHeaders.includes('x-enable-bugs') && allowHeaders.includes('x-candidate-id'));",
+                  "  pm.expect(allowsCustomHeaders, 'Expected access-control-allow-headers to include both custom headers').to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "OPTIONS",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:5173",
+                "type": "text"
+              },
+              {
+                "key": "Access-Control-Request-Method",
+                "value": "GET",
+                "type": "text"
+              },
+              {
+                "key": "Access-Control-Request-Headers",
+                "value": "x-enable-bugs,x-candidate-id",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Sends the browser-style preflight for /portfolio and verifies that both custom headers are permitted."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const candidateId = pm.collectionVariables.get('candidateId');",
+          "if (!candidateId || !String(candidateId).trim()) {",
+          "  pm.collectionVariables.set('candidateId', 'postman-' + pm.variables.replaceIn('{{$guid}}'));",
+          "}",
+          "",
+          "const bugMode = pm.collectionVariables.get('bugMode');",
+          "if (!bugMode) {",
+          "  pm.collectionVariables.set('bugMode', 'off');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://dummy-api-topaz.vercel.app",
+      "type": "string"
+    },
+    {
+      "key": "candidateId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bugMode",
+      "value": "off",
+      "type": "string"
+    },
+    {
+      "key": "instrumentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "ticker",
+      "value": "DYCA",
+      "type": "string"
+    },
+    {
+      "key": "lastPrice",
+      "value": "45.72",
+      "type": "string"
+    },
+    {
+      "key": "query",
+      "value": "DYC",
+      "type": "string"
+    },
+    {
+      "key": "noResultsQuery",
+      "value": "ZZZZZZ",
+      "type": "string"
+    },
+    {
+      "key": "orderQuantity",
+      "value": "2",
+      "type": "string"
+    },
+    {
+      "key": "sellQuantity",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "limitPrice",
+      "value": "40.50",
+      "type": "string"
+    },
+    {
+      "key": "startingCash",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "seedQuantity",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "seedOrderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "limitBuyOrderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sellOrderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "limitSellOrderId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
