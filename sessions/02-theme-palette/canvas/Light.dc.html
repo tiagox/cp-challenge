@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Instrumentos con modal de orden, tema claro</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0062DE}a:hover{color:#0052BD}
+</style>
+</helmet>
+<div style="position: relative; width: 100%; min-height: 860px; box-sizing: border-box; background: {{ t.bg }}; color: {{ t.text }}; font-family: {{ font }}; display: flex; flex-direction: column">
+
+<header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; background: {{ t.surface }}; border-bottom: 1px solid {{ t.border }}">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 28px">
+<span style="font-size: 18px; font-weight: 700; letter-spacing: -0.01em">Mercado</span>
+<nav style="display: flex; flex-wrap: wrap; gap: 6px">
+<a href="#instrumentos" style="padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 600; text-decoration: none; background: {{ t.surface2 }}; color: {{ t.text }}">Instrumentos</a>
+<a href="#portafolio" style="padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none; color: {{ t.muted }}">Portafolio</a>
+<a href="#buscar" style="padding: 8px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none; color: {{ t.muted }}">Buscar</a>
+</nav>
+</div>
+<div style="display: flex; align-items: center; gap: 8px">
+<div style="display: flex; padding: 3px; border-radius: 999px; border: 1px solid {{ t.border }}">
+<button type="button" style="height: 32px; padding: 0 12px; border: 0; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; background: {{ t.surface2 }}; color: {{ t.text }}">ES</button>
+<button type="button" style="height: 32px; padding: 0 12px; border: 0; border-radius: 999px; font: inherit; font-size: 13px; font-weight: 600; background: transparent; color: {{ t.muted }}">EN</button>
+</div>
+<button type="button" aria-label="Cambiar tema" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 999px; border: 1px solid {{ t.border }}; background: transparent; color: {{ t.text }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>
+</button>
+</div>
+</header>
+
+<main style="display: flex; flex-direction: column; gap: 16px; padding: 32px; max-width: 1200px; width: 100%; box-sizing: border-box; margin: 0 auto">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em">Instrumentos</h1>
+<p style="margin: 0; font-size: 14px; color: {{ t.muted }}">Retorno calculado contra el precio de cierre. Tocá un instrumento para operar.</p>
+</div>
+<div style="overflow-x: auto; border-radius: 16px; background: {{ t.surface }}; border: 1px solid {{ t.border }}">
+<table style="width: 100%; border-collapse: collapse; font-size: 15px">
+<thead>
+<tr style="text-align: left; color: {{ t.muted }}; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em">
+<th style="padding: 14px 20px; font-weight: 600; border-bottom: 1px solid {{ t.border }}">Ticker</th>
+<th style="padding: 14px 20px; font-weight: 600; border-bottom: 1px solid {{ t.border }}">Nombre</th>
+<th style="padding: 14px 20px; font-weight: 600; border-bottom: 1px solid {{ t.border }}; text-align: right">Último precio</th>
+<th style="padding: 14px 20px; font-weight: 600; border-bottom: 1px solid {{ t.border }}; text-align: right">Retorno</th>
+<th style="padding: 14px 20px; font-weight: 600; border-bottom: 1px solid {{ t.border }}"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Acciones</span></th>
+</tr>
+</thead>
+<tbody>
+<sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+<tr style="background: {{ r.rowBg }}">
+<td style="padding: 14px 20px; font-weight: 700; border-bottom: 1px solid {{ t.border }}">{{ r.ticker }}</td>
+<td style="padding: 14px 20px; color: {{ t.muted }}; border-bottom: 1px solid {{ t.border }}">{{ r.name }}</td>
+<td style="padding: 14px 20px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; border-bottom: 1px solid {{ t.border }}">{{ r.price }}</td>
+<td style="padding: 14px 20px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: {{ r.retColor }}; border-bottom: 1px solid {{ t.border }}">{{ r.ret }}</td>
+<td style="padding: 14px 20px; text-align: right; border-bottom: 1px solid {{ t.border }}"><a href="#operar" style="font-size: 14px; font-weight: 600; text-decoration: none; color: {{ t.accentText }}">Operar →</a></td>
+</tr>
+</sc-for>
+</tbody>
+</table>
+</div>
+</main>
+
+<div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; box-sizing: border-box; background: {{ t.overlay }}">
+<section role="dialog" aria-modal="true" aria-labelledby="order-title-{{ theme }}" style="width: 100%; max-width: 460px; display: flex; flex-direction: column; gap: 16px; padding: 24px; box-sizing: border-box; border-radius: 20px; background: {{ t.surface }}; border: 1px solid {{ t.border }}; box-shadow: {{ t.shadow }}">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<h2 id="order-title-{{ theme }}" style="margin: 0; font-size: 20px; font-weight: 700">Comprar CAPX</h2>
+<span style="font-size: 14px; color: {{ t.muted }}">Capex S.A. · Último $ 53,68</span>
+</div>
+<button type="button" aria-label="Cerrar" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; border-radius: 999px; border: 0; background: {{ t.surface2 }}; color: {{ t.text }}">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 999px; background: {{ t.surface2 }}">
+<button type="button" style="height: 40px; border: 0; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 700; background: {{ t.accent }}; color: #FFFFFF">Comprar</button>
+<button type="button" style="height: 40px; border: 0; border-radius: 999px; font: inherit; font-size: 14px; font-weight: 600; background: transparent; color: {{ t.muted }}">Vender</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; border: 1px solid {{ t.border }}">
+<button type="button" style="height: 36px; border: 0; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 600; background: {{ t.surface2 }}; color: {{ t.text }}">Mercado</button>
+<button type="button" style="height: 36px; border: 0; border-radius: 8px; font: inherit; font-size: 14px; font-weight: 500; background: transparent; color: {{ t.muted }}">Límite</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<label for="qty-{{ theme }}" style="font-size: 13px; font-weight: 600">Cantidad</label>
+<input id="qty-{{ theme }}" type="number" inputmode="numeric" defaultValue="100" style="height: 46px; width: 100%; box-sizing: border-box; padding: 0 14px; border-radius: 10px; border: 1px solid {{ t.accent }}; outline: 2px solid {{ t.focus }}; outline-offset: 2px; background: {{ t.bg }}; color: {{ t.text }}; font: inherit; font-size: 16px; font-variant-numeric: tabular-nums">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<label for="amt-{{ theme }}" style="font-size: 13px; font-weight: 600">Monto (ARS)</label>
+<input id="amt-{{ theme }}" type="number" inputmode="decimal" defaultValue="5368.00" style="height: 46px; width: 100%; box-sizing: border-box; padding: 0 14px; border-radius: 10px; border: 1px solid {{ t.border }}; background: {{ t.bg }}; color: {{ t.text }}; font: inherit; font-size: 16px; font-variant-numeric: tabular-nums">
+</div>
+</div>
+<span style="margin-top: -6px; font-size: 12px; color: {{ t.muted }}">Las acciones se calculan con el último precio.</span>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 12px; background: {{ t.surface2 }}">
+<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px"><span style="color: {{ t.muted }}">Efectivo disponible</span><span style="font-variant-numeric: tabular-nums">$ 1.000.000,00</span></div>
+<div style="display: flex; justify-content: space-between; gap: 12px; font-size: 16px; font-weight: 700"><span>Total estimado</span><span style="font-variant-numeric: tabular-nums">$ 5.368,00</span></div>
+</div>
+<div aria-live="polite" style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 12px; border: 1px solid {{ t.border }}">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="font-size: 14px; font-weight: 600">Orden #648128</span>
+<span style="display: inline-flex; gap: 6px; align-items: center; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{ t.posBg }}; color: {{ t.pos }}">Ejecutada · FILLED</span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="display: inline-flex; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{ t.warnBg }}; color: {{ t.warn }}">Pendiente · PENDING</span>
+<span style="display: inline-flex; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: {{ t.negBg }}; color: {{ t.neg }}">Rechazada · REJECTED</span>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<button type="button" style="height: 48px; border-radius: 999px; border: 1px solid {{ t.border }}; font: inherit; font-size: 15px; font-weight: 600; background: transparent; color: {{ t.text }}">Cancelar</button>
+<button type="button" style="height: 48px; border: 0; border-radius: 999px; font: inherit; font-size: 15px; font-weight: 700; background: {{ t.accent }}; color: #FFFFFF">Comprar</button>
+</div>
+</section>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["light","dark"],"default":"light","section":"Compare"},"font":{"editor":"enum","options":["jakarta","system"],"default":"jakarta","section":"Compare"},"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+renderVals() {
+var theme = this.props.theme ?? 'light';
+var tokens = {
+light: { bg: '#F2F7FD', surface: '#FFFFFF', surface2: '#EDF2F7', border: '#E5E9EF', text: '#00152E', muted: '#597291', accent: '#0062DE', accentText: '#0062DE', focus: '#0062DE', pos: '#07785A', posBg: '#E6F6EB', neg: '#C8281C', negBg: '#FDECEA', warn: '#8A5A00', warnBg: '#FFF4D6', overlay: 'rgba(0,21,46,0.45)', shadow: '0 24px 64px rgba(0,21,51,0.24)' },
+dark: { bg: '#001533', surface: '#001B3D', surface2: '#00295C', border: '#164583', text: '#FFFFFF', muted: '#8DA7C8', accent: '#0062DE', accentText: '#8AC0F6', focus: '#8AC0F6', pos: '#0CB077', posBg: 'rgba(12,176,119,0.16)', neg: '#FF6B6B', negBg: 'rgba(255,107,107,0.16)', warn: '#F0B90B', warnBg: 'rgba(240,185,11,0.16)', overlay: 'rgba(0,8,20,0.7)', shadow: '0 24px 64px rgba(0,0,0,0.5)' }
+};
+var t = tokens[theme] || tokens.light;
+var font = (this.props.font ?? 'jakarta') === 'system'
+? "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+: "'Plus Jakarta Sans', system-ui, sans-serif";
+var data = [
+['DYCA', 'Dycasa S.A.', '$ 45,72', -8.69],
+['CAPX', 'Capex S.A.', '$ 53,68', 7.99],
+['PGR', 'Phoenix Global Resources', '$ 31,95', 11.83],
+['MOLA', 'Molinos Agro S.A.', '$ 92,15', 9.53],
+['MIRG', 'Mirgor', '$ 40,88', 8.32],
+['PATA', 'Importadora y Exportadora de la Patagonia', '$ 47,41', 7.24],
+['TECO2', 'Telecom', '$ 76,04', 8.83],
+['FERR', 'Ferrum S.A.', '$ 66,29', 10.82]
+];
+var rows = data.map(function (d) {
+var up = d[3] >= 0;
+return {
+ticker: d[0],
+name: d[1],
+price: d[2],
+ret: (up ? '+' : '−') + Math.abs(d[3]).toFixed(2).replace('.', ',') + '%',
+retColor: up ? t.pos : t.neg,
+rowBg: d[0] === 'CAPX' ? t.surface2 : 'transparent'
+};
+});
+return { t: t, theme: theme, font: font, rows: rows };
+}
+}
+</script>
+</body>
+</html>

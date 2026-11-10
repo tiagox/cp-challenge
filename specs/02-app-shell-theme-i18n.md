@@ -158,7 +158,7 @@ Order:
 
 1. valid stored theme
 2. `prefersDark` → `dark`
-3. fallback `dark`
+3. fallback `light`
 
 ### 4.2 Provider
 
@@ -209,7 +209,7 @@ Add to `index.html`, before the module script:
       }
       document.documentElement.lang = lang
     } catch (error) {
-      document.documentElement.dataset.theme = 'dark'
+      document.documentElement.dataset.theme = 'light'
       document.documentElement.lang = 'es'
     }
   })()
@@ -589,6 +589,7 @@ Full-width centered spinner with `common.loading`, used by Suspense.
 - boot/default theme applies `data-theme`
 - toggle changes theme, updates `data-theme`, and persists `ccs.theme`
 - stored theme wins over system preference
+- no stored theme and no dark preference resolves to `light`
 - toggle has an accessible label in EN and ES
 
 ### `language-switcher.test.tsx`

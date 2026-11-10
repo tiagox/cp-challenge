@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Theme palette and open questions</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0062DE}a:hover{color:#0052BD}
+</style>
+</helmet>
+<div style="width: 1280px; height: 1180px; box-sizing: border-box; padding: 56px 64px; background: #FFFFFF; color: #15181C; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; gap: 40px">
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5A6270">Q1 · Palette source</p>
+<h1 style="margin: 0; font-size: 36px; line-height: 1.15">Cocos light tokens as-is; dark derived from their navy</h1>
+<p style="margin: 0; font-size: 16px; line-height: 1.5; color: #444B57; max-width: 860px">Light values come straight from cocos.capital's <code>--cocos-theme-*</code> variables. Cocos has no dark mode, so dark uses the navy of their dark hero sections. Ratios are WCAG contrast of the text tokens against the theme's background (button tokens: white text on the fill).</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 16px; background: #F2F7FD; border: 1px solid #E5E9EF">
+<h2 style="margin: 0; font-size: 18px; color: #00152E">Light</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{ light }}" as="s" hint-placeholder-count="12">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 10px; background: #FFFFFF; border: 1px solid #E5E9EF">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; border: 1px solid rgba(0,0,0,0.12); background: {{ s.hex }}"></div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 13px; font-weight: 600; color: #00152E">{{ s.name }}</span>
+<span style="font-size: 12px; color: #4F6680; font-family: ui-monospace, Menlo, monospace">{{ s.hex }} {{ s.ratio }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 16px; background: #001533; border: 1px solid #164583">
+<h2 style="margin: 0; font-size: 18px; color: #FFFFFF">Dark</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{ dark }}" as="s" hint-placeholder-count="12">
+<div style="display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 10px; background: #001B3D; border: 1px solid #164583">
+<div style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px; border: 1px solid rgba(255,255,255,0.18); background: {{ s.hex }}"></div>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 13px; font-weight: 600; color: #FFFFFF">{{ s.name }}</span>
+<span style="font-size: 12px; color: #8DA7C8; font-family: ui-monospace, Menlo, monospace">{{ s.hex }} {{ s.ratio }}</span>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 16px; border: 1px solid #E2E5EA">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5A6270">Q3 · Accent as text</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #444B57">Brand blue fails as link text on dark. Add <code>--color-accent-text</code>.</p>
+<div style="display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 12px; background: #001B3D">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+<span style="font-size: 16px; font-weight: 600; color: #0062DE">Ver portafolio →</span>
+<span style="font-size: 12px; color: #FF6B6B; font-family: ui-monospace, Menlo, monospace">#0062DE 3.1:1 ✗</span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px">
+<span style="font-size: 16px; font-weight: 600; color: #8AC0F6">Ver portafolio →</span>
+<span style="font-size: 12px; color: #0CB077; font-family: ui-monospace, Menlo, monospace">#8AC0F6 9.0:1 ✓</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 13px; color: #5A6270">Light keeps #0062DE for text (5.1:1).</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 16px; border: 1px solid #E2E5EA">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5A6270">Q4 · Button hover</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #444B57">Cocos hovers lighter; white text then drops below AA. Hover darker instead.</p>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border-radius: 999px; background: #0062DE; color: #FFFFFF; font-size: 15px; font-weight: 600">Comprar</span>
+<span style="font-size: 12px; color: #5A6270; font-family: ui-monospace, Menlo, monospace">default 5.5:1</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border-radius: 999px; background: #0571FF; color: #FFFFFF; font-size: 15px; font-weight: 600">Comprar</span>
+<span style="font-size: 12px; color: #B42318; font-family: ui-monospace, Menlo, monospace">#0571FF 4.4:1 ✗</span>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+<span style="display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 20px; border-radius: 999px; background: #0052BD; color: #FFFFFF; font-size: 15px; font-weight: 600">Comprar</span>
+<span style="font-size: 12px; color: #07785A; font-family: ui-monospace, Menlo, monospace">#0052BD 7.1:1 ✓</span>
+</div>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 16px; border: 1px solid #E2E5EA">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #5A6270">Q5 · Gains and losses</p>
+<p style="margin: 0; font-size: 15px; line-height: 1.45; color: #444B57">Cocos's bright green fails as text on white. Cocos has no red: these are new.</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E5E9EF">
+<span style="font-size: 18px; font-weight: 700; color: #0EBE8C">+7,99%</span>
+<span style="font-size: 11px; color: #B42318; font-family: ui-monospace, Menlo, monospace">#0EBE8C 2.8:1 ✗</span>
+<span style="font-size: 18px; font-weight: 700; color: #07785A">+7,99%</span>
+<span style="font-size: 11px; color: #4F6680; font-family: ui-monospace, Menlo, monospace">#07785A 5.5:1 ✓</span>
+<span style="font-size: 18px; font-weight: 700; color: #C8281C">−8,69%</span>
+<span style="font-size: 11px; color: #4F6680; font-family: ui-monospace, Menlo, monospace">#C8281C 5.6:1 ✓</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 12px; background: #001B3D">
+<span style="font-size: 18px; font-weight: 700; color: #0CB077">+7,99%</span>
+<span style="font-size: 11px; color: #8DA7C8; font-family: ui-monospace, Menlo, monospace">#0CB077 6.1:1 ✓</span>
+<span style="font-size: 18px; font-weight: 700; color: #FF6B6B">−8,69%</span>
+<span style="font-size: 11px; color: #8DA7C8; font-family: ui-monospace, Menlo, monospace">#FF6B6B 6.2:1 ✓</span>
+<span style="font-size: 18px; font-weight: 700; color: #F0B90B">Pendiente</span>
+<span style="font-size: 11px; color: #8DA7C8; font-family: ui-monospace, Menlo, monospace">#F0B90B 9.5:1 ✓</span>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+renderVals() {
+return {
+light: [
+{ name: 'bg', hex: '#F2F7FD', ratio: '' },
+{ name: 'surface', hex: '#FFFFFF', ratio: '' },
+{ name: 'surface-2', hex: '#EDF2F7', ratio: '' },
+{ name: 'border', hex: '#E5E9EF', ratio: '' },
+{ name: 'text', hex: '#00152E', ratio: '· 16.8:1' },
+{ name: 'text-muted', hex: '#597291', ratio: '· 4.6:1' },
+{ name: 'accent (fill)', hex: '#0062DE', ratio: '· 5.5:1' },
+{ name: 'accent-hover', hex: '#0052BD', ratio: '· 7.1:1' },
+{ name: 'accent-text', hex: '#0062DE', ratio: '· 5.1:1' },
+{ name: 'positive', hex: '#07785A', ratio: '· 5.1:1' },
+{ name: 'negative', hex: '#C8281C', ratio: '· 5.2:1' },
+{ name: 'warning', hex: '#8A5A00', ratio: '· 5.5:1' }
+],
+dark: [
+{ name: 'bg', hex: '#001533', ratio: '' },
+{ name: 'surface', hex: '#001B3D', ratio: '' },
+{ name: 'surface-2', hex: '#00295C', ratio: '' },
+{ name: 'border', hex: '#164583', ratio: '' },
+{ name: 'text', hex: '#FFFFFF', ratio: '· 18.2:1' },
+{ name: 'text-muted', hex: '#8DA7C8', ratio: '· 7.4:1' },
+{ name: 'accent (fill)', hex: '#0062DE', ratio: '· 5.5:1' },
+{ name: 'accent-hover', hex: '#0052BD', ratio: '· 7.1:1' },
+{ name: 'accent-text', hex: '#8AC0F6', ratio: '· 9.5:1' },
+{ name: 'positive', hex: '#0CB077', ratio: '· 6.5:1' },
+{ name: 'negative', hex: '#FF6B6B', ratio: '· 6.6:1' },
+{ name: 'warning', hex: '#F0B90B', ratio: '· 10.1:1' }
+]
+};
+}
+}
+</script>
+</body>
+</html>

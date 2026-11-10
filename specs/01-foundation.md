@@ -116,6 +116,7 @@ npm install \
   react-i18next@18.0.1 \
   @radix-ui/react-dialog@1.3.1 \
   lucide-react@1.71.0 \
+  @fontsource-variable/plus-jakarta-sans@5.3.0 \
   sass@1.108.1
 ```
 
@@ -224,30 +225,39 @@ Required token groups:
 
 - `--color-bg`, `--color-surface`, `--color-surface-2`, `--color-border`
 - `--color-text`, `--color-text-muted`
-- `--color-accent`, `--color-accent-hover`, `--color-on-accent`
+- `--color-accent`, `--color-accent-hover`, `--color-on-accent`, `--color-accent-text`
 - `--color-positive`, `--color-negative`, `--color-warning`, `--color-info`
 - `--color-overlay`
 - `--space-1` … `--space-8` (4, 8, 12, 16, 24, 32, 48, 64 px)
 - `--radius-sm`, `--radius-md`, `--radius-lg`, `--radius-pill`
-- `--font-sans` (system stack), `--font-mono`
+- `--font-sans` (`'Plus Jakarta Sans Variable'`, then the system stack), `--font-mono`
 - `--text-xs`, `--text-sm`, `--text-md`, `--text-lg`, `--text-xl`, `--text-2xl`
 - `--shadow-sm`, `--shadow-md`, `--shadow-lg`
 - `--z-header`, `--z-bottom-nav`, `--z-modal`
 
-Suggested palette:
+Palette (decided in `sessions/02-theme-palette.md`): light is the cocos.capital palette; dark is derived from its navy. Use these exact values. Ratios are WCAG contrast against `bg` (button tokens: white text on the fill).
 
-| Token | Dark | Light |
+| Token | Light | Dark |
 |---|---|---|
-| bg | `#0B0E11` | `#F7F8FA` |
-| surface | `#13171C` | `#FFFFFF` |
-| surface-2 | `#1A1F26` | `#F0F2F5` |
-| border | `#252B33` | `#E2E6EB` |
-| text | `#F3F5F7` | `#0F1419` |
-| text-muted | `#8B95A5` | `#5C6675` |
-| accent | `#3B82F6` | `#1F5EFF` |
-| positive | `#16C784` | `#0E9F6E` |
-| negative | `#EA3943` | `#D92D20` |
-| warning | `#F0B90B` | `#B7791F` |
+| bg | `#F2F7FD` | `#001533` |
+| surface | `#FFFFFF` | `#001B3D` |
+| surface-2 | `#EDF2F7` | `#00295C` |
+| border | `#E5E9EF` | `#164583` |
+| text | `#00152E` (16.8:1) | `#FFFFFF` (18.2:1) |
+| text-muted | `#597291` (4.6:1) | `#8DA7C8` (7.4:1) |
+| accent (fills) | `#0062DE` (white text 5.5:1) | `#0062DE` (white text 5.5:1) |
+| accent-hover | `#0052BD` (white text 7.1:1) | `#0052BD` |
+| on-accent | `#FFFFFF` | `#FFFFFF` |
+| accent-text (links, accent-coloured text, focus ring) | `#0062DE` (5.1:1) | `#8AC0F6` (9.5:1) |
+| positive | `#07785A` (5.1:1) | `#0CB077` (6.5:1) |
+| negative | `#C8281C` (5.2:1) | `#FF6B6B` (6.6:1) |
+| warning | `#8A5A00` (5.5:1) | `#F0B90B` (10.1:1) |
+| overlay | `rgba(0, 21, 46, 0.45)` | `rgba(0, 8, 20, 0.7)` |
+
+- `accent` is only a fill (buttons, active segments) with `on-accent` text. Never use it as text on `bg`/`surface` in dark: it fails AA (3.3:1). Use `accent-text`.
+- Hover goes darker (`accent-hover`), not lighter: Cocos's `#0571FF` hover drops white text to 4.4:1.
+- Status badges use the status colour as text on a tint of the same colour (light: `#E6F6EB`, `#FDECEA`, `#FFF4D6`; dark: the colour at 16% alpha).
+- Do not use the Cocos logo, wordmark, name or imagery; borrow the palette and font only.
 
 Set `color-scheme: dark` / `light` per theme.
 
@@ -265,7 +275,7 @@ $bp-xl: 1280px;
 Provide:
 
 - `respond-to($bp)` media query mixin
-- `focus-ring` using `:focus-visible`
+- `focus-ring` using `:focus-visible` and `--color-accent-text` (2px outline, 2px offset)
 - `visually-hidden`
 - `truncate`
 - `card-surface`
@@ -663,7 +673,7 @@ Spec 02 extends this helper with theme and order-ticket providers.
 
 ## 13. App entry placeholder
 
-- `src/main.tsx` imports `./shared/i18n`, `./app/styles/globals.scss`, and renders `<App />`.
+- `src/main.tsx` imports `@fontsource-variable/plus-jakarta-sans`, `./shared/i18n`, `./app/styles/globals.scss`, and renders `<App />`. The font is self-hosted through the package: no Google Fonts request.
 - `src/App.tsx` renders a minimal translated placeholder:
 
 ```tsx
