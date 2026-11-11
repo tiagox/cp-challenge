@@ -1,0 +1,83 @@
+@use '@/app/styles/mixins' as *;
+
+.button {
+  display: inline-flex;
+  gap: var(--space-2);
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  @include focus-ring;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  svg {
+    flex-shrink: 0;
+    width: 1.1em;
+    height: 1.1em;
+  }
+}
+
+.sm {
+  min-height: 36px;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.md {
+  min-height: 44px;
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-md);
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.primary {
+  color: var(--color-on-accent);
+  background: var(--color-accent);
+
+  &:hover:not(:disabled) {
+    background: var(--color-accent-hover);
+  }
+}
+
+.secondary {
+  color: var(--color-accent-text);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-2);
+  }
+}
+
+.ghost {
+  color: var(--color-text);
+  background: transparent;
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-2);
+  }
+}
+
+.danger {
+  color: var(--color-negative);
+  background: var(--color-negative-tint);
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-negative);
+  }
+}

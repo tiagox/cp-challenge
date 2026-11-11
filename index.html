@@ -2,8 +2,39 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>CP Invest</title>
+    <!-- Sets theme and language before React renders. Keep in sync with
+         resolveInitialTheme (src/app/theme/theme.ts) and resolveInitialLanguage
+         (src/shared/i18n/language.ts). -->
+    <script>
+      ;(function () {
+        try {
+          var theme = localStorage.getItem('cp.theme')
+          if (theme !== 'dark' && theme !== 'light') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+          }
+          document.documentElement.dataset.theme = theme
+
+          var lang = localStorage.getItem('cp.lang')
+          if (lang !== 'en' && lang !== 'es') {
+            var languages = navigator.languages || [navigator.language || '']
+            lang = 'es'
+            for (var i = 0; i < languages.length; i++) {
+              var value = String(languages[i]).toLowerCase()
+              if (value.indexOf('es') === 0 || value.indexOf('en') === 0) {
+                lang = value.slice(0, 2)
+                break
+              }
+            }
+          }
+          document.documentElement.lang = lang
+        } catch (error) {
+          document.documentElement.dataset.theme = 'light'
+          document.documentElement.lang = 'es'
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>
