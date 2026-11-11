@@ -24,8 +24,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 8. `sessions/06-app-name.md` — the app is called CP Invest; the UI never mentions Cocos
 9. `sessions/07-spec-02-handoff.md` — spec 01 implementation facts and hand-off to spec 02
 10. `sessions/08-spec-03-handoff.md` — spec 02 implementation facts, ponytail review workflow, hand-off to spec 03
-11. The spec you are assigned
-12. The specs it depends on, especially their “Contracts” and “Files owned” sections
+11. `sessions/09-spec-04-handoff.md` — spec 03 implementation facts and hand-off to spec 04
+12. The spec you are assigned
+13. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
