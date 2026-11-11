@@ -22,8 +22,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 6. `sessions/03-agent-setup-and-handoff.md` — agent setup and hand-off notes for spec 00
 7. `sessions/05-search-in-instruments.md` — search is a box on the instruments page, not a screen
 8. `sessions/06-app-name.md` — the app is called CP Invest; the UI never mentions Cocos
-9. The spec you are assigned
-10. The specs it depends on, especially their “Contracts” and “Files owned” sections
+9. `sessions/07-spec-02-handoff.md` — spec 01 implementation facts and hand-off to spec 02
+10. The spec you are assigned
+11. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
