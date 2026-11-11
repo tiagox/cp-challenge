@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Portafolio desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8AC0F6}a:hover{color:#FFFFFF}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.th{font-size:12px;font-weight:600;color:#8DA7C8;text-transform:uppercase;letter-spacing:.04em;padding:12px 20px;border-bottom:1px solid #164583;text-align:left}
+.td{padding:14px 20px;border-bottom:1px solid #164583;font-size:15px}
+.navlink{text-decoration:none;color:#8DA7C8;font-weight:600;font-size:15px;padding:8px 14px;border-radius:999px}
+.navlink.active{color:#8AC0F6;background:rgba(138,192,246,0.12)}
+.iconbtn{width:40px;height:40px;border-radius:999px;border:1px solid #164583;background:#001B3D;color:#FFFFFF;display:inline-flex;align-items:center;justify-content:center}
+.btn{font:inherit;font-weight:700;font-size:14px;border:0;border-radius:999px;padding:9px 18px;background:#0062DE;color:#FFFFFF}
+.stat{background:#001B3D;border:1px solid #164583;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:6px}
+.statlabel{font-size:13px;font-weight:600;color:#8DA7C8}
+.statval{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+</style>
+</helmet>
+<div style="min-height: 820px; background: #001533; color: #FFFFFF; font-family: 'Plus Jakarta Sans', system-ui, sans-serif">
+  <header style="position: sticky; top: 0; background: rgba(0,21,51,0.85); border-bottom: 1px solid #164583">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 32px">
+      <a href="Main.dc.html" style="text-decoration: none; color: #FFFFFF; font-weight: 800; font-size: 18px">Cocos Invest</a>
+      <nav aria-label="Navegación principal" style="display: flex; gap: 4px; flex-grow: 1">
+        <a class="navlink" href="Main.dc.html">Instrumentos</a>
+        <a class="navlink active" href="#" aria-current="page">Portafolio</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <button class="iconbtn" aria-label="Cambiar a tema claro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></button>
+        <select aria-label="Idioma" style="font: inherit; font-weight: 600; color: #FFFFFF; background: #001B3D; border: 1px solid #164583; border-radius: 999px; height: 40px; padding: 0 12px"><option>ES</option><option>EN</option></select>
+      </div>
+    </div>
+  </header>
+  <main style="max-width: 1200px; margin: 0 auto; padding: 32px 24px 48px">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px">
+      <div>
+        <h1 style="margin: 0 0 6px; font-size: 30px; font-weight: 800">Portafolio</h1>
+        <p style="margin: 0; color: #8DA7C8; font-size: 15px">Tu efectivo disponible y tus posiciones abiertas.</p>
+      </div>
+      <button class="btn" style="background: #001B3D; color: #8AC0F6; border: 1px solid #164583">Actualizar</button>
+    </div>
+    <section aria-label="Resumen" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 32px">
+      <div class="stat"><span class="statlabel">Efectivo disponible</span><span class="statval">$ 980.400,00</span></div>
+      <div class="stat"><span class="statlabel">Valor de mercado</span><span class="statval">$ 20.193,10</span></div>
+      <div class="stat"><span class="statlabel">Ganancia total</span><span class="statval" style="color: #0CB077">+$ 593,10</span></div>
+      <div class="stat"><span class="statlabel">Rendimiento total</span><span class="statval" style="color: #0CB077">+3,03%</span></div>
+    </section>
+    <h2 style="margin: 0 0 12px; font-size: 18px; font-weight: 700">Posiciones <span style="color: #8DA7C8; font-weight: 600">· 3</span></h2>
+    <div style="background: #001B3D; border: 1px solid #164583; border-radius: 16px; overflow: hidden">
+      <table style="width: 100%; border-collapse: collapse">
+        <caption style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Posiciones</caption>
+        <thead style="background: #00295C">
+          <tr><th class="th">Ticker</th><th class="th num">Cantidad</th><th class="th num">Valor de mercado</th><th class="th num">Ganancia</th><th class="th num">Rendimiento</th><th class="th num"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Acción</span></th></tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="3">
+            <tr>
+              <td class="td" style="font-weight: 800">{{r.ticker}}</td>
+              <td class="td num">{{r.qty}}</td>
+              <td class="td num" style="font-weight: 600">{{r.mv}}</td>
+              <td class="td num" style="font-weight: 700; color: {{r.tone}}">{{r.pl}}</td>
+              <td class="td num" style="font-weight: 700; color: {{r.tone}}">{{r.ret}}</td>
+              <td class="td num"><button class="btn" style="background: transparent; color: #8AC0F6; border: 1px solid #164583">Vender</button></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var pos = '#0CB077', neg = '#FF6B6B';
+    return { rows: [
+      { ticker: 'CAPX', qty: '120', mv: '$ 6.441,60', pl: '+$ 441,60', ret: '+7,36%', tone: pos },
+      { ticker: 'DYCA', qty: '200', mv: '$ 9.144,00', pl: '−$ 456,00', ret: '−4,75%', tone: neg },
+      { ticker: 'MOLA', qty: '50', mv: '$ 4.607,50', pl: '+$ 607,50', ret: '+15,19%', tone: pos }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

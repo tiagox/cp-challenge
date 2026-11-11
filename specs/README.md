@@ -10,7 +10,7 @@ This folder contains the implementation specs for the frontend challenge. Each s
 | 01 | [Foundation](./01-foundation.md) | 00 |
 | 02 | [App shell, theme & i18n](./02-app-shell-theme-i18n.md) | 01 |
 | 03 | [Instruments](./03-instruments.md) | 02 |
-| 04 | [Search](./04-search.md) | 02 |
+| 04 | [Instrument search](./04-search.md) | 03 |
 | 05 | [Portfolio](./05-portfolio.md) | 02 |
 | 06 | [Orders](./06-orders.md) | 02, 05 |
 | 07 | [Hardening & docs](./07-hardening-docs.md) | 03–06 |
@@ -72,13 +72,12 @@ src/
   pages/                # thin route screens
     instruments/
     portfolio/
-    search/
     not-found/
 
   features/
     instruments/        # API + query + list UI
     portfolio/          # API + query + summary/positions UI
-    search/             # API + query + debounced search UI
+    search/             # API + query + search input (composed into the instruments page)
     order/              # context, validation, form, modal, mutation
 
   entities/
@@ -112,7 +111,7 @@ app → pages → features → entities → shared
 |---|---|
 | Instruments, portfolio, search, order submission | TanStack Query |
 | Order ticket open/closed, selected instrument, preset side/quantity | `OrderTicketProvider` (React context + `useReducer`) |
-| Search query | URL (`?q=`) |
+| Search query | URL (`/instruments?q=`) |
 | Form values and validation | Local component state |
 
 ## API rules

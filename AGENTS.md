@@ -20,8 +20,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 4. `sessions/01-plan-grilling.md` — decisions that refine session 00
 5. `sessions/02-theme-palette.md` — palette, font and theme fallback
 6. `sessions/03-agent-setup-and-handoff.md` — agent setup and hand-off notes for spec 00
-7. The spec you are assigned
-8. The specs it depends on, especially their “Contracts” and “Files owned” sections
+7. `sessions/05-search-in-instruments.md` — search is a box on the instruments page, not a screen
+8. The spec you are assigned
+9. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
@@ -33,7 +34,7 @@ Do not read only the task description. File ownership and layering rules are enf
 | 2 | `specs/01-foundation.md` | 00 | Tooling, Sass, i18n infra, entities, test infra |
 | 3 | `specs/02-app-shell-theme-i18n.md` | 01 | Providers, router, layout, theme, UI kit, stubs |
 | 4 | `specs/03-instruments.md` | 02 | Instruments list and BUY entry point |
-| 5 | `specs/04-search.md` | 02 | Ticker search with `?q=` |
+| 5 | `specs/04-search.md` | 03 | Ticker search box on the instruments page (`?q=`) |
 | 6 | `specs/05-portfolio.md` | 02 | Exposes `usePortfolio` |
 | 7 | `specs/06-orders.md` | 02, 05 | Needs `usePortfolio` from spec 05 |
 | 8 | `specs/07-hardening-docs.md` | 03–06 | Run last |
@@ -96,7 +97,7 @@ Hard rules:
 |---|---|
 | Instruments, portfolio, search, order submission | TanStack Query |
 | Order ticket open state, instrument, presets | `OrderTicketProvider` |
-| Search query | URL (`?q=`) |
+| Search query | URL (`/instruments?q=`) |
 | Form values and validation | Local component state |
 | Theme | `ThemeProvider` + `localStorage` + boot script |
 | Language | i18next + `localStorage` + boot script |

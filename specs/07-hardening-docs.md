@@ -42,7 +42,7 @@ You may make minimal supporting edits in earlier specs’ files **only** when th
 Verify and fix:
 
 - [ ] `src/pages/instruments/InstrumentsPage.tsx` renders the real instruments feature (not `common.comingSoon`).
-- [ ] `src/pages/search/SearchPage.tsx` renders the real search feature.
+- [ ] `src/pages/instruments/InstrumentsPage.tsx` includes the search box; no `/search` route or `src/pages/search/` exists.
 - [ ] `src/pages/portfolio/PortfolioPage.tsx` renders the real portfolio feature.
 - [ ] `src/app/layout/OrderModalContainer.tsx` renders the real order modal and no longer returns `null`.
 - [ ] `src/App.tsx` renders only `AppProviders`.
@@ -77,10 +77,11 @@ Required flows:
    - modal opens in SELL mode with quantity equal to the holding quantity
    - submit sends `side: 'SELL'` and the same integer quantity
 3. **Search → order**
-   - visit `/search`
-   - type a ticker
-   - result click opens the modal in BUY mode
-   - URL contains the query
+   - visit `/instruments`
+   - type a ticker in the search box
+   - the list shows only matching results
+   - “Trade” on a result opens the modal in BUY mode
+   - URL contains `?q=`
 4. **Order error path**
    - server returns `400 { error: 'Insufficient cash' }`
    - UI shows the localized rejection message and no order id
@@ -91,7 +92,7 @@ Required flows:
    - submitted body includes `price`
    - status `PENDING` renders the pending copy
 6. **Navigation**
-   - desktop or mobile nav moves between the three sections
+   - desktop or mobile nav moves between the two sections
    - active route is marked
    - unknown route renders the not-found page and the link back works
 

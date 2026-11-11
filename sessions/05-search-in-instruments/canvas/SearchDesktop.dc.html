@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Buscar desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0062DE}a:hover{color:#0052BD}
+.navlink{text-decoration:none;color:#597291;font-weight:600;font-size:15px;padding:8px 14px;border-radius:999px}
+.navlink.active{color:#0062DE;background:#E6EFFC}
+.iconbtn{width:40px;height:40px;border-radius:999px;border:1px solid #E5E9EF;background:#FFFFFF;color:#00152E;display:inline-flex;align-items:center;justify-content:center}
+</style>
+</helmet>
+<div style="min-height: 700px; background: #F2F7FD; color: #00152E; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums">
+  <header style="position: sticky; top: 0; background: rgba(242,247,253,0.85); border-bottom: 1px solid #E5E9EF">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 32px">
+      <a href="Main.dc.html" style="text-decoration: none; color: #00152E; font-weight: 800; font-size: 18px">Cocos Invest</a>
+      <nav aria-label="Navegación principal" style="display: flex; gap: 4px; flex-grow: 1">
+        <a class="navlink" href="Main.dc.html">Instrumentos</a>
+        <a class="navlink" href="PortfolioDesktop.dc.html">Portafolio</a>
+        <a class="navlink active" href="#" aria-current="page">Buscar</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <button class="iconbtn" aria-label="Cambiar a tema oscuro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button>
+        <select aria-label="Idioma" style="font: inherit; font-weight: 600; color: #00152E; background: #FFFFFF; border: 1px solid #E5E9EF; border-radius: 999px; height: 40px; padding: 0 12px"><option>ES</option><option>EN</option></select>
+      </div>
+    </div>
+  </header>
+  <main style="max-width: 1200px; margin: 0 auto; padding: 32px 24px 48px">
+    <h1 style="margin: 0 0 6px; font-size: 30px; font-weight: 800">Buscar</h1>
+    <p style="margin: 0 0 20px; color: #597291; font-size: 15px">Buscá instrumentos por ticker.</p>
+    <div role="search" style="max-width: 640px; margin-bottom: 12px">
+      <label for="q" style="display: block; font-size: 13px; font-weight: 600; color: #597291; margin-bottom: 6px">Ticker</label>
+      <div style="display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 16px; background: #FFFFFF; border: 2px solid #0062DE; border-radius: 14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#597291" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input id="q" type="search" value="ar" style="flex-grow: 1; border: 0; outline: 0; font: inherit; font-size: 17px; font-weight: 600; color: #00152E; background: transparent">
+      </div>
+    </div>
+    <p aria-live="polite" style="margin: 0 0 16px; font-size: 14px; color: #597291">4 resultados para “ar”</p>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+        <article style="background: #FFFFFF; border: 1px solid #E5E9EF; border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; gap: 16px">
+          <div style="flex-grow: 1; min-width: 0">
+            <div style="display: flex; align-items: center; gap: 8px"><span style="font-weight: 800; font-size: 16px">{{r.ticker}}</span><span style="font-size: 11px; font-weight: 700; color: #597291; background: #EDF2F7; border-radius: 999px; padding: 2px 8px">{{r.type}}</span></div>
+            <div style="color: #597291; font-size: 13px; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</div>
+          </div>
+          <div style="text-align: right">
+            <div style="font-weight: 700">{{r.price}}</div>
+            <div style="font-weight: 700; font-size: 13px; color: {{r.tone}}">{{r.ret}}</div>
+          </div>
+          <button style="font: inherit; font-weight: 700; font-size: 14px; border: 0; border-radius: 999px; padding: 9px 18px; background: #0062DE; color: #FFFFFF">Operar</button>
+        </article>
+      </sc-for>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var pos = '#07785A', flat = '#597291';
+    return { rows: [
+      { ticker: 'GARO', type: 'Acciones', name: 'Garovaglio Y Zorraquín', price: '$ 27,12', ret: '+10,97%', tone: pos },
+      { ticker: 'HARG', type: 'Acciones', name: 'Holcim (Argentina) S.A.', price: '$ 78,25', ret: '+10,01%', tone: pos },
+      { ticker: 'BBAR', type: 'Acciones', name: 'Banco Frances', price: '$ 79,36', ret: '+10,73%', tone: pos },
+      { ticker: 'ARS', type: 'Moneda', name: 'Pesos', price: '$ 1,00', ret: '0,00%', tone: flat }
+    ] };
+  }
+}
+</script>
+</body>
+</html>
