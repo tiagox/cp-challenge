@@ -376,7 +376,7 @@ Feature namespace files (`instruments`, `portfolio`, `search`, `orders`, `valida
 
 | Key | EN | ES |
 |---|---|---|
-| `appName` | `Cocos Invest` | `Cocos Invest` |
+| `appName` | `CP Invest` | `CP Invest` |
 | `loading` | `Loading...` | `Cargando...` |
 | `retry` | `Retry` | `Reintentar` |
 | `close` | `Close` | `Cerrar` |

@@ -11,7 +11,8 @@ export interface RequestOptions {
 export const DEFAULT_TIMEOUT_MS = 15_000
 
 function combineSignals(signals: AbortSignal[]): AbortSignal {
-  if (signals.length === 1) return signals[0]
+  const [first] = signals
+  if (first && signals.length === 1) return first
   if (typeof AbortSignal.any === 'function') return AbortSignal.any(signals)
 
   const controller = new AbortController()
@@ -87,7 +88,11 @@ export const http = {
   get<T>(path: string, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
     return request<T>(path, { ...options, method: 'GET' })
   },
-  post<T>(path: string, body: unknown, options?: Omit<RequestOptions, 'method' | 'body'>): Promise<T> {
+  post<T>(
+    path: string,
+    body: unknown,
+    options?: Omit<RequestOptions, 'method' | 'body'>,
+  ): Promise<T> {
     return request<T>(path, { ...options, method: 'POST', body })
   },
 }

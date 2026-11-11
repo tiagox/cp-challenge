@@ -13,7 +13,9 @@ function jsonResponse(body: unknown, init: ResponseInit = {}) {
   })
 }
 
-function mockFetch(implementation: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>) {
+function mockFetch(
+  implementation: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>,
+) {
   const fetchMock = vi.fn(implementation)
   vi.stubGlobal('fetch', fetchMock)
   return fetchMock
@@ -32,7 +34,7 @@ function hangingFetch() {
 }
 
 function sentHeaders(fetchMock: ReturnType<typeof mockFetch>) {
-  return new Headers(fetchMock.mock.calls[0][1]?.headers)
+  return new Headers(fetchMock.mock.calls[0]?.[1]?.headers)
 }
 
 async function catchApiError(promise: Promise<unknown>): Promise<ApiError> {
@@ -72,7 +74,7 @@ describe('request headers and body', () => {
     await http.get('/instruments')
 
     expect(sentHeaders(fetchMock).has('Content-Type')).toBe(false)
-    expect(fetchMock.mock.calls[0][1]?.body).toBeUndefined()
+    expect(fetchMock.mock.calls[0]?.[1]?.body).toBeUndefined()
   })
 
   it('sends a JSON body with Content-Type', async () => {
@@ -81,7 +83,7 @@ describe('request headers and body', () => {
 
     await http.post('/orders', order)
 
-    const init = fetchMock.mock.calls[0][1]
+    const init = fetchMock.mock.calls[0]?.[1]
     expect(init?.method).toBe('POST')
     expect(sentHeaders(fetchMock).get('Content-Type')).toBe('application/json')
     expect(init?.body).toBe(JSON.stringify(order))

@@ -1,0 +1,16 @@
+export const common = {
+  appName: 'CP Invest',
+  loading: 'Loading...',
+  retry: 'Retry',
+  close: 'Close',
+  cancel: 'Cancel',
+  back: 'Back',
+  notAvailable: '—',
+  comingSoon: 'Coming soon',
+  unexpectedErrorTitle: 'Something went wrong',
+  unexpectedErrorDescription: 'Please try again.',
+  notFoundTitle: 'Page not found',
+  notFoundDescription: 'The page you are looking for does not exist.',
+  goToInstruments: 'Go to instruments',
+  refresh: 'Refresh',
+}

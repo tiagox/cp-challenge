@@ -11,6 +11,16 @@ export default mergeConfig(
       restoreMocks: true,
       unstubGlobals: true,
       unstubEnvs: true,
+      coverage: {
+        provider: 'v8',
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: [
+          'src/**/*.test.{ts,tsx}',
+          'src/test/**',
+          'src/shared/api/generated/**',
+          'src/**/*.d.ts',
+        ],
+      },
     },
   }),
 )
