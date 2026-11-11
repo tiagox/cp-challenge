@@ -14,6 +14,8 @@
 }
 
 .status {
+  // Keeps its line while empty so results don't shift when the count appears.
+  min-height: 1lh;
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }

@@ -94,24 +94,28 @@ describe('InstrumentsPage search', () => {
 
   it('shows the skeleton instead of previous results while the next search loads', async () => {
     renderPage('/instruments?q=dy')
-    await screen.findByText('1 result for “dy”')
+    const results = await screen.findByText('1 result for “dy”')
 
-    let respond = () => {}
+    let respond: (() => void) | undefined
     server.use(
       http.get(searchUrl, async () => {
         await new Promise<void>((resolve) => (respond = resolve))
         return HttpResponse.json([])
       }),
     )
-    await userEvent.clear(searchbox())
-    await userEvent.type(searchbox(), 'zz')
+    await userEvent.type(searchbox(), 'z')
 
     await waitFor(() => expect(screen.queryByRole('table')).not.toBeInTheDocument())
-    expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading...')
-    expect(screen.queryByText(/results? for/)).not.toBeInTheDocument()
+    expect(screen.getAllByText('Loading...')[0]).toBeInTheDocument()
+    // The same live region stays mounted and empties, so the new count is announced.
+    expect(results).toBeInTheDocument()
+    expect(results).toBeEmptyDOMElement()
 
-    respond()
+    // Release the response only once the request is in flight.
+    await waitFor(() => expect(respond).toBeDefined())
+    respond?.()
     expect(await screen.findByRole('heading', { name: 'No instruments found' })).toBeInTheDocument()
+    expect(results).toHaveTextContent('0 results for “dyz”')
   })
 
   it('populates the box and results from an initial ?q=', async () => {
@@ -157,6 +161,7 @@ describe('InstrumentsPage search', () => {
     await userEvent.click(within(state).getByRole('button', { name: 'Clear search' }))
 
     expect(searchbox()).toHaveValue('')
+    expect(searchbox()).toHaveFocus()
     await expectRows(instrumentsFixture.length)
     await waitFor(() => expect(location()).toBe('/instruments'))
   })
@@ -206,6 +211,20 @@ describe('InstrumentsPage search', () => {
     await expectRows(instrumentsFixture.length)
     await waitFor(() => expect(location()).toBe('/instruments'))
     expect(screen.queryByText(/results? for/)).not.toBeInTheDocument()
+  })
+
+  it('does not revive the cleared query when typing right after clearing', async () => {
+    const queries = recordSearchQueries()
+    renderPage('/instruments?q=dy')
+    await screen.findByText('1 result for “dy”')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search' }))
+    await userEvent.type(searchbox(), 'a')
+
+    expect(screen.queryByText('1 result for “dy”')).not.toBeInTheDocument()
+    expect(location()).toBe('/instruments')
+    expect(await screen.findByText('3 results for “a”')).toBeInTheDocument()
+    expect(queries).toEqual(['dy', 'a'])
   })
 
   it('renders ES copy', async () => {

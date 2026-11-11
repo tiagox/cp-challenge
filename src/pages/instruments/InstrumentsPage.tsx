@@ -37,7 +37,8 @@ export default function InstrumentsPage() {
     if (urlQuery !== input.trim()) setInput(urlQuery)
   }
 
-  const debounced = useDebouncedValue(input, 300)
+  // No delay once empty, so typing right after a clear never revives the old query.
+  const debounced = useDebouncedValue(input, input.trim() ? 300 : 0)
   // Typing is debounced; clearing restores the full list at once.
   const query = input.trim() ? debounced.trim() : ''
   const searching = query !== ''
@@ -57,6 +58,13 @@ export default function InstrumentsPage() {
       { replace: true },
     )
   }, [query, setSearchParams])
+
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const clearSearch = () => {
+    setInput('')
+    // The empty state and its button unmount, so keep focus in the search box.
+    searchInputRef.current?.focus()
+  }
 
   const instruments = useInstruments()
   const search = useSearchInstruments(query)
@@ -91,7 +99,7 @@ export default function InstrumentsPage() {
           title={t('search.empty.title')}
           description={t('search.empty.description', { query })}
           action={
-            <Button variant="secondary" onClick={() => setInput('')}>
+            <Button variant="secondary" onClick={clearSearch}>
               {t('search.input.clear')}
             </Button>
           }
@@ -129,10 +137,11 @@ export default function InstrumentsPage() {
         }
       />
       <div className={styles.search}>
-        <SearchInput value={input} onChange={setInput} />
-        {searching && data ? (
+        <SearchInput ref={searchInputRef} value={input} onChange={setInput} />
+        {/* Stays mounted while loading: screen readers announce text changes, not insertions. */}
+        {searching ? (
           <p role="status" className={styles.status}>
-            {t('search.results', { count: data.length, query })}
+            {data ? t('search.results', { count: data.length, query }) : null}
           </p>
         ) : null}
       </div>
