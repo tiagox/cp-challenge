@@ -1,0 +1,42 @@
+@use '@/app/styles/mixins' as *;
+
+.table {
+  @include card-surface;
+
+  display: none;
+
+  @include respond-to(md) {
+    display: block;
+  }
+}
+
+.row {
+  display: flex;
+  gap: var(--space-5);
+  align-items: center;
+  justify-content: space-between;
+  height: 61px;
+  padding: 0 var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+}
+
+.cards {
+  display: grid;
+  gap: var(--space-3);
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.card {
+  @include card-surface;
+
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
