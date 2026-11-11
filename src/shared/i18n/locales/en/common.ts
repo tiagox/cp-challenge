@@ -1,5 +1,5 @@
 export const common = {
-  appName: 'Cocos Invest',
+  appName: 'CP Invest',
   loading: 'Loading...',
   retry: 'Retry',
   close: 'Close',

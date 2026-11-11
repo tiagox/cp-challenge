@@ -1,4 +1,4 @@
-# Cocos Invest — frontend challenge
+# CP Invest — frontend challenge
 
 A React app to browse instruments, search them by ticker, view a portfolio and send market or limit orders against the challenge API.
 

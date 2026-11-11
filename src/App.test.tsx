@@ -7,7 +7,7 @@ describe('App placeholder', () => {
   it('renders the translated app name', () => {
     renderWithProviders(<App />)
 
-    expect(screen.getByRole('heading', { name: 'Cocos Invest' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'CP Invest' })).toBeInTheDocument()
     expect(screen.getByText('Coming soon')).toBeInTheDocument()
   })
 

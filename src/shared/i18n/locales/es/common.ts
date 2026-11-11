@@ -1,7 +1,7 @@
 import type { common as enCommon } from '../en/common'
 
 export const common = {
-  appName: 'Cocos Invest',
+  appName: 'CP Invest',
   loading: 'Cargando...',
   retry: 'Reintentar',
   close: 'Cerrar',
