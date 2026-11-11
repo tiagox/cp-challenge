@@ -15,13 +15,13 @@ describe('app shell', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the instruments stub', async () => {
+  it('renders the instruments page', async () => {
     renderApp({ route: '/instruments' })
 
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Instruments' }),
     ).toBeInTheDocument()
-    expect(screen.getByText('Coming soon')).toBeInTheDocument()
+    expect(await screen.findByRole('table', { name: 'Instruments' })).toBeInTheDocument()
   })
 
   it('renders the portfolio stub', async () => {
