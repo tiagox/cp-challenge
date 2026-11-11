@@ -1,0 +1,347 @@
+openapi: 3.1.0
+info:
+  title: Cocos Challenge API
+  version: 1.0.0
+  description: |
+    External challenge API for instruments, portfolio, search and orders.
+    All requests must send X-Enable-Bugs: off for deterministic behavior.
+servers:
+  - url: https://dummy-api-topaz.vercel.app
+tags:
+  - name: instruments
+  - name: portfolio
+  - name: search
+  - name: orders
+
+paths:
+  /instruments:
+    get:
+      tags: [instruments]
+      operationId: listInstruments
+      summary: List all instruments
+      parameters:
+        - $ref: '#/components/parameters/EnableBugsHeader'
+        - $ref: '#/components/parameters/CandidateIdHeaderOptional'
+      responses:
+        '200':
+          description: All available instruments.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instrument'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /portfolio:
+    get:
+      tags: [portfolio]
+      operationId: getPortfolio
+      summary: Get the candidate's cash and holdings
+      parameters:
+        - $ref: '#/components/parameters/EnableBugsHeader'
+        - $ref: '#/components/parameters/CandidateIdHeader'
+      responses:
+        '200':
+          description: Cash and holdings for the candidate in X-Candidate-Id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+              example:
+                cash: 999542.8
+                holdings:
+                  - instrument_id: 1
+                    ticker: DYCA
+                    quantity: 10
+                    last_price: 45.72
+                    close_price: 50.07
+                    avg_cost_price: 45.72
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /search:
+    get:
+      tags: [search]
+      operationId: searchInstruments
+      summary: Search instruments by ticker
+      description: |
+        Case-insensitive substring match on ticker. An empty or missing query
+        returns all instruments.
+      parameters:
+        - $ref: '#/components/parameters/EnableBugsHeader'
+        - $ref: '#/components/parameters/CandidateIdHeaderOptional'
+        - name: query
+          in: query
+          required: false
+          description: Ticker fragment to match.
+          schema:
+            type: string
+          example: dyc
+      responses:
+        '200':
+          description: Instruments whose ticker contains the query.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Instrument'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /orders:
+    post:
+      tags: [orders]
+      operationId: createOrder
+      summary: Send a BUY or SELL order
+      description: |
+        MARKET orders execute at last_price and are FILLED or REJECTED.
+        LIMIT orders execute at the given price and are PENDING or REJECTED.
+        Validation failures return 400 with an Error body.
+      parameters:
+        - $ref: '#/components/parameters/EnableBugsHeader'
+        - $ref: '#/components/parameters/CandidateIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+            examples:
+              market:
+                summary: MARKET BUY
+                value:
+                  instrument_id: 1
+                  side: BUY
+                  type: MARKET
+                  quantity: 1234
+              limit:
+                summary: LIMIT SELL
+                value:
+                  instrument_id: 1
+                  side: SELL
+                  type: LIMIT
+                  quantity: 123
+                  price: 84.5
+      responses:
+        '201':
+          description: The created order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              example:
+                id: 648128
+                candidate_id: test
+                instrument_id: 1
+                side: BUY
+                type: MARKET
+                quantity: 10
+                price: 45.72
+                status: FILLED
+                created_at: '2026-11-10T17:48:29.611Z'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  parameters:
+    EnableBugsHeader:
+      name: X-Enable-Bugs
+      in: header
+      required: true
+      description: |
+        Bug mode. Mandatory on every request, even when `off`; a missing or
+        invalid value returns 400. The client always sends it.
+      schema:
+        type: string
+        enum: [off, easy, medium, hard]
+        default: 'off'
+    CandidateIdHeader:
+      name: X-Candidate-Id
+      in: header
+      required: true
+      description: |
+        Anonymous candidate key. Scopes cash and holdings. A new candidate
+        starts with {"cash": 1000000, "holdings": []}. The client sends it on
+        every request.
+      schema:
+        type: string
+        minLength: 1
+    CandidateIdHeaderOptional:
+      name: X-Candidate-Id
+      in: header
+      required: false
+      description: |
+        Anonymous candidate key. Not required on this endpoint, but the client
+        sends it on every request.
+      schema:
+        type: string
+        minLength: 1
+
+  responses:
+    BadRequest:
+      description: Invalid request, missing header or failed order validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: Insufficient cash
+
+  schemas:
+    Instrument:
+      type: object
+      required: [id, ticker, name, type, last_price, close_price]
+      properties:
+        id:
+          type: integer
+        ticker:
+          type: string
+          description: Uppercase ticker.
+        name:
+          type: string
+          description: Company or asset name.
+        type:
+          type: string
+          enum: [ACCIONES, MONEDA]
+        last_price:
+          type: number
+          description: Last price in ARS. May be 0 in QA bug modes.
+        close_price:
+          type: number
+          description: Previous close price in ARS.
+      example:
+        id: 1
+        ticker: DYCA
+        name: Dycasa S.A.
+        type: ACCIONES
+        last_price: 45.72
+        close_price: 50.07
+
+    Holding:
+      type: object
+      required: [instrument_id, ticker, quantity, last_price, close_price, avg_cost_price]
+      properties:
+        instrument_id:
+          type: integer
+        ticker:
+          type: string
+        quantity:
+          type: integer
+        last_price:
+          type: number
+        close_price:
+          type: number
+        avg_cost_price:
+          type: number
+
+    Portfolio:
+      type: object
+      required: [cash, holdings]
+      properties:
+        cash:
+          type: number
+        holdings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Holding'
+
+    OrderSide:
+      type: string
+      enum: [BUY, SELL]
+
+    OrderType:
+      type: string
+      enum: [MARKET, LIMIT]
+
+    OrderStatus:
+      type: string
+      enum: [PENDING, REJECTED, FILLED]
+
+    MarketOrderRequest:
+      type: object
+      required: [instrument_id, side, type, quantity]
+      properties:
+        instrument_id:
+          type: integer
+        side:
+          $ref: '#/components/schemas/OrderSide'
+        type:
+          type: string
+          const: MARKET
+        quantity:
+          type: integer
+          minimum: 1
+          description: Whole shares only; fractions are rejected.
+      description: BUY cash validation uses the instrument's last_price.
+
+    LimitOrderRequest:
+      type: object
+      required: [instrument_id, side, type, quantity, price]
+      properties:
+        instrument_id:
+          type: integer
+        side:
+          $ref: '#/components/schemas/OrderSide'
+        type:
+          type: string
+          const: LIMIT
+        quantity:
+          type: integer
+          minimum: 1
+          description: Whole shares only; fractions are rejected.
+        price:
+          type: number
+          exclusiveMinimum: 0
+          description: Limit price. Required only for LIMIT orders.
+      description: BUY cash validation uses the limit price, not last_price.
+
+    CreateOrderRequest:
+      oneOf:
+        - $ref: '#/components/schemas/MarketOrderRequest'
+        - $ref: '#/components/schemas/LimitOrderRequest'
+      discriminator:
+        propertyName: type
+        mapping:
+          MARKET: '#/components/schemas/MarketOrderRequest'
+          LIMIT: '#/components/schemas/LimitOrderRequest'
+
+    Order:
+      type: object
+      required:
+        [id, candidate_id, instrument_id, side, type, quantity, price, status, created_at]
+      properties:
+        id:
+          type: integer
+        candidate_id:
+          type: string
+        instrument_id:
+          type: integer
+        side:
+          $ref: '#/components/schemas/OrderSide'
+        type:
+          $ref: '#/components/schemas/OrderType'
+        quantity:
+          type: integer
+        price:
+          type: number
+        status:
+          $ref: '#/components/schemas/OrderStatus'
+        created_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: |
+            Known messages: "Insufficient cash", "Insufficient shares",
+            "quantity must be a positive number", "quantity must be a positive
+            integer", "LIMIT orders require a numeric price", "Instrument not
+            found", "Missing X-Candidate-Id header", "X-Enable-Bugs must be off,
+            easy, medium, or hard".
