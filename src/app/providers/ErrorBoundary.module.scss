@@ -1,0 +1,21 @@
+.fallback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  padding: var(--space-5) var(--space-4);
+  text-align: center;
+  background: var(--color-bg);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+}
+
+.description {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-muted);
+}

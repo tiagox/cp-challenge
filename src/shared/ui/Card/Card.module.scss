@@ -1,0 +1,7 @@
+@use '@/app/styles/mixins' as *;
+
+.card {
+  @include card-surface;
+
+  min-width: 0;
+}

@@ -1,0 +1,12 @@
+@use '@/app/styles/mixins' as *;
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  padding-inline: var(--space-4);
+  margin-inline: auto;
+
+  @include respond-to(md) {
+    padding-inline: var(--space-5);
+  }
+}
