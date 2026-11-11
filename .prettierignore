@@ -1,0 +1,11 @@
+dist
+coverage
+package-lock.json
+src/shared/api/generated
+# Hand-written docs and agent files keep their own formatting; Prettier covers code and config.
+.claude
+docs
+specs
+sessions
+AGENTS.md
+frontend-challenge.md

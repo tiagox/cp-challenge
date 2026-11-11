@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use 'tokens' as *;
+
+$breakpoints: (
+  sm: $bp-sm,
+  md: $bp-md,
+  lg: $bp-lg,
+  xl: $bp-xl,
+);
+
+// Mobile-first: styles apply from the breakpoint up. Accepts a key (`md`) or a length.
+@mixin respond-to($bp) {
+  $width: $bp;
+
+  @if map.has-key($breakpoints, $bp) {
+    $width: map.get($breakpoints, $bp);
+  }
+
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: 2px solid var(--color-accent-text);
+    outline-offset: 2px;
+  }
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin card-surface {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
