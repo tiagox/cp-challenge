@@ -46,8 +46,6 @@
 }
 
 .row {
-  cursor: pointer;
-
   &:hover,
   &:focus-within {
     background: var(--color-surface-2);

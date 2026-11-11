@@ -39,7 +39,7 @@ export function InstrumentsTable({ instruments, onSelect }: InstrumentsTableProp
       </thead>
       <tbody>
         {instruments.map((instrument) => (
-          <tr key={instrument.id} className={styles.row} onClick={() => onSelect(instrument)}>
+          <tr key={instrument.id} className={styles.row}>
             <th scope="row" className={styles.ticker}>
               <span className={styles.tickerCell}>
                 {instrument.ticker}
@@ -57,14 +57,7 @@ export function InstrumentsTable({ instruments, onSelect }: InstrumentsTableProp
               />
             </td>
             <td className={styles.action}>
-              <Button
-                size="sm"
-                variant="secondary"
-                onClick={(event) => {
-                  event.stopPropagation()
-                  onSelect(instrument)
-                }}
-              >
+              <Button size="sm" onClick={() => onSelect(instrument)}>
                 {t('instruments.actions.trade')}
               </Button>
             </td>

@@ -174,20 +174,6 @@ describe('InstrumentsPage', () => {
     })
   })
 
-  it('opens the order ticket when a table row is clicked', async () => {
-    renderWithProviders(
-      <>
-        <InstrumentsPage />
-        <TicketState />
-      </>,
-    )
-    const row = rowFor(await screen.findByRole('table'), 'DYCA')
-
-    await userEvent.click(within(row).getByText(dyca.name))
-
-    expect(screen.getByTestId('ticket')).toHaveTextContent('"ticker":"DYCA"')
-  })
-
   it('opens the order ticket from a mobile card', async () => {
     renderWithProviders(
       <>
