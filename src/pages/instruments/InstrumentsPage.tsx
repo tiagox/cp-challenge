@@ -1,22 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useSearchParams } from 'react-router-dom'
 import type { Instrument } from '@/entities/instrument/model/types'
-import {
-  InstrumentsCards,
-  InstrumentsSkeleton,
-  InstrumentsTable,
-  useInstruments,
-} from '@/features/instruments'
+import { InstrumentsCards, InstrumentsSkeleton, InstrumentsTable } from '@/features/instruments'
 import { useOrderTicket } from '@/features/order'
-import { SearchInput, useSearchInstruments } from '@/features/search'
+import { SearchInput } from '@/features/search'
 import { ApiError } from '@/shared/api/errors'
-import { useDebouncedValue } from '@/shared/lib/hooks/useDebouncedValue'
 import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import styles from './InstrumentsPage.module.scss'
+import { useInstrumentList } from './useInstrumentList'
 
 function errorKey(error: unknown) {
   if (error instanceof ApiError && error.code === 'NETWORK') return 'errors.network'
@@ -26,38 +20,8 @@ function errorKey(error: unknown) {
 
 export default function InstrumentsPage() {
   const { t } = useTranslation()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const urlQuery = (searchParams.get('q') ?? '').trim()
-
-  const [input, setInput] = useState(urlQuery)
-  // Back/forward: adopt the URL value when it changes from outside the box.
-  const [prevUrlQuery, setPrevUrlQuery] = useState(urlQuery)
-  if (urlQuery !== prevUrlQuery) {
-    setPrevUrlQuery(urlQuery)
-    if (urlQuery !== input.trim()) setInput(urlQuery)
-  }
-
-  // No delay once empty, so typing right after a clear never revives the old query.
-  const debounced = useDebouncedValue(input, input.trim() ? 300 : 0)
-  // Typing is debounced; clearing restores the full list at once.
-  const query = input.trim() ? debounced.trim() : ''
-  const searching = query !== ''
-
-  // Write only when the query itself changes, so URL-driven renders never write back.
-  const writtenQuery = useRef(query)
-  useEffect(() => {
-    if (query === writtenQuery.current) return
-    writtenQuery.current = query
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev)
-        if (query) next.set('q', query)
-        else next.delete('q')
-        return next
-      },
-      { replace: true },
-    )
-  }, [query, setSearchParams])
+  const { input, setInput, query, searching, data, error, isFetching, refetch } =
+    useInstrumentList()
 
   const searchInputRef = useRef<HTMLInputElement>(null)
   const clearSearch = () => {
@@ -66,9 +30,6 @@ export default function InstrumentsPage() {
     searchInputRef.current?.focus()
   }
 
-  const instruments = useInstruments()
-  const search = useSearchInstruments(query)
-  const { data, error, isFetching, refetch } = searching ? search : instruments
   const { open } = useOrderTicket()
 
   const handleSelect = (instrument: Instrument) => {
