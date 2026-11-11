@@ -99,6 +99,10 @@ Export the hook and UI components needed by the page. Keep internals private whe
   })
   ```
 
+### Presentational list components
+
+`InstrumentsTable`, `InstrumentsCards` and `InstrumentsSkeleton` do not fetch. The table and cards take `instruments: Instrument[]` and `onSelect: (instrument: Instrument) => void` as props, and the page passes the data in. Export them from `features/instruments/index.ts`: spec 04 reuses them to render search results on this page.
+
 ### Desktop
 
 Breakpoint `>= 768px`: semantic table with columns:
@@ -283,7 +287,7 @@ Mock/override handlers with `server.use(http.get(...))`.
 
 ## 10. Out of scope
 
-- Search input on the instruments page
+- Search box on the instruments page (spec 04 adds it)
 - Order form/modal implementation
 - Portfolio data
 - Sorting or filtering controls

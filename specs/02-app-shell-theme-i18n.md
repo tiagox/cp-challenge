@@ -49,7 +49,6 @@ src/app/layout/OrderModalContainer.tsx
 
 src/pages/instruments/InstrumentsPage.tsx
 src/pages/portfolio/PortfolioPage.tsx
-src/pages/search/SearchPage.tsx
 src/pages/not-found/NotFoundPage.tsx
 
 src/shared/ui/Button/Button.tsx
@@ -271,7 +270,7 @@ Requirements:
 ### 6.2 Header
 
 - brand link to `/instruments` using `common.appName`
-- desktop nav: Instruments, Portfolio, Search (`NavLink`, active state)
+- desktop nav: Instruments, Portfolio (`NavLink`, active state). There is no search route; search is a box on the instruments page (spec 04).
 - right side: `ThemeToggle`, `LanguageSwitcher`
 - sticky at top with `backdrop-filter` if supported
 - desktop nav hidden below `768px`
@@ -279,7 +278,7 @@ Requirements:
 ### 6.3 MobileNav
 
 - fixed bottom navigation visible below `768px`
-- three `NavLink` items with lucide icons and translated labels
+- two `NavLink` items (Instruments, Portfolio) with lucide icons and translated labels
 - safe-area padding (`env(safe-area-inset-bottom)`)
 - active state uses accent color and `aria-current="page"` (NavLink provides it)
 - hidden on desktop
@@ -298,7 +297,6 @@ Routes:
 /             → <Navigate to="/instruments" replace />
 /instruments  → InstrumentsPage (stub in this spec)
 /portfolio    → PortfolioPage (stub in this spec)
-/search       → SearchPage (stub in this spec)
 *             → NotFoundPage
 ```
 
@@ -579,7 +577,8 @@ Full-width centered spinner with `common.loading`, used by Suspense.
 ### `app-shell.test.tsx`
 
 - `/` redirects to `/instruments`
-- `/instruments`, `/portfolio`, `/search` render their stub headers
+- `/instruments`, `/portfolio` render their stub headers
+- `/search` renders the not-found page
 - unknown route renders not-found copy and a link to instruments
 - nav marks the active route
 - skip link targets `#main`

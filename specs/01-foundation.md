@@ -399,7 +399,6 @@ Feature namespace files (`instruments`, `portfolio`, `search`, `orders`, `valida
 |---|---|---|
 | `instruments` | `Instruments` | `Instrumentos` |
 | `portfolio` | `Portfolio` | `Portafolio` |
-| `search` | `Search` | `Buscar` |
 | `mainNavigation` | `Main navigation` | `Navegación principal` |
 | `skipToContent` | `Skip to content` | `Saltar al contenido` |
 | `toggleTheme` | `Toggle theme` | `Cambiar tema` |

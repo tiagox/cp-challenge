@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Instrumentos desktop</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#0062DE}a:hover{color:#0052BD}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.th{font-size:12px;font-weight:600;color:#597291;text-transform:uppercase;letter-spacing:.04em;padding:12px 20px;border-bottom:1px solid #E5E9EF;text-align:left}
+.td{padding:14px 20px;border-bottom:1px solid #E5E9EF;font-size:15px}
+.navlink{text-decoration:none;color:#597291;font-weight:600;font-size:15px;padding:8px 14px;border-radius:999px}
+.navlink.active{color:#0062DE;background:#E6EFFC}
+.iconbtn{width:40px;height:40px;border-radius:999px;border:1px solid #E5E9EF;background:#FFFFFF;color:#00152E;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.btn{font:inherit;font-weight:700;font-size:14px;border:0;border-radius:999px;padding:9px 18px;background:#0062DE;color:#FFFFFF;cursor:pointer}
+</style>
+</helmet>
+<div style="min-height: 860px; background: #F2F7FD; color: #00152E; font-family: 'Plus Jakarta Sans', system-ui, sans-serif">
+  <header style="position: sticky; top: 0; background: rgba(242,247,253,0.85); backdrop-filter: blur(8px); border-bottom: 1px solid #E5E9EF">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 32px">
+      <a href="#" style="text-decoration: none; color: #00152E; font-weight: 800; font-size: 18px">Cocos Invest</a>
+      <nav aria-label="Navegación principal" style="display: flex; gap: 4px; flex-grow: 1">
+        <a class="navlink active" href="#" aria-current="page">Instrumentos</a>
+        <a class="navlink" href="PortfolioDesktop.dc.html">Portafolio</a>
+      </nav>
+      <div style="display: flex; align-items: center; gap: 8px">
+        <button class="iconbtn" aria-label="Cambiar a tema oscuro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg></button>
+        <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #597291">
+          <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Idioma</span>
+          <select style="font: inherit; font-weight: 600; color: #00152E; background: #FFFFFF; border: 1px solid #E5E9EF; border-radius: 999px; height: 40px; padding: 0 12px"><option>ES</option><option>EN</option></select>
+        </label>
+      </div>
+    </div>
+  </header>
+  <main style="max-width: 1200px; margin: 0 auto; padding: 32px 24px 48px">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 24px">
+      <div>
+        <h1 style="margin: 0 0 6px; font-size: 30px; font-weight: 800; letter-spacing: -0.01em">Instrumentos</h1>
+        <p style="margin: 0; color: #597291; font-size: 15px">Explorá los instrumentos disponibles y enviá una orden de mercado o límite.</p>
+      </div>
+      <button class="btn" style="background: #FFFFFF; color: #0062DE; border: 1px solid #E5E9EF">Actualizar</button>
+    </div>
+    <div role="search" style="max-width: 640px; margin-bottom: 16px">
+      <label for="q" style="display: block; font-size: 13px; font-weight: 600; color: #597291; margin-bottom: 6px">Buscar por ticker</label>
+      <div style="display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; background: #FFFFFF; border: 1px solid #C9D3DF; border-radius: 14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#597291" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        <input id="q" type="search" placeholder="ej. DYCA" style="flex-grow: 1; min-width: 0; border: 0; outline: 0; font: inherit; font-size: 16px; font-weight: 600; color: #00152E; background: transparent">
+      </div>
+    </div>
+    <div style="background: #FFFFFF; border: 1px solid #E5E9EF; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,21,46,0.06)">
+      <table style="width: 100%; border-collapse: collapse">
+        <caption style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Instrumentos</caption>
+        <thead style="background: #EDF2F7">
+          <tr><th class="th">Ticker</th><th class="th">Nombre</th><th class="th num">Último precio</th><th class="th num">Retorno</th><th class="th num"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Acción</span></th></tr>
+        </thead>
+        <tbody>
+          <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+            <tr>
+              <td class="td"><span style="font-weight: 800">{{r.ticker}}</span> <span style="margin-left: 8px; font-size: 11px; font-weight: 700; color: #597291; background: #EDF2F7; border-radius: 999px; padding: 3px 8px">Acciones</span></td>
+              <td class="td" style="color: #597291">{{r.name}}</td>
+              <td class="td num" style="font-weight: 600">{{r.price}}</td>
+              <td class="td num" style="font-weight: 700; color: {{r.tone}}">{{r.ret}}</td>
+              <td class="td num"><button class="btn">Operar</button></td>
+            </tr>
+          </sc-for>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":860}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var pos = '#07785A', neg = '#C8281C';
+    return { rows: [
+      { ticker: 'DYCA', name: 'Dycasa S.A.', price: '$ 45,72', ret: '−8,69%', tone: neg },
+      { ticker: 'CAPX', name: 'Capex S.A.', price: '$ 53,68', ret: '+7,99%', tone: pos },
+      { ticker: 'PGR', name: 'Phoenix Global Resources', price: '$ 31,95', ret: '+11,83%', tone: pos },
+      { ticker: 'MOLA', name: 'Molinos Agro S.A.', price: '$ 92,15', ret: '+9,53%', tone: pos },
+      { ticker: 'MIRG', name: 'Mirgor', price: '$ 40,88', ret: '+8,32%', tone: pos },
+      { ticker: 'PATA', name: 'Importadora y Exportadora de la Patagonia', price: '$ 47,41', ret: '+7,24%', tone: pos },
+      { ticker: 'TECO2', name: 'Telecom', price: '$ 76,04', ret: '+8,83%', tone: pos },
+      { ticker: 'FERR', name: 'Ferrum S.A.', price: '$ 66,29', ret: '+10,82%', tone: pos }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

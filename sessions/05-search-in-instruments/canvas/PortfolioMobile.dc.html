@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Portafolio mobile</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8AC0F6}a:hover{color:#FFFFFF}
+.iconbtn{width:44px;height:44px;border-radius:999px;border:1px solid #164583;background:#001B3D;color:#FFFFFF;display:inline-flex;align-items:center;justify-content:center}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;text-decoration:none;color:#8DA7C8;font-size:12px;font-weight:600}
+.tab.active{color:#8AC0F6}
+.stat{background:#001B3D;border:1px solid #164583;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.statlabel{font-size:12px;font-weight:600;color:#8DA7C8}
+.statval{font-size:17px;font-weight:800}
+.kv{display:flex;flex-direction:column;gap:2px}
+.k{font-size:12px;color:#8DA7C8;font-weight:600}
+.v{font-size:14px;font-weight:700}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #001533; color: #FFFFFF; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums">
+  <header style="height: 60px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #164583">
+    <a href="InstrumentsMobile.dc.html" style="text-decoration: none; color: #FFFFFF; font-weight: 800; font-size: 17px">Cocos Invest</a>
+    <div style="display: flex; gap: 8px">
+      <button class="iconbtn" aria-label="Cambiar a tema claro"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path></svg></button>
+      <select aria-label="Idioma" style="font: inherit; font-weight: 600; color: #FFFFFF; background: #001B3D; border: 1px solid #164583; border-radius: 999px; height: 44px; padding: 0 10px"><option>ES</option><option>EN</option></select>
+    </div>
+  </header>
+  <main style="padding: 20px 16px 96px; display: flex; flex-direction: column; gap: 12px">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 800">Portafolio</h1>
+    <section aria-label="Resumen" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <div class="stat"><span class="statlabel">Efectivo disponible</span><span class="statval">$ 980.400,00</span></div>
+      <div class="stat"><span class="statlabel">Valor de mercado</span><span class="statval">$ 20.193,10</span></div>
+      <div class="stat"><span class="statlabel">Ganancia total</span><span class="statval" style="color: #0CB077">+$ 593,10</span></div>
+      <div class="stat"><span class="statlabel">Rendimiento total</span><span class="statval" style="color: #0CB077">+3,03%</span></div>
+    </section>
+    <h2 style="margin: 8px 0 0; font-size: 16px; font-weight: 700">Posiciones <span style="color: #8DA7C8; font-weight: 600">· 3</span></h2>
+    <sc-for list="{{rows}}" as="r" hint-placeholder-count="2">
+      <article style="background: #001B3D; border: 1px solid #164583; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 800; font-size: 16px">{{r.ticker}}</span><span style="font-size: 13px; color: #8DA7C8">{{r.qty}} acciones</span></div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <div class="kv"><span class="k">Valor</span><span class="v">{{r.mv}}</span></div>
+          <div class="kv"><span class="k">Ganancia</span><span class="v" style="color: {{r.tone}}">{{r.pl}}</span></div>
+          <div class="kv" style="text-align: right"><span class="k">Rend.</span><span class="v" style="color: {{r.tone}}">{{r.ret}}</span></div>
+        </div>
+        <button style="font: inherit; font-weight: 700; font-size: 15px; height: 44px; border: 1px solid #164583; border-radius: 999px; background: transparent; color: #8AC0F6; width: 100%">Vender</button>
+      </article>
+    </sc-for>
+  </main>
+  <nav aria-label="Navegación principal" style="position: absolute; left: 0; right: 0; bottom: 0; display: flex; background: #001B3D; border-top: 1px solid #164583; padding-bottom: 18px">
+    <a class="tab" href="InstrumentsMobile.dc.html"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="m19 9-5 5-4-4-3 3"></path></svg>Instrumentos</a>
+    <a class="tab active" href="#" aria-current="page"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"></path><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"></path></svg>Portafolio</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var pos = '#0CB077', neg = '#FF6B6B';
+    return { rows: [
+      { ticker: 'CAPX', qty: '120', mv: '$ 6.441,60', pl: '+$ 441,60', ret: '+7,36%', tone: pos },
+      { ticker: 'DYCA', qty: '200', mv: '$ 9.144,00', pl: '−$ 456,00', ret: '−4,75%', tone: neg }
+    ] };
+  }
+}
+</script>
+</body>
+</html>

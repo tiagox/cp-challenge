@@ -10,7 +10,7 @@
 
 Implement the order modal:
 
-- opened by clicking an instrument from instruments, search or portfolio
+- opened by clicking an instrument from the instruments list (including search results) or portfolio
 - BUY/SELL side and MARKET/LIMIT type
 - quantity and amount fields linked through the last price
 - limit price required only for LIMIT
