@@ -2,6 +2,7 @@
 import { lazy } from 'react'
 import { Navigate, type RouteObject } from 'react-router-dom'
 import { AppLayout } from './layout/AppLayout'
+import { ErrorFallback } from './providers/ErrorBoundary'
 
 const InstrumentsPage = lazy(() => import('@/pages/instruments/InstrumentsPage'))
 const PortfolioPage = lazy(() => import('@/pages/portfolio/PortfolioPage'))
@@ -12,6 +13,8 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <AppLayout />,
+    // React Router catches route render errors itself; without this it shows its own English page.
+    errorElement: <ErrorFallback onRetry={() => window.location.reload()} />,
     children: [
       { index: true, element: <Navigate to="/instruments" replace /> },
       { path: 'instruments', element: <InstrumentsPage /> },

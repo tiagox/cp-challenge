@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/shared/ui/Button'
 import styles from './ErrorBoundary.module.scss'
 
-function ErrorFallback({ onRetry }: { onRetry: () => void }) {
+export function ErrorFallback({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation()
 
   return (

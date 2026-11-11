@@ -84,25 +84,29 @@ describe('boot script', () => {
   })
 
   const languageCases = [
-    { stored: null, languages: ['en-US', 'es-AR'] },
-    { stored: null, languages: ['fr-FR', 'es-MX'] },
-    { stored: null, languages: ['fr-FR', 'de-DE'] },
-    { stored: 'en', languages: ['es-AR'] },
-    { stored: 'xx', languages: ['EN-GB'] },
+    { stored: null, languages: ['en-US', 'es-AR'], language: 'en-US' },
+    { stored: null, languages: ['fr-FR', 'es-MX'], language: 'fr-FR' },
+    { stored: null, languages: ['fr-FR', 'de-DE'], language: 'fr-FR' },
+    { stored: 'en', languages: ['es-AR'], language: 'es-AR' },
+    { stored: 'xx', languages: ['EN-GB'], language: 'en-GB' },
+    // Some browsers report an empty list; both must fall back to `navigator.language`.
+    { stored: null, languages: [], language: 'en-US' },
   ] as const
 
-  it.each(languageCases)('resolves the language like i18n (%o)', ({ stored, languages }) => {
-    // The boot script reads matchMedia before the language; jsdom has none.
-    stubPrefersDark(false)
-    vi.spyOn(navigator, 'languages', 'get').mockReturnValue([...languages])
-    if (stored) localStorage.setItem('cp.lang', stored)
+  it.each(languageCases)(
+    'resolves the language like i18n (%o)',
+    ({ stored, languages, language }) => {
+      // The boot script reads matchMedia before the language; jsdom has none.
+      stubPrefersDark(false)
+      vi.spyOn(navigator, 'languages', 'get').mockReturnValue([...languages])
+      vi.spyOn(navigator, 'language', 'get').mockReturnValue(language)
+      if (stored) localStorage.setItem('cp.lang', stored)
 
-    runBootScript()
+      runBootScript()
 
-    expect(document.documentElement.lang).toBe(
-      resolveInitialLanguage({ stored, navigatorLanguages: languages }),
-    )
-  })
+      expect(document.documentElement.lang).toBe(resolveInitialLanguage())
+    },
+  )
 })
 
 describe('ThemeProvider and ThemeToggle', () => {
