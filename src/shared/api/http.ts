@@ -10,17 +10,6 @@ export interface RequestOptions {
 
 export const DEFAULT_TIMEOUT_MS = 15_000
 
-const NO_JSON = Symbol('no-json')
-
-function parseJson(text: string): unknown {
-  if (!text) return undefined
-  try {
-    return JSON.parse(text)
-  } catch {
-    return NO_JSON
-  }
-}
-
 function combineSignals(signals: AbortSignal[]): AbortSignal {
   if (signals.length === 1) return signals[0]
   if (typeof AbortSignal.any === 'function') return AbortSignal.any(signals)
@@ -53,8 +42,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     callerSignal ? [callerSignal, timeoutController.signal] : [timeoutController.signal],
   )
 
-  let response: Response
-  let text: string
+  let response: Response | undefined
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
       method,
@@ -62,39 +50,37 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       body: hasBody ? JSON.stringify(body) : undefined,
       signal,
     })
-    text = await response.text()
+
+    if (!response.ok) {
+      // Gateways in front of the API can answer with HTML or plain text.
+      const errorBody: unknown = await response.json().catch(() => undefined)
+      const serverMessage = getServerMessage(errorBody)
+      throw new ApiError(
+        'HTTP',
+        serverMessage ?? (response.statusText || `Request failed with status ${response.status}`),
+        { status: response.status, serverMessage, body: errorBody },
+      )
+    }
+
+    return (await response.json()) as T
   } catch (error) {
+    if (error instanceof ApiError) throw error
     if (callerSignal?.aborted) {
       throw new ApiError('ABORTED', 'Request aborted', { cause: error })
     }
     if (timeoutController.signal.aborted) {
       throw new ApiError('TIMEOUT', `Request timed out after ${timeoutMs} ms`, { cause: error })
     }
+    if (error instanceof SyntaxError) {
+      throw new ApiError('INVALID_RESPONSE', 'Response is not valid JSON', {
+        status: response?.status,
+        cause: error,
+      })
+    }
     throw new ApiError('NETWORK', 'Network request failed', { cause: error })
   } finally {
     clearTimeout(timer)
   }
-
-  const parsed = parseJson(text)
-
-  if (!response.ok) {
-    const errorBody = parsed === NO_JSON ? text : parsed
-    const serverMessage = getServerMessage(errorBody)
-    throw new ApiError(
-      'HTTP',
-      serverMessage ?? (response.statusText || `Request failed with status ${response.status}`),
-      { status: response.status, serverMessage, body: errorBody },
-    )
-  }
-
-  if (parsed === NO_JSON) {
-    throw new ApiError('INVALID_RESPONSE', 'Response is not valid JSON', {
-      status: response.status,
-      body: text,
-    })
-  }
-
-  return parsed as T
 }
 
 export const http = {

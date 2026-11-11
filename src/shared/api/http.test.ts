@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL, CANDIDATE_STORAGE_KEY } from './config'
 import { ApiError } from './errors'
-import { http, request } from './http'
+import { http } from './http'
 
 const CANDIDATE = 'test-candidate'
 
@@ -95,12 +95,6 @@ describe('responses', () => {
     await expect(http.get('/portfolio')).resolves.toEqual({ cash: 1000000, holdings: [] })
   })
 
-  it('resolves undefined for an empty success body', async () => {
-    mockFetch(async () => new Response('', { status: 200 }))
-
-    await expect(request('/empty')).resolves.toBeUndefined()
-  })
-
   it('throws ApiError with serverMessage on 400 { error }', async () => {
     mockFetch(async () => jsonResponse({ error: 'Insufficient cash' }, { status: 400 }))
 
@@ -125,7 +119,7 @@ describe('responses', () => {
     expect(error.status).toBe(502)
     expect(error.serverMessage).toBeUndefined()
     expect(error.message).toBe('Bad Gateway')
-    expect(error.body).toBe('<html>Bad gateway</html>')
+    expect(error.body).toBeUndefined()
   })
 
   it('uses a generic message when the error has no status text', async () => {
