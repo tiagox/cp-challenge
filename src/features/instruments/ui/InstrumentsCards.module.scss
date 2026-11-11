@@ -2,6 +2,8 @@
 
 .list {
   display: grid;
+  // minmax(0, 1fr): an auto column grows to the untruncated name and pushes cards off-screen.
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   padding: 0;
   margin: 0;
@@ -14,6 +16,7 @@
 
 .card {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
   padding: var(--space-4);
 }
