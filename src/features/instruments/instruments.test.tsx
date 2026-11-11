@@ -5,8 +5,9 @@ import { describe, expect, it } from 'vitest'
 import { useOrderTicket } from '@/features/order'
 import InstrumentsPage from '@/pages/instruments/InstrumentsPage'
 import { API_BASE_URL } from '@/shared/api/config'
+import { queryKeys } from '@/shared/api/queryKeys'
 import { capx, dyca, instrumentsFixture } from '@/test/fixtures/instruments'
-import { renderWithProviders } from '@/test/render'
+import { createTestQueryClient, renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 
 const instrumentsUrl = `${API_BASE_URL}/instruments`
@@ -16,11 +17,6 @@ function TicketState() {
   return <pre data-testid="ticket">{JSON.stringify(state)}</pre>
 }
 
-// Table and cards are both in the DOM and toggled by CSS, which jsdom does not apply.
-async function findTable() {
-  return screen.findByRole('table')
-}
-
 function rowFor(table: HTMLElement, ticker: string) {
   const header = within(table).getByRole('rowheader', { name: new RegExp(`^${ticker}`) })
   const row = header.closest('tr')
@@ -28,10 +24,12 @@ function rowFor(table: HTMLElement, ticker: string) {
   return row
 }
 
+// Table and cards are both in the DOM and toggled by CSS, which jsdom does not apply,
+// so queries are scoped to the table or a card.
 describe('InstrumentsPage', () => {
   it('renders all fixture instruments on desktop', async () => {
     renderWithProviders(<InstrumentsPage />)
-    const table = await findTable()
+    const table = await screen.findByRole('table')
 
     // Header row + one row per instrument.
     expect(within(table).getAllByRole('row')).toHaveLength(instrumentsFixture.length + 1)
@@ -40,7 +38,7 @@ describe('InstrumentsPage', () => {
 
   it('shows ticker, name, formatted last price and return', async () => {
     renderWithProviders(<InstrumentsPage />)
-    const row = rowFor(await findTable(), 'DYCA')
+    const row = rowFor(await screen.findByRole('table'), 'DYCA')
 
     expect(within(row).getByText('DYCA')).toBeInTheDocument()
     expect(within(row).getByText(dyca.name)).toBeInTheDocument()
@@ -58,7 +56,7 @@ describe('InstrumentsPage', () => {
       ),
     )
     renderWithProviders(<InstrumentsPage />)
-    const table = await findTable()
+    const table = await screen.findByRole('table')
 
     expect(within(rowFor(table, 'DYCA')).getByText('+9.51%')).toBeInTheDocument()
     expect(within(rowFor(table, 'CAPX')).getByText('-7.40%')).toBeInTheDocument()
@@ -70,7 +68,7 @@ describe('InstrumentsPage', () => {
 
   it('renders the type badge labels in EN', async () => {
     renderWithProviders(<InstrumentsPage />)
-    const table = await findTable()
+    const table = await screen.findByRole('table')
 
     expect(within(rowFor(table, 'DYCA')).getByText('Stocks')).toBeInTheDocument()
     expect(within(rowFor(table, 'ARS')).getByText('Currency')).toBeInTheDocument()
@@ -78,7 +76,7 @@ describe('InstrumentsPage', () => {
 
   it('renders ES copy', async () => {
     renderWithProviders(<InstrumentsPage />, { lang: 'es' })
-    const table = await findTable()
+    const table = await screen.findByRole('table')
 
     expect(screen.getByRole('heading', { level: 1, name: 'Instrumentos' })).toBeInTheDocument()
     expect(screen.getByText('4 instrumentos')).toBeInTheDocument()
@@ -107,8 +105,36 @@ describe('InstrumentsPage', () => {
     expect(alert).toHaveTextContent('Something went wrong. Please try again.')
     expect(alert).toHaveTextContent('The server returned an error.')
 
+    let respond = () => {}
+    server.use(
+      http.get(instrumentsUrl, async () => {
+        await new Promise<void>((resolve) => (respond = resolve))
+        return HttpResponse.json(instrumentsFixture)
+      }),
+    )
     await userEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
-    expect(await findTable()).toBeInTheDocument()
+
+    // The skeleton replaces the error while the retry runs.
+    expect(await screen.findByRole('status')).toHaveTextContent('Loading...')
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+
+    respond()
+    expect(await screen.findByRole('table')).toBeInTheDocument()
+  })
+
+  it('keeps the list when a background refetch fails', async () => {
+    const queryClient = createTestQueryClient()
+    renderWithProviders(<InstrumentsPage />, { queryClient })
+    await screen.findByRole('table')
+
+    server.use(
+      http.get(instrumentsUrl, () => HttpResponse.json({ error: 'boom' }, { status: 500 })),
+    )
+    await queryClient.refetchQueries({ queryKey: queryKeys.instruments })
+
+    expect(queryClient.getQueryState(queryKeys.instruments)?.status).toBe('error')
+    expect(screen.getByRole('table')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('renders the network error copy', async () => {
@@ -137,7 +163,7 @@ describe('InstrumentsPage', () => {
         <TicketState />
       </>,
     )
-    const row = rowFor(await findTable(), 'CAPX')
+    const row = rowFor(await screen.findByRole('table'), 'CAPX')
 
     await userEvent.click(within(row).getByRole('button', { name: 'Trade' }))
 
@@ -155,7 +181,7 @@ describe('InstrumentsPage', () => {
         <TicketState />
       </>,
     )
-    const row = rowFor(await findTable(), 'DYCA')
+    const row = rowFor(await screen.findByRole('table'), 'DYCA')
 
     await userEvent.click(within(row).getByText(dyca.name))
 

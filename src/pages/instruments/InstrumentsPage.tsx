@@ -21,7 +21,7 @@ function errorKey(error: unknown) {
 
 export default function InstrumentsPage() {
   const { t } = useTranslation()
-  const { data, error, isPending, refetch } = useInstruments()
+  const { data, error, isFetching, refetch } = useInstruments()
   const { open } = useOrderTicket()
 
   const handleSelect = (instrument: Instrument) => {
@@ -36,10 +36,22 @@ export default function InstrumentsPage() {
     })
   }
 
+  // Data first: a failed background refetch keeps the old list instead of hiding it.
   let content
-  if (isPending) {
-    content = <InstrumentsSkeleton />
-  } else if (error) {
+  if (data) {
+    content =
+      data.length === 0 ? (
+        <EmptyState
+          title={t('instruments.empty.title')}
+          description={t('instruments.empty.description')}
+        />
+      ) : (
+        <>
+          <InstrumentsTable instruments={data} onSelect={handleSelect} />
+          <InstrumentsCards instruments={data} onSelect={handleSelect} />
+        </>
+      )
+  } else if (error && !isFetching) {
     content = (
       <ErrorState
         title={t('errors.unexpected')}
@@ -47,20 +59,8 @@ export default function InstrumentsPage() {
         onRetry={() => void refetch()}
       />
     )
-  } else if (data.length === 0) {
-    content = (
-      <EmptyState
-        title={t('instruments.empty.title')}
-        description={t('instruments.empty.description')}
-      />
-    )
   } else {
-    content = (
-      <>
-        <InstrumentsTable instruments={data} onSelect={handleSelect} />
-        <InstrumentsCards instruments={data} onSelect={handleSelect} />
-      </>
-    )
+    content = <InstrumentsSkeleton />
   }
 
   return (

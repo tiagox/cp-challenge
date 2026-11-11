@@ -4,12 +4,12 @@
 @include tokens.css-variables;
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow-x: clip;
   font-family: var(--font-sans);
   font-size: var(--text-md);
   color: var(--color-text);
