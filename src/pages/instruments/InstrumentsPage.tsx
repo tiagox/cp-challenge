@@ -16,7 +16,6 @@ import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
-import { VisuallyHidden } from '@/shared/ui/VisuallyHidden'
 import styles from './InstrumentsPage.module.scss'
 
 function errorKey(error: unknown) {
@@ -135,10 +134,6 @@ export default function InstrumentsPage() {
           <p role="status" className={styles.status}>
             {t('search.results', { count: data.length, query })}
           </p>
-        ) : null}
-        {/* Previous results stay visible while the next search loads. */}
-        {searching && data && isFetching ? (
-          <VisuallyHidden role="status">{t('common.loading')}</VisuallyHidden>
         ) : null}
       </div>
       {content}

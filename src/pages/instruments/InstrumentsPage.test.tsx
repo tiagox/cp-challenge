@@ -92,6 +92,28 @@ describe('InstrumentsPage search', () => {
     expect(screen.queryByText('4 instruments')).not.toBeInTheDocument()
   })
 
+  it('shows the skeleton instead of previous results while the next search loads', async () => {
+    renderPage('/instruments?q=dy')
+    await screen.findByText('1 result for “dy”')
+
+    let respond = () => {}
+    server.use(
+      http.get(searchUrl, async () => {
+        await new Promise<void>((resolve) => (respond = resolve))
+        return HttpResponse.json([])
+      }),
+    )
+    await userEvent.clear(searchbox())
+    await userEvent.type(searchbox(), 'zz')
+
+    await waitFor(() => expect(screen.queryByRole('table')).not.toBeInTheDocument())
+    expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading...')
+    expect(screen.queryByText(/results? for/)).not.toBeInTheDocument()
+
+    respond()
+    expect(await screen.findByRole('heading', { name: 'No instruments found' })).toBeInTheDocument()
+  })
+
   it('populates the box and results from an initial ?q=', async () => {
     renderPage('/instruments?q=dy')
 
