@@ -1,0 +1,16 @@
+.percent {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.neutral {
+  color: inherit;
+}
+
+.positive {
+  color: var(--color-positive);
+}
+
+.negative {
+  color: var(--color-negative);
+}

@@ -1,0 +1,46 @@
+@use '@/app/styles/mixins' as *;
+
+.nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-bottom-nav);
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+
+  @include respond-to(md) {
+    display: none;
+  }
+}
+
+.tab {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: center;
+  min-height: 60px;
+  padding: 10px 0;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+
+  @include focus-ring;
+
+  &:focus-visible {
+    outline-offset: -4px;
+  }
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.active {
+  color: var(--color-accent-text);
+}

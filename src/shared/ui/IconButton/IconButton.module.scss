@@ -1,0 +1,48 @@
+@use '@/app/styles/mixins' as *;
+
+.button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: var(--color-text);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  transition: background-color 0.15s ease;
+
+  @include focus-ring;
+
+  &:hover:not(:disabled) {
+    background: var(--color-surface-2);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.sm {
+  width: 36px;
+  height: 36px;
+}
+
+.md {
+  width: 44px;
+  height: 44px;
+}
+
+.outline {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.ghost {
+  background: transparent;
+}

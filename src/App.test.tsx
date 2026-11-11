@@ -1,19 +1,14 @@
-import { screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { renderWithProviders } from '@/test/render'
 import App from './App'
 
-describe('App placeholder', () => {
-  it('renders the translated app name', () => {
-    renderWithProviders(<App />)
+describe('App', () => {
+  it('boots the providers and router and lands on instruments', async () => {
+    render(<App />)
 
-    expect(screen.getByRole('heading', { name: 'CP Invest' })).toBeInTheDocument()
-    expect(screen.getByText('Coming soon')).toBeInTheDocument()
-  })
-
-  it('renders Spanish copy', () => {
-    renderWithProviders(<App />, { lang: 'es' })
-
-    expect(screen.getByText('Próximamente')).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Instruments' }),
+    ).toBeInTheDocument()
+    expect(window.location.pathname).toBe('/instruments')
   })
 })

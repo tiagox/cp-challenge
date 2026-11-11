@@ -1,0 +1,76 @@
+@use '@/app/styles/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+
+  @supports (backdrop-filter: blur(8px)) {
+    background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+    backdrop-filter: blur(8px);
+  }
+}
+
+.inner {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  height: 60px;
+
+  @include respond-to(md) {
+    gap: var(--space-6);
+    height: 64px;
+  }
+}
+
+.brand {
+  flex-shrink: 0;
+  margin-right: auto;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+
+  @include respond-to(md) {
+    margin-right: 0;
+  }
+}
+
+.nav {
+  display: none;
+
+  @include respond-to(md) {
+    display: flex;
+    flex-grow: 1;
+    gap: var(--space-1);
+  }
+}
+
+.navLink {
+  padding: var(--space-2) 14px;
+  font-size: var(--text-md);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}
+
+.active,
+.active:hover {
+  color: var(--color-accent-text);
+  background: var(--color-info-tint);
+}
+
+.actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: var(--space-2);
+  align-items: center;
+}
