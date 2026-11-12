@@ -28,8 +28,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 12. `sessions/10-spec-05-handoff.md` — spec 04 implementation facts, test patterns, hand-off to spec 05
 13. `sessions/11-spec-06-handoff.md` — spec 05 implementation facts and hand-off to spec 06
 14. `sessions/12-placed-orders-scope.md` — adds spec 07 (placed orders) and renumbers hardening to 08
-15. The spec you are assigned
-16. The specs it depends on, especially their “Contracts” and “Files owned” sections
+15. `sessions/13-spec-07-handoff.md` — spec 06 implementation facts and hand-off to spec 07
+16. The spec you are assigned
+17. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
