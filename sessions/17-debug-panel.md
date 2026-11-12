@@ -18,7 +18,7 @@ To try the API bug modes (session 16) and switch candidates without editing `.en
 
 - **`?debug` turns debug mode on, `?debug=off` turns it off.** The flag persists in `localStorage["cp.debug"]`. The panel's "Turn off debug" link also clears it.
 - **A light-gray bug button sits bottom-right**, above the mobile bottom nav. It opens a native `popover` card, so Esc, click-outside and toggling need no state.
-- **`X-Enable-Bugs` is read on every request** through `resolveBugMode()` in `shared/api/config.ts`: valid `localStorage["cp.bugMode"]` → `VITE_API_BUG_MODE` → `off`. It replaces the `API_BUG_MODE` constant. Choosing `off` or turning debug off removes the stored mode.
+- **`X-Enable-Bugs` is read on every request** through `resolveBugMode()` in `shared/api/config.ts`: valid `localStorage["cp.bugMode"]` → `VITE_API_BUG_MODE` → `off`. It replaces the `API_BUG_MODE` constant. Every choice is stored, `off` included, so it wins over a non-off env value. Turning debug off removes it.
 - **The candidate field writes the existing `cp.candidateId` key.** `VITE_CANDIDATE_ID` still wins, so the field is disabled with a hint when it is set.
 - **Every change calls `queryClient.resetQueries()`** so all screens refetch with the new headers.
 - **Works in production builds.** This is a deliberate exception to "never expose easy/medium/hard": the modes are reachable only through `?debug`, never from the normal UI. The default stays `off`.

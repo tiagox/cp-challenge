@@ -64,7 +64,8 @@ function DebugPanelContent({ onTurnOff }: { onTurnOff: () => void }) {
 
   const changeBugMode = (mode: BugMode) => {
     setBugMode(mode)
-    store(BUG_MODE_STORAGE_KEY, mode === 'off' ? null : mode)
+    // Store `off` too, so it overrides a non-off VITE_API_BUG_MODE.
+    store(BUG_MODE_STORAGE_KEY, mode)
     refetchAll()
   }
 
@@ -78,10 +79,8 @@ function DebugPanelContent({ onTurnOff }: { onTurnOff: () => void }) {
 
   const turnOff = () => {
     store(DEBUG_STORAGE_KEY, null)
-    if (bugMode !== 'off') {
-      store(BUG_MODE_STORAGE_KEY, null)
-      refetchAll()
-    }
+    store(BUG_MODE_STORAGE_KEY, null)
+    refetchAll()
     onTurnOff()
   }
 

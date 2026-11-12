@@ -39,6 +39,12 @@ describe('DebugPanel', () => {
     })
     expect(localStorage.getItem(BUG_MODE_STORAGE_KEY)).toBe('medium')
 
+    // `off` is stored too, so a non-off VITE_API_BUG_MODE cannot take over.
+    fireEvent.change(screen.getByRole('combobox', { name: 'X-Enable-Bugs', ...hidden }), {
+      target: { value: 'off' },
+    })
+    expect(localStorage.getItem(BUG_MODE_STORAGE_KEY)).toBe('off')
+
     fireEvent.change(screen.getByRole('textbox', { name: 'X-Candidate-Id', ...hidden }), {
       target: { value: 'debug-candidate' },
     })
