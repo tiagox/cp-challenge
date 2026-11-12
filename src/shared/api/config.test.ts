@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  BUG_MODE_STORAGE_KEY,
   CANDIDATE_STORAGE_KEY,
   DEFAULT_API_BASE_URL,
   normalizeBaseUrl,
   parseBugMode,
+  resolveBugMode,
   resolveCandidateId,
 } from './config'
 
@@ -91,14 +93,34 @@ describe('module constants', () => {
     vi.resetModules()
   })
 
-  it('reads base URL and bug mode from env', async () => {
+  it('reads the base URL from env', async () => {
     vi.stubEnv('VITE_API_BASE_URL', 'https://api.example.com/')
-    vi.stubEnv('VITE_API_BUG_MODE', 'nope')
     vi.resetModules()
 
     const config = await import('./config')
 
     expect(config.API_BASE_URL).toBe('https://api.example.com')
-    expect(config.API_BUG_MODE).toBe('off')
+  })
+})
+
+describe('resolveBugMode', () => {
+  it('uses a valid stored mode over env', () => {
+    const storage = memoryStorage({ [BUG_MODE_STORAGE_KEY]: 'hard' })
+
+    expect(resolveBugMode({ envValue: 'easy', storage })).toBe('hard')
+  })
+
+  it('falls back to env when the stored mode is missing or invalid', () => {
+    expect(resolveBugMode({ envValue: 'medium', storage: memoryStorage() })).toBe('medium')
+    expect(
+      resolveBugMode({
+        envValue: 'medium',
+        storage: memoryStorage({ [BUG_MODE_STORAGE_KEY]: 'nope' }),
+      }),
+    ).toBe('medium')
+  })
+
+  it('defaults to off', () => {
+    expect(resolveBugMode({ envValue: 'nope', storage: undefined })).toBe('off')
   })
 })

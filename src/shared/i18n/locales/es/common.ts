@@ -14,4 +14,12 @@ export const common = {
   notFoundDescription: 'La página que buscás no existe.',
   goToInstruments: 'Ir a instrumentos',
   refresh: 'Actualizar',
+  debug: {
+    open: 'Herramientas de depuración',
+    title: 'Depuración',
+    newCandidate: 'Nuevo ID',
+    apply: 'Aplicar',
+    candidateFromEnv: 'Definido por VITE_CANDIDATE_ID; no se puede cambiar acá.',
+    turnOff: 'Desactivar depuración',
+  },
 } satisfies typeof enCommon

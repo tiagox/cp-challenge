@@ -38,6 +38,10 @@ npm run dev       # http://localhost:5173
 
 The candidate ID is optional. Without it, the app reuses `localStorage["cp.candidateId"]` or generates an anonymous UUID and stores it there. A new candidate starts with `{ cash: 1000000, holdings: [] }`, so a first visit shows an empty portfolio. Set `VITE_CANDIDATE_ID` to pin a candidate that already has holdings. The ID is never shown in the UI.
 
+### Debug mode
+
+Open any page with `?debug` to show a gray bug button in the bottom-right corner. It opens a small panel to change the `X-Enable-Bugs` mode (stored in `localStorage["cp.bugMode"]`, wins over `VITE_API_BUG_MODE`) and the candidate ID (`cp.candidateId`; disabled when `VITE_CANDIDATE_ID` is set). Every change refetches all data. `?debug=off` or "Turn off debug" hides it and resets the mode to `off`.
+
 ## Scripts
 
 | Script                            | What it does                                      |

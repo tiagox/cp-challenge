@@ -2,8 +2,9 @@ export type BugMode = 'off' | 'easy' | 'medium' | 'hard'
 
 export const DEFAULT_API_BASE_URL = 'https://dummy-api-topaz.vercel.app'
 export const CANDIDATE_STORAGE_KEY = 'cp.candidateId'
+export const BUG_MODE_STORAGE_KEY = 'cp.bugMode'
 
-const BUG_MODES: readonly BugMode[] = ['off', 'easy', 'medium', 'hard']
+export const BUG_MODES: readonly BugMode[] = ['off', 'easy', 'medium', 'hard']
 
 export function normalizeBaseUrl(value: string | undefined): string {
   const trimmed = value?.trim()
@@ -15,7 +16,6 @@ export function parseBugMode(value: string | undefined): BugMode {
 }
 
 export const API_BASE_URL: string = normalizeBaseUrl(import.meta.env.VITE_API_BASE_URL)
-export const API_BUG_MODE: BugMode = parseBugMode(import.meta.env.VITE_API_BUG_MODE)
 
 type CandidateStorage = Pick<Storage, 'getItem' | 'setItem'>
 
@@ -30,7 +30,24 @@ function defaultStorage(): CandidateStorage | undefined {
   }
 }
 
-function generateCandidateId(): string {
+/** Debug-panel override in storage → `VITE_API_BUG_MODE` → `off`. Read on every request. */
+export function resolveBugMode(
+  options: { envValue?: string; storage?: Pick<Storage, 'getItem'> } = {},
+): BugMode {
+  const storage = 'storage' in options ? options.storage : defaultStorage()
+  let stored: string | null | undefined
+  try {
+    stored = storage?.getItem(BUG_MODE_STORAGE_KEY)
+  } catch {
+    stored = undefined
+  }
+  return (
+    BUG_MODES.find((mode) => mode === stored) ??
+    parseBugMode(options.envValue ?? import.meta.env.VITE_API_BUG_MODE)
+  )
+}
+
+export function generateCandidateId(): string {
   if (typeof globalThis.crypto?.randomUUID === 'function') {
     return globalThis.crypto.randomUUID()
   }

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { API_BASE_URL, CANDIDATE_STORAGE_KEY } from './config'
+import { API_BASE_URL, BUG_MODE_STORAGE_KEY, CANDIDATE_STORAGE_KEY } from './config'
 import { ApiError, errorKey } from './errors'
 import { http } from './http'
 
@@ -66,6 +66,15 @@ describe('request headers and body', () => {
     expect(headers.get('X-Enable-Bugs')).toBe('off')
     expect(headers.get('X-Candidate-Id')).toBe(CANDIDATE)
     expect(headers.get('Accept')).toBe('application/json')
+  })
+
+  it('sends the bug mode stored by the debug panel', async () => {
+    localStorage.setItem(BUG_MODE_STORAGE_KEY, 'easy')
+    const fetchMock = mockFetch(async () => jsonResponse([]))
+
+    await http.get('/instruments')
+
+    expect(sentHeaders(fetchMock).get('X-Enable-Bugs')).toBe('easy')
   })
 
   it('omits Content-Type when there is no body', async () => {

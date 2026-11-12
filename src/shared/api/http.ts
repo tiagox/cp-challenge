@@ -1,4 +1,4 @@
-import { API_BASE_URL, API_BUG_MODE, resolveCandidateId } from './config'
+import { API_BASE_URL, resolveBugMode, resolveCandidateId } from './config'
 import { ApiError, getServerMessage } from './errors'
 
 export interface RequestOptions {
@@ -31,7 +31,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
 
   const headers: Record<string, string> = {
     Accept: 'application/json',
-    'X-Enable-Bugs': API_BUG_MODE,
+    'X-Enable-Bugs': resolveBugMode(),
     'X-Candidate-Id': resolveCandidateId(),
   }
   if (hasBody) headers['Content-Type'] = 'application/json'
