@@ -6,18 +6,8 @@
   gap: var(--space-4);
 }
 
-.toggles {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
-
-  > * {
-    width: 100%;
-  }
-
-  @include respond-to(sm) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.toggle {
+  width: 100%;
 }
 
 .fields {

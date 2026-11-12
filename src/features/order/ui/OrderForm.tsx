@@ -118,26 +118,16 @@ export function OrderForm({
 
   return (
     <form id={id} className={styles.form} onSubmit={handleSubmit} noValidate>
-      <div className={styles.toggles}>
-        <SegmentedControl
-          label={t('orders.side.label')}
-          value={side}
-          onChange={changeSide}
-          options={[
-            { value: 'BUY', label: t('orders.side.BUY') },
-            { value: 'SELL', label: t('orders.side.SELL') },
-          ]}
-        />
-        <SegmentedControl
-          label={t('orders.type.label')}
-          value={type}
-          onChange={setType}
-          options={[
-            { value: 'MARKET', label: t('orders.type.MARKET') },
-            { value: 'LIMIT', label: t('orders.type.LIMIT') },
-          ]}
-        />
-      </div>
+      <SegmentedControl
+        className={styles.toggle}
+        label={t('orders.side.label')}
+        value={side}
+        onChange={changeSide}
+        options={[
+          { value: 'BUY', label: t('orders.side.BUY') },
+          { value: 'SELL', label: t('orders.side.SELL') },
+        ]}
+      />
 
       {lastPrice > 0 ? null : (
         <p className={styles.alert} role="alert">
@@ -167,21 +157,33 @@ export function OrderForm({
           onChange={(event) => changeAmount(event.target.value)}
           hint={t(type === 'LIMIT' ? 'orders.hints.amountLimit' : 'orders.hints.amount')}
         />
-        {type === 'LIMIT' ? (
-          <Input
-            ref={priceRef}
-            label={t('orders.fields.limitPrice')}
-            type="number"
-            step="0.01"
-            min="0"
-            inputMode="decimal"
-            value={limitPrice}
-            onChange={(event) => setLimitPrice(event.target.value)}
-            hint={t('orders.hints.limit')}
-            error={errorText(shownErrors.price)}
-          />
-        ) : null}
       </div>
+
+      <SegmentedControl
+        className={styles.toggle}
+        label={t('orders.type.label')}
+        value={type}
+        onChange={setType}
+        options={[
+          { value: 'MARKET', label: t('orders.type.MARKET') },
+          { value: 'LIMIT', label: t('orders.type.LIMIT') },
+        ]}
+      />
+
+      {type === 'LIMIT' ? (
+        <Input
+          ref={priceRef}
+          label={t('orders.fields.limitPrice')}
+          type="number"
+          step="0.01"
+          min="0"
+          inputMode="decimal"
+          value={limitPrice}
+          onChange={(event) => setLimitPrice(event.target.value)}
+          hint={t('orders.hints.limit')}
+          error={errorText(shownErrors.price)}
+        />
+      ) : null}
 
       {formError ? (
         <p className={styles.alert} role="alert">
