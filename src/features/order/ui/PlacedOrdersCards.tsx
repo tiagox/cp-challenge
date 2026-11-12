@@ -36,7 +36,7 @@ export function PlacedOrdersCards({ orders, tickers }: PlacedOrdersProps) {
               </div>
               <div>
                 <dt>{t('orders.history.columns.side')}</dt>
-                <dd>{t(`orders.side.${order.side}`)}</dd>
+                <dd>{t(`orders.history.side.${order.side}`)}</dd>
               </div>
               <div>
                 <dt>{t('orders.history.columns.type')}</dt>

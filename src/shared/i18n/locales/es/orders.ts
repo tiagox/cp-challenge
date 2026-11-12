@@ -62,10 +62,14 @@ export const orders = {
     count_other: '{{count}} órdenes',
     caption: 'Órdenes que enviaste, de la más reciente a la más antigua',
     unknownInstrument: '#{{id}}',
+    side: {
+      BUY: 'Compra',
+      SELL: 'Venta',
+    },
     columns: {
       date: 'Fecha',
       instrument: 'Instrumento',
-      side: 'Lado',
+      side: 'Operación',
       type: 'Tipo',
       quantity: 'Cantidad',
       price: 'Precio',

@@ -160,7 +160,7 @@ describe('Placed orders section', () => {
       [
         '12 nov 2026, 1:53 a. m.',
         'DYCA',
-        'Vender',
+        'Venta',
         'Mercado',
         '3',
         '$ 50,07',
@@ -170,7 +170,7 @@ describe('Placed orders section', () => {
       [
         '11 nov 2026, 9:30 a. m.',
         'CAPX',
-        'Comprar',
+        'Compra',
         'Mercado',
         '10',
         '$ 49,71',
@@ -180,7 +180,7 @@ describe('Placed orders section', () => {
       [
         '10 nov 2026, 2:05 p. m.',
         'DYCA',
-        'Comprar',
+        'Compra',
         'Límite',
         '20',
         '$ 48,50',
@@ -189,7 +189,7 @@ describe('Placed orders section', () => {
       ],
     ])
     const table = within(section('Órdenes enviadas')).getByRole('table')
-    expect(within(table).getByRole('columnheader', { name: 'Fecha' })).toBeInTheDocument()
+    expect(within(table).getByRole('columnheader', { name: 'Operación' })).toBeInTheDocument()
     expect(within(section('Órdenes enviadas')).getByText('3 órdenes')).toBeInTheDocument()
   })
 })

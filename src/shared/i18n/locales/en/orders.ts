@@ -60,6 +60,10 @@ export const orders = {
     count_other: '{{count}} orders',
     caption: 'Orders you have placed, newest first',
     unknownInstrument: '#{{id}}',
+    side: {
+      BUY: 'Buy',
+      SELL: 'Sell',
+    },
     columns: {
       date: 'Date',
       instrument: 'Instrument',

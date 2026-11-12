@@ -55,7 +55,7 @@ export function PlacedOrdersTable({ orders, tickers }: PlacedOrdersProps) {
                 {tickers.get(order.instrument_id) ??
                   t('orders.history.unknownInstrument', { id: order.instrument_id })}
               </td>
-              <td>{t(`orders.side.${order.side}`)}</td>
+              <td>{t(`orders.history.side.${order.side}`)}</td>
               <td>{t(`orders.type.${order.type}`)}</td>
               <td className={styles.numeric}>
                 {quantity(order.quantity) ?? t('common.notAvailable')}
