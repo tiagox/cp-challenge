@@ -13,9 +13,10 @@ This folder contains the implementation specs for the frontend challenge. Each s
 | 04 | [Instrument search](./04-search.md) | 03 |
 | 05 | [Portfolio](./05-portfolio.md) | 02 |
 | 06 | [Orders](./06-orders.md) | 02, 05 |
-| 07 | [Hardening & docs](./07-hardening-docs.md) | 03–06 |
+| 07 | [Placed orders](./07-placed-orders.md) | 03, 05, 06 |
+| 08 | [Hardening & docs](./08-hardening-docs.md) | 03–07 |
 
-**Sequential rule:** one agent runs the specs strictly in order, 00 → 07. Each spec gets its own branch (`spec/NN-<name>`) and PR; the user squash-merges it before the next spec branches from `main`. Spec 02 creates stubs for every page and for the order modal container so every intermediate state runs; feature specs replace their own stubs. Each feature owns its page and i18n namespace. The “Files owned” lists describe a spec’s scope for reviewers; touching another file is allowed when needed, with the reason stated in the PR.
+**Sequential rule:** one agent runs the specs strictly in order, 00 → 08. Each spec gets its own branch (`spec/NN-<name>`) and PR; the user squash-merges it before the next spec branches from `main`. Spec 02 creates stubs for every page and for the order modal container so every intermediate state runs; feature specs replace their own stubs. Each feature owns its page and i18n namespace. The “Files owned” lists describe a spec’s scope for reviewers; touching another file is allowed when needed, with the reason stated in the PR.
 
 ## Source of truth
 

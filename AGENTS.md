@@ -27,8 +27,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 11. `sessions/09-spec-04-handoff.md` — spec 03 implementation facts and hand-off to spec 04
 12. `sessions/10-spec-05-handoff.md` — spec 04 implementation facts, test patterns, hand-off to spec 05
 13. `sessions/11-spec-06-handoff.md` — spec 05 implementation facts and hand-off to spec 06
-14. The spec you are assigned
-15. The specs it depends on, especially their “Contracts” and “Files owned” sections
+14. `sessions/12-placed-orders-scope.md` — adds spec 07 (placed orders) and renumbers hardening to 08
+15. The spec you are assigned
+16. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
@@ -43,7 +44,8 @@ Do not read only the task description. File ownership and layering rules are enf
 | 5 | `specs/04-search.md` | 03 | Ticker search box on the instruments page (`?q=`) |
 | 6 | `specs/05-portfolio.md` | 02 | Exposes `usePortfolio` |
 | 7 | `specs/06-orders.md` | 02, 05 | Needs `usePortfolio` from spec 05 |
-| 8 | `specs/07-hardening-docs.md` | 03–06 | Run last |
+| 8 | `specs/07-placed-orders.md` | 03, 05, 06 | Placed orders list on the portfolio page |
+| 9 | `specs/08-hardening-docs.md` | 03–07 | Run last |
 
 Rules:
 
@@ -52,7 +54,7 @@ Rules:
 - One branch and one PR per spec: `spec/NN-<name>`, branched from the updated `main`. Open the PR with `gh`, summarize what changed against the spec, then stop. The user reviews and squash-merges before the next spec starts.
 - Stay within the files your spec lists. If another file must change, say why in the PR and keep the edit minimal.
 - Do not start spec 06 before spec 05 exposes its public `usePortfolio` hook.
-- Do not build product features during spec 07. It is hardening, QA and documentation only.
+- Do not build product features during spec 08. It is hardening, QA and documentation only.
 
 ## Non-negotiable stack
 
@@ -101,7 +103,7 @@ Hard rules:
 
 | State | Owner |
 |---|---|
-| Instruments, portfolio, search, order submission | TanStack Query |
+| Instruments, portfolio, search, placed orders, order submission | TanStack Query |
 | Order ticket open state, instrument, presets | `OrderTicketProvider` |
 | Search query | URL (`/instruments?q=`) |
 | Form values and validation | Local component state |
@@ -126,11 +128,12 @@ X-Candidate-Id: <candidate key>
 - Never expose `easy`, `medium` or `hard` bug modes in the product. `off` is the only supported mode.
 - Candidate resolution: `VITE_CANDIDATE_ID` → `localStorage["cp.candidateId"]` → generated UUID persisted in storage. Never show it in the UI.
 - `/portfolio` returns `{ cash, holdings }`. A new candidate starts at `{ "cash": 1000000, "holdings": [] }`.
+- `GET /orders` returns the candidate's orders oldest first (`[]` when new), with no paging or filters. The app shows them newest first.
 - `/search` matches ticker case-insensitively by substring. Empty query returns all; the app must not call it for empty input.
 - `POST /orders` returns `201` with the full order. Validation failures are `400 { "error": "..." }`, not a `201` with `REJECTED`.
 - LIMIT BUY validates cash against the limit price. MARKET uses `last_price`.
 - Order mutations **never retry**. Query retries are allowed once for network/5xx only.
-- Invalidate the portfolio query after a successful order. Do not optimistically mutate the portfolio.
+- Invalidate the portfolio and orders queries after a successful order. Do not optimistically mutate the portfolio.
 - Generated types live in `src/shared/api/generated/schema.ts` and must not be edited by hand.
 
 ## Domain formulas
@@ -245,11 +248,11 @@ Plus:
   - frontmatter: session, date, agent, mode, title, status, related specs
   - capture the decision, rationale and rejected alternatives
 - Never edit `sessions/00-design-decisions.md` after it is committed.
-- Keep `README.md` current as features land; spec 07 owns the final version.
+- Keep `README.md` current as features land; spec 08 owns the final version.
 
 ## Scope discipline
 
-- Do not add features not in the challenge: no auth, order history, charts, sorting, pagination, cancellation or partial fills.
+- Do not add features not in the challenge: no auth, order detail/cancellation (the placed-orders list in spec 07 is the only history), charts, sorting, pagination, cancellation or partial fills.
 - Do not add dependencies because they are convenient. The stack is intentional and version-pinned.
 - Do not redesign screens while implementing a spec. If a spec is ambiguous, choose the simplest option consistent with the rules and note it.
 - Prefer semantic HTML and native controls over ARIA-heavy custom widgets.

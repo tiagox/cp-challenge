@@ -1,9 +1,9 @@
-# Spec 07 — Hardening, QA & Documentation
+# Spec 08 — Hardening, QA & Documentation
 
 | | |
 |---|---|
 | **Status** | Ready |
-| **Depends on** | [03 — Instruments](./03-instruments.md), [04 — Search](./04-search.md), [05 — Portfolio](./05-portfolio.md), [06 — Orders](./06-orders.md) |
+| **Depends on** | [03 — Instruments](./03-instruments.md), [04 — Search](./04-search.md), [05 — Portfolio](./05-portfolio.md), [06 — Orders](./06-orders.md), [07 — Placed orders](./07-placed-orders.md) |
 | **Owns** | Final README, QA checklist, cross-feature integration tests, cleanup and final verification |
 | **Must not do** | Add features, change the API contract, redesign screens, or change feature behavior |
 
@@ -70,7 +70,7 @@ Required flows:
    - submit a valid quantity
    - POST body is `{ instrument_id, side: 'BUY', type: 'MARKET', quantity }` with no `price`
    - success view shows the returned order `id` and `FILLED`
-   - `queryKeys.portfolio` is invalidated
+   - `queryKeys.portfolio` and `queryKeys.orders` are invalidated
 2. **Portfolio → sell preset**
    - visit `/portfolio`
    - click “Sell” on a holding
@@ -219,7 +219,7 @@ Replace the skeleton `README.md` with a complete document. Required sections:
 12. **Testing** — what is covered, how to run, MSW usage, the critical-flow suite, coverage command.
 13. **Accessibility and responsiveness** — key guarantees and manual checklist link.
 14. **Design decisions** — link to `sessions/00-design-decisions.md` and `specs/README.md`.
-15. **Known limitations** — no order history, no auth, candidate identity is anonymous, server bug modes are not used, LIMIT orders are not simulated/cancelled.
+15. **Known limitations** — order history is a plain list (no paging, filters or detail), no auth, candidate identity is anonymous, server bug modes are not used, LIMIT orders are not simulated/cancelled.
 16. **Time spent** — optional short note, only if the challenge reviewer expects it.
 
 Keep it skimmable: short paragraphs, tables and code blocks. Do not paste the whole spec set.
@@ -311,7 +311,7 @@ Expected:
 
 - New product features or screens
 - Authentication or real user accounts
-- Order history, cancellation or modification
+- Order cancellation or modification, and anything beyond the placed-orders list
 - Charts, sorting, filtering or pagination
 - Server-side changes
 - CI/CD provisioning (document the commands, do not assume a CI provider)

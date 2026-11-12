@@ -2,7 +2,7 @@
 
 A React app to browse instruments, search them by ticker, view a portfolio and send market or limit orders against the challenge API.
 
-> This README is a skeleton. Full documentation (architecture, decisions, QA notes) lands in spec 07.
+> This README is a skeleton. Full documentation (architecture, decisions, QA notes) lands in spec 08.
 
 ## Stack
 
