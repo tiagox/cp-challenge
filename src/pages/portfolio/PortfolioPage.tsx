@@ -9,10 +9,10 @@ import {
   PositionsTable,
   usePortfolio,
 } from '@/features/portfolio'
+import { errorKey } from '@/shared/api/errors'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
-import { errorKey } from './errorKey'
 import { PlacedOrdersSection } from './PlacedOrdersSection'
 import styles from './PortfolioPage.module.scss'
 

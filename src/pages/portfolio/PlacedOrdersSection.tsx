@@ -8,9 +8,9 @@ import {
   PlacedOrdersTable,
   usePlacedOrders,
 } from '@/features/order'
+import { errorKey } from '@/shared/api/errors'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
-import { errorKey } from './errorKey'
 import styles from './PortfolioPage.module.scss'
 
 /** Loads and fails on its own, so it never blocks the summary or the positions. */

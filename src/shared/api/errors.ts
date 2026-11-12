@@ -31,3 +31,10 @@ export function getServerMessage(body: unknown): string | undefined {
   if (typeof body !== 'object' || body === null || !('error' in body)) return undefined
   return typeof body.error === 'string' ? body.error : undefined
 }
+
+/** Translation key for a failed query's retry state. */
+export function errorKey(error: unknown) {
+  if (error instanceof ApiError && error.code === 'NETWORK') return 'errors.network'
+  if (error instanceof ApiError && error.code === 'TIMEOUT') return 'errors.timeout'
+  return 'errors.server'
+}

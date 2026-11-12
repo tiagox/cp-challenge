@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL, CANDIDATE_STORAGE_KEY } from './config'
-import { ApiError } from './errors'
+import { ApiError, errorKey } from './errors'
 import { http } from './http'
 
 const CANDIDATE = 'test-candidate'
@@ -236,5 +236,14 @@ describe('retries', () => {
     await catchApiError(http.get('/instruments'))
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('errorKey', () => {
+  it('maps network, timeout and everything else', () => {
+    expect(errorKey(new ApiError('NETWORK', 'x'))).toBe('errors.network')
+    expect(errorKey(new ApiError('TIMEOUT', 'x'))).toBe('errors.timeout')
+    expect(errorKey(new ApiError('HTTP', 'x', { status: 500 }))).toBe('errors.server')
+    expect(errorKey(new Error('x'))).toBe('errors.server')
   })
 })
