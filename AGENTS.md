@@ -25,8 +25,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 9. `sessions/07-spec-02-handoff.md` — spec 01 implementation facts and hand-off to spec 02
 10. `sessions/08-spec-03-handoff.md` — spec 02 implementation facts, ponytail review workflow, hand-off to spec 03
 11. `sessions/09-spec-04-handoff.md` — spec 03 implementation facts and hand-off to spec 04
-12. The spec you are assigned
-13. The specs it depends on, especially their “Contracts” and “Files owned” sections
+12. `sessions/10-spec-05-handoff.md` — spec 04 implementation facts, test patterns, hand-off to spec 05
+13. The spec you are assigned
+14. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
