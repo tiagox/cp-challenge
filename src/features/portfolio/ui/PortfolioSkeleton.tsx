@@ -2,6 +2,8 @@ import { useTranslation } from 'react-i18next'
 import { Skeleton } from '@/shared/ui/Skeleton'
 import { VisuallyHidden } from '@/shared/ui/VisuallyHidden'
 import styles from './PortfolioSkeleton.module.scss'
+// Same grid as the real summary, so the cards don't jump when data arrives.
+import summaryStyles from './PortfolioSummary.module.scss'
 
 const ITEMS = [0, 1, 2, 3]
 
@@ -12,7 +14,7 @@ export function PortfolioSkeleton() {
   return (
     <div role="status">
       <VisuallyHidden>{t('common.loading')}</VisuallyHidden>
-      <div className={styles.summary}>
+      <div className={summaryStyles.grid}>
         {ITEMS.map((item) => (
           <div key={item} className={styles.summaryCard}>
             <Skeleton width="50%" />

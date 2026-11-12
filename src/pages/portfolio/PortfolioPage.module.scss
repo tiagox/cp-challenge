@@ -24,15 +24,19 @@
 // A link styled like the primary Button (shared Button renders a <button> only).
 .emptyAction {
   display: inline-flex;
+  gap: var(--space-2);
   align-items: center;
   justify-content: center;
   min-height: 44px;
   padding: var(--space-3) var(--space-5);
   font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
   color: var(--color-on-accent);
   text-decoration: none;
   background: var(--color-accent);
   border-radius: var(--radius-pill);
+  transition: background-color 0.15s ease;
 
   @include focus-ring;
 
