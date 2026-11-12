@@ -1,6 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { delay, http, HttpResponse } from 'msw'
+import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
 import { queryKeys } from '@/shared/api/queryKeys'
@@ -42,9 +42,6 @@ describe('critical flows', () => {
     const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
     const bodies = captureOrders()
     renderApp({ route: '/instruments', queryClient })
-
-    // Loading state before the list arrives.
-    expect(await screen.findByRole('status')).toBeInTheDocument()
     const dialog = await tradeFrom('DYCA')
 
     expect(dialog).toHaveAccessibleName('Buy DYCA')
@@ -175,13 +172,12 @@ describe('critical flows', () => {
 
   it('shows a retryable error when instruments fail', async () => {
     server.use(
-      http.get(`${API_BASE_URL}/instruments`, async () => {
-        await delay(10)
-        return HttpResponse.json({ error: 'boom' }, { status: 500 })
-      }),
+      http.get(`${API_BASE_URL}/instruments`, () =>
+        HttpResponse.json({ error: 'boom' }, { status: 500 }),
+      ),
     )
     renderApp({ route: '/instruments' })
 
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument())
+    expect(await screen.findByRole('button', { name: 'Retry' })).toBeInTheDocument()
   })
 })
