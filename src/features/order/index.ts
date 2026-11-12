@@ -5,3 +5,5 @@ export type {
   OrderTicketContextValue,
   OrderTicketState,
 } from './model/OrderTicketContext'
+export { OrderModal } from './ui/OrderModal'
+export type { OrderModalProps } from './ui/OrderModal'
