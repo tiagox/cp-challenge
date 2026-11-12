@@ -6,6 +6,7 @@ export default mergeConfig(
   defineConfig({
     test: {
       environment: 'jsdom',
+      env: { TZ: 'UTC' },
       setupFiles: ['./src/test/setup.ts'],
       include: ['src/**/*.test.{ts,tsx}'],
       restoreMocks: true,

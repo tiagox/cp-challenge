@@ -40,3 +40,13 @@ export function formatQuantity(value: number | null | undefined, locale: AppLoca
   if (!isFiniteNumber(value)) return null
   return new Intl.NumberFormat(getIntlLocale(locale), { maximumFractionDigits: 0 }).format(value)
 }
+
+/** ISO date-time → localized date and time in the browser's time zone. `null` if unparseable. */
+export function formatDateTime(value: string | null | undefined, locale: AppLocale): string | null {
+  const time = value ? Date.parse(value) : NaN
+  if (Number.isNaN(time)) return null
+  return new Intl.DateTimeFormat(getIntlLocale(locale), {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(time)
+}

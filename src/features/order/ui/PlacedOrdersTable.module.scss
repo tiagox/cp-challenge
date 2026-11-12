@@ -1,0 +1,55 @@
+@use '@/app/styles/mixins' as *;
+
+.scroller {
+  @include card-surface;
+
+  display: none;
+  overflow-x: auto;
+
+  @include respond-to(md) {
+    display: block;
+  }
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  // Not sticky like Positions: sticky does not work inside a horizontal scroll box.
+  thead th {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+}
+
+.date {
+  font-variant-numeric: tabular-nums;
+}
+
+.ticker {
+  font-weight: 800;
+}
+
+.numeric {
+  font-variant-numeric: tabular-nums;
+
+  .table & {
+    text-align: right;
+  }
+}

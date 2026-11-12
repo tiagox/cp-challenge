@@ -265,6 +265,7 @@ describe('OrderModal', () => {
     await screen.findByText('Order #648128')
 
     expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.portfolio })
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.orders })
   })
 
   it('offers only Close after a result', async () => {
