@@ -62,7 +62,7 @@ Base URL: `https://dummy-api-topaz.vercel.app`. Every request goes through `src/
 | `X-Enable-Bugs`  | `off`                   | Required on every endpoint; missing → `400`                  |
 | `X-Candidate-Id` | anonymous candidate key | Required on `/portfolio` and `/orders`; scopes cash/holdings |
 
-The brief mentions neither header. Other bug modes (`easy`, `medium`, `hard`) make the server corrupt responses on purpose; the product never exposes them. They are documented for manual QA only in [`docs/api/bug-levels.md`](./docs/api/bug-levels.md).
+The brief mentions neither header. Other bug modes (`easy`, `medium`, `hard`) make the server corrupt responses on purpose; the product never exposes them.
 
 Requests time out after 15 s. Queries retry once, and only for network errors or `5xx`. Order submissions never retry.
 
