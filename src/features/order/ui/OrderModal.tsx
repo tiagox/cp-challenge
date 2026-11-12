@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Holding } from '@/entities/position/model/types'
 import type { CreateOrderRequest, OrderSide } from '@/shared/api/types'
@@ -38,12 +38,17 @@ export function OrderModal({
   const formId = useId()
   const [side, setSide] = useState(initialSide)
   const mutation = useCreateOrder()
+  const submitted = useRef(false)
 
   const availableShares =
     holdings?.find((holding) => holding.instrument_id === instrument.id)?.quantity ?? 0
 
+  // `isPending` only flips on the next render, so a fast double-click could submit twice.
+  // The ticket places one order per opening, so a ref blocks every later submit.
   const submit = (payload: CreateOrderRequest) => {
-    if (!mutation.isPending) mutation.mutate(payload)
+    if (submitted.current) return
+    submitted.current = true
+    mutation.mutate(payload)
   }
 
   const closeButton = (

@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IconButton } from '../IconButton'
 import styles from './Modal.module.scss'
@@ -16,6 +16,8 @@ export interface ModalProps {
 
 export function Modal({ open, onOpenChange, title, description, children, footer }: ModalProps) {
   const { t } = useTranslation()
+  // Radix only restores focus to a `Dialog.Trigger`; our dialogs open from anywhere.
+  const returnFocus = useRef<HTMLElement | null>(null)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -23,6 +25,15 @@ export function Modal({ open, onOpenChange, title, description, children, footer
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content
           className={styles.content}
+          onOpenAutoFocus={() => {
+            // Runs before Radix moves focus into the dialog.
+            returnFocus.current =
+              document.activeElement instanceof HTMLElement ? document.activeElement : null
+          }}
+          onCloseAutoFocus={(event) => {
+            event.preventDefault()
+            returnFocus.current?.focus()
+          }}
           // Without a description, opt out explicitly so no orphan `aria-describedby` is set.
           {...(description ? {} : { 'aria-describedby': undefined })}
         >

@@ -34,6 +34,15 @@ A review of all of `src/` removed code that no caller uses, even where a spec li
 - `returnOnCost` reuses `returnPercent` (same formula, different base). Queries no longer repeat the default `staleTime`. The order side lives only in `OrderModal`; `OrderForm` receives it.
 - Test helpers used in several files (`rowFor`, `captureOrders`, `stubPrefersDark`, `runBootScript`) live in `src/test/helpers.ts`.
 
-## 3. Left as is
+## 3. Browser QA fixes
+
+The manual pass in Chrome (production build, live API) found two defects that the jsdom tests missed:
+
+- **A double-click placed two orders.** `OrderModal` guarded on `mutation.isPending`, which only flips after the next render. It now uses a ref, set before `mutate`; the ticket allows one order per opening anyway. Test: two `submit` events in the same tick send one request.
+- **Closing the order modal lost focus.** Radix modal dialogs only return focus to a `Dialog.Trigger`, and our dialogs open from context. `Modal` records the focused element in `onOpenAutoFocus` and focuses it again in `onCloseAutoFocus`. This also covers the order ticket, which unmounts on close. Tests in `modal.test.tsx` and `OrderModalContainer.test.tsx`.
+
+Also seen: the live API lists orders rejected later (`REJECTED`) in `GET /orders`, which answers the open question in session 14.
+
+## 4. Left as is
 
 - `src/features/instruments/instruments.test.tsx` and `src/features/portfolio/portfolio.test.tsx` import `useOrderTicket` from the order feature. These are tests checking the open-ticket call, not product code; the layer rule holds for `src/` app code.

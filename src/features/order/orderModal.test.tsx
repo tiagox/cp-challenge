@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
@@ -203,6 +203,20 @@ describe('OrderModal', () => {
 
     await user.dblClick(screen.getByRole('button', { name: 'Buy' }))
     expect(screen.getByRole('button', { name: /Submitting/ })).toBeDisabled()
+
+    await screen.findByText('Order #648128')
+    expect(bodies).toHaveLength(1)
+  })
+
+  // A real double-click can land both submits before React re-renders with `isPending`.
+  it('sends a single request when two submits fire in the same tick', async () => {
+    const bodies = captureOrders()
+    const { user } = renderModal()
+    await user.type(quantity(), '1')
+
+    const form = quantity().closest('form')!
+    fireEvent.submit(form)
+    fireEvent.submit(form)
 
     await screen.findByText('Order #648128')
     expect(bodies).toHaveLength(1)
