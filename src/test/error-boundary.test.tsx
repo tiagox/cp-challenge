@@ -1,6 +1,8 @@
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { renderApp } from './render'
+import { ErrorBoundary } from '@/app/providers/ErrorBoundary'
+import { renderApp, renderWithProviders } from './render'
 
 vi.mock('@/pages/portfolio/PortfolioPage', () => ({
   default: () => {
@@ -35,5 +37,31 @@ describe('route errors', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Algo salió mal' }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('ErrorBoundary', () => {
+  let shouldThrow = true
+  function Flaky() {
+    if (shouldThrow) throw new Error('boom')
+    return <p>Recovered</p>
+  }
+
+  it('catches a render error, shows the fallback and recovers on retry', async () => {
+    shouldThrow = true
+    renderWithProviders(
+      <ErrorBoundary>
+        <Flaky />
+      </ErrorBoundary>,
+    )
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Something went wrong')
+    expect(screen.getByRole('heading', { level: 1, name: 'Something went wrong' })).toBeVisible()
+
+    shouldThrow = false
+    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
+
+    expect(screen.getByText('Recovered')).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 })

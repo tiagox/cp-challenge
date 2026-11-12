@@ -8,7 +8,6 @@ export const common = {
   cancel: 'Cancelar',
   back: 'Volver',
   notAvailable: '—',
-  comingSoon: 'Próximamente',
   unexpectedErrorTitle: 'Algo salió mal',
   unexpectedErrorDescription: 'Intentá de nuevo.',
   notFoundTitle: 'Página no encontrada',

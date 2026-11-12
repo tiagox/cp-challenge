@@ -24,7 +24,7 @@ describe('app shell', () => {
     expect(await screen.findByRole('table', { name: 'Instruments' })).toBeInTheDocument()
   })
 
-  it('renders the portfolio stub', async () => {
+  it('renders the portfolio page', async () => {
     renderApp({ route: '/portfolio' })
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Portfolio' })).toBeInTheDocument()
