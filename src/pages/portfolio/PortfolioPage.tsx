@@ -24,7 +24,9 @@ export default function PortfolioPage() {
     open({
       instrument: {
         id: holding.instrument_id,
-        ticker: holding.ticker,
+        ticker:
+          holding.ticker ??
+          t('portfolio.positions.unknownInstrument', { id: holding.instrument_id }),
         last_price: holding.last_price,
       },
       side: 'SELL',

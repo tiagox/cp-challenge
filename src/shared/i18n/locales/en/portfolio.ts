@@ -11,6 +11,8 @@ export const portfolio = {
     title: 'Positions',
     count_one: '{{count}} position',
     count_other: '{{count}} positions',
+    /** Shown when a holding comes back without its ticker. */
+    unknownInstrument: '#{{id}}',
   },
   columns: {
     ticker: 'Ticker',
