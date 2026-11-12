@@ -1,17 +1,16 @@
+import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { Instrument } from '@/entities/instrument/model/types'
-import {
-  InstrumentsCards,
-  InstrumentsSkeleton,
-  InstrumentsTable,
-  useInstruments,
-} from '@/features/instruments'
+import { InstrumentsCards, InstrumentsSkeleton, InstrumentsTable } from '@/features/instruments'
 import { useOrderTicket } from '@/features/order'
+import { SearchInput } from '@/features/search'
 import { ApiError } from '@/shared/api/errors'
+import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import styles from './InstrumentsPage.module.scss'
+import { useInstrumentList } from './useInstrumentList'
 
 function errorKey(error: unknown) {
   if (error instanceof ApiError && error.code === 'NETWORK') return 'errors.network'
@@ -21,7 +20,16 @@ function errorKey(error: unknown) {
 
 export default function InstrumentsPage() {
   const { t } = useTranslation()
-  const { data, error, isFetching, refetch } = useInstruments()
+  const { input, setInput, query, searching, data, error, isFetching, refetch } =
+    useInstrumentList()
+
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const clearSearch = () => {
+    setInput('')
+    // The empty state and its button unmount, so keep focus in the search box.
+    searchInputRef.current?.focus()
+  }
+
   const { open } = useOrderTicket()
 
   const handleSelect = (instrument: Instrument) => {
@@ -39,18 +47,33 @@ export default function InstrumentsPage() {
   // Data first: a failed background refetch keeps the old list instead of hiding it.
   let content
   if (data) {
-    content =
-      data.length === 0 ? (
-        <EmptyState
-          title={t('instruments.empty.title')}
-          description={t('instruments.empty.description')}
-        />
-      ) : (
+    if (data.length > 0) {
+      content = (
         <>
           <InstrumentsTable instruments={data} onSelect={handleSelect} />
           <InstrumentsCards instruments={data} onSelect={handleSelect} />
         </>
       )
+    } else if (searching) {
+      content = (
+        <EmptyState
+          title={t('search.empty.title')}
+          description={t('search.empty.description', { query })}
+          action={
+            <Button variant="secondary" onClick={clearSearch}>
+              {t('search.input.clear')}
+            </Button>
+          }
+        />
+      )
+    } else {
+      content = (
+        <EmptyState
+          title={t('instruments.empty.title')}
+          description={t('instruments.empty.description')}
+        />
+      )
+    }
   } else if (error && !isFetching) {
     content = (
       <ErrorState
@@ -69,11 +92,20 @@ export default function InstrumentsPage() {
         title={t('instruments.title')}
         description={t('instruments.description')}
         actions={
-          data ? (
+          !searching && data ? (
             <span className={styles.count}>{t('instruments.count', { count: data.length })}</span>
           ) : null
         }
       />
+      <div className={styles.search}>
+        <SearchInput ref={searchInputRef} value={input} onChange={setInput} />
+        {/* Stays mounted while loading: screen readers announce text changes, not insertions. */}
+        {searching ? (
+          <p role="status" className={styles.status}>
+            {data ? t('search.results', { count: data.length, query }) : null}
+          </p>
+        ) : null}
+      </div>
       {content}
     </>
   )
