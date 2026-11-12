@@ -33,7 +33,6 @@ export const orders = {
     submitBuy: 'Buy',
     submitSell: 'Sell',
     submitting: 'Submitting...',
-    newOrder: 'New order',
     close: 'Close',
   },
   result: {

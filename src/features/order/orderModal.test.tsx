@@ -222,13 +222,16 @@ describe('OrderModal', () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.portfolio })
   })
 
-  it('starts a new order from the result', async () => {
-    const { user } = renderModal()
+  it('offers only Close after a result', async () => {
+    const { user, onClose } = renderModal()
     await user.type(quantity(), '1')
     await user.click(screen.getByRole('button', { name: 'Buy' }))
-    await user.click(await screen.findByRole('button', { name: 'New order' }))
+    await screen.findByText('Order #648128')
 
-    expect(quantity()).toHaveValue(null)
+    expect(screen.queryByRole('button', { name: 'New order' })).not.toBeInTheDocument()
+    // The header's X icon button is also named "Close"; this is the footer one.
+    await user.click(screen.getByText('Close', { selector: 'button' }))
+    expect(onClose).toHaveBeenCalled()
   })
 
   it('renders Spanish copy', async () => {

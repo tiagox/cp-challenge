@@ -35,7 +35,6 @@ export const orders = {
     submitBuy: 'Comprar',
     submitSell: 'Vender',
     submitting: 'Enviando...',
-    newOrder: 'Nueva orden',
     close: 'Cerrar',
   },
   result: {

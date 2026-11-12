@@ -36,8 +36,6 @@ export function OrderModal({
   const { t } = useTranslation()
   const formId = useId()
   const [side, setSide] = useState(initialSide)
-  // Bumped by "New order" to remount the form with its initial values.
-  const [formKey, setFormKey] = useState(0)
   const mutation = useCreateOrder()
 
   const availableShares =
@@ -45,12 +43,6 @@ export function OrderModal({
 
   const submit = (payload: CreateOrderRequest) => {
     if (!mutation.isPending) mutation.mutate(payload)
-  }
-
-  const startNewOrder = () => {
-    mutation.reset()
-    setSide(initialSide)
-    setFormKey((key) => key + 1)
   }
 
   const closeButton = (
@@ -69,16 +61,9 @@ export function OrderModal({
     ) : (
       <OrderResult error={mutation.error} />
     )
-    footer = (
-      <>
-        {closeButton}
-        <Button onClick={startNewOrder}>{t('orders.actions.newOrder')}</Button>
-      </>
-    )
   } else if (cash !== undefined) {
     body = (
       <OrderForm
-        key={formKey}
         id={formId}
         instrument={instrument}
         initialSide={initialSide}
