@@ -81,7 +81,7 @@ describe('InstrumentsPage search', () => {
 
     expect(await screen.findByText('1 result for “dy”')).toBeInTheDocument()
     await expectRows(1)
-    expect(queries).toEqual(['dy'])
+    expect(queries).toEqual(['DY'])
     expect(location()).toBe('/instruments?q=dy')
     expect(screen.queryByText('4 instruments')).not.toBeInTheDocument()
   })
@@ -177,7 +177,7 @@ describe('InstrumentsPage search', () => {
 
     expect(await screen.findByText('1 result for “dy”')).toBeInTheDocument()
     // The failed request plus the retry.
-    expect(queries).toEqual(['dy', 'dy'])
+    expect(queries).toEqual(['DY', 'DY'])
   })
 
   it('opens the order ticket in BUY mode from a result', async () => {
@@ -217,7 +217,7 @@ describe('InstrumentsPage search', () => {
     expect(screen.queryByText('1 result for “dy”')).not.toBeInTheDocument()
     expect(location()).toBe('/instruments')
     expect(await screen.findByText('3 results for “a”')).toBeInTheDocument()
-    expect(queries).toEqual(['dy', 'a'])
+    expect(queries).toEqual(['DY', 'A'])
   })
 
   it('renders ES copy', async () => {

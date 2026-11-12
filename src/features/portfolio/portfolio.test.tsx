@@ -87,6 +87,25 @@ describe('PortfolioPage', () => {
     expect(document.body).not.toHaveTextContent(/NaN|Infinity/)
   })
 
+  it('degrades a holding without ticker or average cost', async () => {
+    // `hard` bug mode can drop these fields from a holding.
+    // JSON drops `undefined`, so both fields arrive missing.
+    const partial = { ...dycaHolding, ticker: undefined, avg_cost_price: undefined }
+    server.use(
+      http.get(portfolioUrl, () =>
+        HttpResponse.json({ cash: 0, holdings: [partial, capxHolding] }),
+      ),
+    )
+    renderWithProviders(<PortfolioPage />)
+    const row = rowFor(await screen.findByRole('table', { name: 'Positions' }), '#1')
+
+    expect(within(row).getAllByText('—')).toHaveLength(2)
+    expect(within(row).getByRole('button', { name: 'Sell #1' })).toBeInTheDocument()
+    expect(summaryValue('Total P&L')).toHaveTextContent('—')
+    expect(summaryValue('Total return')).toHaveTextContent('—')
+    expect(document.body).not.toHaveTextContent(/NaN|Infinity|undefined/)
+  })
+
   it('renders EN copy by default', async () => {
     renderWithProviders(<PortfolioPage />)
     const table = await screen.findByRole('table', { name: 'Positions' })

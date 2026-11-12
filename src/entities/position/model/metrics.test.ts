@@ -37,8 +37,10 @@ describe('profitLoss', () => {
     expect(profitLoss(10, 10, 10)).toBe(0)
   })
 
-  it('returns 0 for non-finite input', () => {
-    expect(profitLoss(10, NaN, 10)).toBe(0)
+  it('returns null for missing or non-finite input', () => {
+    expect(profitLoss(10, NaN, 10)).toBeNull()
+    // `hard` bug mode can drop avg_cost_price from a holding.
+    expect(profitLoss(10, 10, undefined as unknown as number)).toBeNull()
   })
 })
 
@@ -89,13 +91,27 @@ describe('aggregatePortfolio', () => {
     expect(metrics.returnPercent).toBeNull()
   })
 
-  it('treats non-finite values as 0', () => {
+  it('sums finite values but returns null P&L and return when a price is invalid', () => {
     const metrics = aggregatePortfolio([
       holding({ quantity: 10, last_price: NaN, avg_cost_price: 10 }),
     ])
 
     expect(metrics.marketValue).toBe(0)
     expect(metrics.costBasis).toBe(100)
-    expect(metrics.profitLoss).toBe(-100)
+    expect(metrics.profitLoss).toBeNull()
+    expect(metrics.returnPercent).toBeNull()
+  })
+
+  it('returns null P&L when a holding has no avg cost price', () => {
+    const withoutCost = holding({ quantity: 10, last_price: 12 })
+    delete (withoutCost as Partial<Holding>).avg_cost_price
+    const metrics = aggregatePortfolio([
+      holding({ quantity: 10, last_price: 12, avg_cost_price: 10 }),
+      withoutCost,
+    ])
+
+    expect(metrics.marketValue).toBe(240)
+    expect(metrics.profitLoss).toBeNull()
+    expect(metrics.returnPercent).toBeNull()
   })
 })

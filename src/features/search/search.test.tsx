@@ -63,13 +63,13 @@ describe('useSearchInstruments', () => {
     expect(urls).toHaveLength(0)
   })
 
-  it('sends the trimmed, encoded query parameter', async () => {
+  it('sends the trimmed, uppercased, encoded query parameter', async () => {
     const urls = recordSearchRequests()
     const { result } = renderHook(() => useSearchInstruments(' a&b c '), { wrapper })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(urls).toHaveLength(1)
-    expect(urls[0]?.search).toBe('?query=a%26b%20c')
-    expect(urls[0]?.searchParams.get('query')).toBe('a&b c')
+    expect(urls[0]?.search).toBe('?query=A%26B%20C')
+    expect(urls[0]?.searchParams.get('query')).toBe('A&B C')
   })
 })

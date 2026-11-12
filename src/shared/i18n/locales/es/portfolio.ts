@@ -13,6 +13,7 @@ export const portfolio = {
     title: 'Posiciones',
     count_one: '{{count}} posición',
     count_other: '{{count}} posiciones',
+    unknownInstrument: '#{{id}}',
   },
   columns: {
     ticker: 'Ticker',
