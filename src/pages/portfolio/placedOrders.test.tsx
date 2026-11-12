@@ -16,7 +16,7 @@ const fail = () => HttpResponse.json({ error: 'boom' }, { status: 500 })
 const text = (element: Element | null) =>
   element?.textContent?.replace(/[\u00a0\u202f]/g, ' ') ?? ''
 
-const section = (name = 'Placed orders') => screen.getByRole('region', { name })
+const section = (name = 'Activity') => screen.getByRole('region', { name })
 
 /** Cell texts per body row, as rendered. Waits for the table to appear. */
 async function tableRows(name?: string) {
@@ -157,7 +157,7 @@ describe('Placed orders section', () => {
   it('collapses and expands the list from the heading button', async () => {
     renderWithProviders(<PortfolioPage />)
     await tableRows()
-    const toggle = within(section()).getByRole('button', { name: 'Placed orders' })
+    const toggle = within(section()).getByRole('button', { name: 'Activity' })
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
 
     await userEvent.click(toggle)
@@ -176,7 +176,7 @@ describe('Placed orders section', () => {
   it('renders Spanish copy and formatting', async () => {
     renderWithProviders(<PortfolioPage />, { lang: 'es' })
 
-    expect(await tableRows('Órdenes enviadas')).toEqual([
+    expect(await tableRows('Actividad')).toEqual([
       [
         '12 nov 2026, 1:53 a. m.',
         'DYCA',
@@ -208,8 +208,8 @@ describe('Placed orders section', () => {
         'RechazadaREJECTED',
       ],
     ])
-    const table = within(section('Órdenes enviadas')).getByRole('table')
+    const table = within(section('Actividad')).getByRole('table')
     expect(within(table).getByRole('columnheader', { name: 'Operación' })).toBeInTheDocument()
-    expect(within(section('Órdenes enviadas')).getByText('3 órdenes')).toBeInTheDocument()
+    expect(within(section('Actividad')).getByText('3 órdenes')).toBeInTheDocument()
   })
 })

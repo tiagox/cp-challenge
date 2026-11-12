@@ -55,7 +55,7 @@ export const orders = {
     lastPriceUnavailable: 'The last price is unavailable. Try again later.',
   },
   history: {
-    title: 'Placed orders',
+    title: 'Activity',
     count_one: '{{count}} order',
     count_other: '{{count}} orders',
     caption: 'Orders you have placed, newest first',

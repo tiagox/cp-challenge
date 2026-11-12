@@ -57,7 +57,7 @@ export const orders = {
     lastPriceUnavailable: 'El último precio no está disponible. Intentá más tarde.',
   },
   history: {
-    title: 'Órdenes enviadas',
+    title: 'Actividad',
     count_one: '{{count}} orden',
     count_other: '{{count}} órdenes',
     caption: 'Órdenes que enviaste, de la más reciente a la más antigua',
