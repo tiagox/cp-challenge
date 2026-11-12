@@ -9,8 +9,13 @@ const newestFirst = (orders: Order[]) => orders.toSorted(compareNewestFirst)
 
 // The API answers a LIMIT as PENDING and resolves it a few seconds later.
 const PENDING_POLL_MS = 3_000
-const countPending = (orders: Order[] | undefined) =>
-  orders?.filter((order) => order.status === 'PENDING').length ?? 0
+const isPending = (order: Order) => order.status === 'PENDING'
+
+/** True when an order that was PENDING in `before` is no longer PENDING in `after`. */
+const anyResolved = (before: Order[] | undefined, after: Order[]) =>
+  before?.some(
+    (order) => isPending(order) && !after.some((next) => next.id === order.id && isPending(next)),
+  ) ?? false
 
 /** The candidate's orders, newest first (the API returns them oldest first). */
 export function usePlacedOrders() {
@@ -22,12 +27,12 @@ export function usePlacedOrders() {
       const before = queryClient.getQueryData<Order[]>(queryKeys.orders)
       const orders = await getOrders(signal)
       // A resolved order may have moved cash and holdings.
-      if (countPending(orders) < countPending(before)) {
+      if (anyResolved(before, orders)) {
         void queryClient.invalidateQueries({ queryKey: queryKeys.portfolio })
       }
       return orders
     },
     select: newestFirst,
-    refetchInterval: (query) => (countPending(query.state.data) > 0 ? PENDING_POLL_MS : false),
+    refetchInterval: (query) => (query.state.data?.some(isPending) ? PENDING_POLL_MS : false),
   })
 }

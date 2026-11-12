@@ -4,6 +4,7 @@ import { http, HttpResponse } from 'msw'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
+import type { Order } from '@/shared/api/types'
 import { queryKeys } from '@/shared/api/queryKeys'
 import { filledOrder, pendingLimitOrder } from '@/test/fixtures/orders'
 import { createTestQueryClient } from '@/test/render'
@@ -13,6 +14,7 @@ import { usePlacedOrders } from './queries'
 describe('usePlacedOrders', () => {
   afterEach(() => {
     vi.useRealTimers()
+    server.events.removeAllListeners()
   })
 
   it('polls while an order is PENDING and refreshes the portfolio once it resolves', async () => {
@@ -44,6 +46,26 @@ describe('usePlacedOrders', () => {
     server.events.on('request:start', fetches)
     await act(() => vi.advanceTimersByTimeAsync(10_000))
     expect(fetches).not.toHaveBeenCalled()
-    server.events.removeAllListeners()
+  })
+
+  it('refreshes the portfolio when one order resolves as another becomes PENDING', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const newPending = { ...pendingLimitOrder, id: 648131, created_at: '2026-11-10T17:52:00.000Z' }
+    let orders: Order[] = [filledOrder, pendingLimitOrder]
+    server.use(http.get(`${API_BASE_URL}/orders`, () => HttpResponse.json(orders)))
+    const queryClient = createTestQueryClient()
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    )
+    const { result } = renderHook(() => usePlacedOrders(), { wrapper })
+    await waitFor(() => expect(result.current.data).toHaveLength(2))
+
+    // Same PENDING count before and after: a count comparison would miss this.
+    orders = [filledOrder, { ...pendingLimitOrder, status: 'FILLED' }, newPending]
+    await act(() => vi.advanceTimersByTimeAsync(3_000))
+
+    await waitFor(() => expect(result.current.data).toHaveLength(3))
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: queryKeys.portfolio })
   })
 })
