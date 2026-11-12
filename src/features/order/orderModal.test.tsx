@@ -190,6 +190,22 @@ describe('OrderModal', () => {
     expect(bodies).toHaveLength(1)
   })
 
+  it('cannot be closed while the order request is pending', async () => {
+    server.use(http.post(ordersUrl, () => delay(50)))
+    const { user, onClose } = renderModal()
+    await user.type(quantity(), '1')
+    await user.click(screen.getByRole('button', { name: 'Buy' }))
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    await user.keyboard('{Escape}')
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+    expect(onClose).not.toHaveBeenCalled()
+
+    await screen.findByText('Order #648128')
+    await user.keyboard('{Escape}')
+    expect(onClose).toHaveBeenCalled()
+  })
+
   it('does not retry a failed order', async () => {
     let calls = 0
     server.use(

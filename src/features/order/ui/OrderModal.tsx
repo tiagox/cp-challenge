@@ -46,7 +46,7 @@ export function OrderModal({
   }
 
   const closeButton = (
-    <Button variant="secondary" onClick={onClose}>
+    <Button variant="secondary" onClick={onClose} disabled={mutation.isPending}>
       {t(mutation.isIdle || mutation.isPending ? 'orders.actions.cancel' : 'orders.actions.close')}
     </Button>
   )
@@ -106,8 +106,9 @@ export function OrderModal({
   return (
     <Modal
       open
+      // Esc, overlay click and the header X all land here; none may close mid-request.
       onOpenChange={(open) => {
-        if (!open) onClose()
+        if (!open && !mutation.isPending) onClose()
       }}
       title={t(side === 'BUY' ? 'orders.title.buy' : 'orders.title.sell', {
         ticker: instrument.ticker,
