@@ -95,7 +95,7 @@ Use a fresh candidate unless noted.
 
 - [ ] `/` redirects to `/instruments`.
 - [ ] Reload on `/portfolio` and `/instruments?q=al` keeps the page and the search.
-- [ ] Search, then Back/Forward → box and results follow the URL.
+- [ ] Open Portfolio, then Instruments, and type a search → the URL gets `?q=` but typing adds no history entries, so Back returns to Portfolio. Forward comes back with the same box text and results.
 - [ ] Unknown path (e.g. `/nope`) shows "Page not found"; its link goes to instruments.
 
 ## 8. Failure injection
