@@ -1,0 +1,10 @@
+.root {
+  width: 100%;
+  max-width: 640px;
+  min-width: 0;
+
+  // The clear button replaces the native one.
+  input::-webkit-search-cancel-button {
+    appearance: none;
+  }
+}
