@@ -80,22 +80,29 @@ export function OrderForm({
   const errorText = (code: OrderValidationCode | undefined) =>
     code ? t(errorKeys[code]) : undefined
 
-  const changeSide = (next: OrderSide) => {
-    setSide(next)
-    onSideChange(next)
-  }
+  // A SELL can never ask for more shares than the position holds.
+  const capShares = (shares: number | null, forSide: OrderSide) =>
+    forSide === 'SELL' && shares !== null && shares > availableShares ? availableShares : shares
 
   // Each field derives the other only on its own change, so the field being typed in never moves.
-  const changeQuantity = (value: string) => {
-    setQuantity(value)
+  const changeQuantity = (value: string, forSide = side) => {
     const parsed = parse(value)
-    setAmount(parsed === null ? '' : toInput(amountFromQuantity(parsed, lastPrice)))
+    const shares = capShares(parsed, forSide)
+    setQuantity(shares === parsed ? value : toInput(shares))
+    setAmount(shares === null ? '' : toInput(amountFromQuantity(shares, lastPrice)))
   }
 
   const changeAmount = (value: string) => {
     setAmount(value)
     const parsed = parse(value)
-    setQuantity(parsed === null ? '' : toInput(quantityFromAmount(parsed, lastPrice)))
+    const shares = parsed === null ? null : quantityFromAmount(parsed, lastPrice)
+    setQuantity(toInput(capShares(shares, side)))
+  }
+
+  const changeSide = (next: OrderSide) => {
+    setSide(next)
+    onSideChange(next)
+    changeQuantity(quantity, next)
   }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -125,7 +132,7 @@ export function OrderForm({
         onChange={changeSide}
         options={[
           { value: 'BUY', label: t('orders.side.BUY') },
-          { value: 'SELL', label: t('orders.side.SELL') },
+          { value: 'SELL', label: t('orders.side.SELL'), disabled: availableShares <= 0 },
         ]}
       />
 
@@ -142,6 +149,7 @@ export function OrderForm({
           type="number"
           step="1"
           min="1"
+          max={side === 'SELL' ? availableShares : undefined}
           inputMode="numeric"
           value={quantity}
           onChange={(event) => changeQuantity(event.target.value)}

@@ -97,6 +97,35 @@ describe('OrderModal', () => {
     expect(screen.getByText('Available shares').nextElementSibling).toHaveTextContent('10')
   })
 
+  it('disables Sell without a position in the instrument', () => {
+    renderModal({ holdings: [] })
+
+    expect(screen.getByLabelText('Sell')).toBeDisabled()
+    expect(screen.getByLabelText('Buy')).toBeEnabled()
+  })
+
+  it('caps a SELL quantity at the shares held', async () => {
+    const { user } = renderModal({ initialSide: 'SELL' })
+
+    await user.type(quantity(), '15')
+    expect(quantity()).toHaveValue(10)
+    expect(amount()).toHaveValue(500.7)
+
+    await user.clear(amount())
+    await user.type(amount(), '1000')
+    expect(quantity()).toHaveValue(10)
+  })
+
+  it('caps the quantity when switching from Buy to Sell', async () => {
+    const { user } = renderModal()
+    await user.type(quantity(), '25')
+
+    await user.click(screen.getByLabelText('Sell'))
+
+    expect(quantity()).toHaveValue(10)
+    expect(amount()).toHaveValue(500.7)
+  })
+
   it('shows localized errors on an invalid submit without calling the API', async () => {
     const bodies = captureOrders()
     const { user } = renderModal()
