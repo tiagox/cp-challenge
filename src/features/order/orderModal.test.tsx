@@ -1,31 +1,20 @@
 import { QueryClient } from '@tanstack/react-query'
-import { screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
 import { queryKeys } from '@/shared/api/queryKeys'
-import type { CreateOrderRequest } from '@/shared/api/types'
 import type { AppLocale } from '@/shared/i18n/types'
 import { dyca } from '@/test/fixtures/instruments'
 import { pendingLimitOrder } from '@/test/fixtures/orders'
 import { portfolioFixture } from '@/test/fixtures/portfolio'
+import { captureOrders } from '@/test/helpers'
 import { createTestQueryClient, renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 import { OrderModal, type OrderModalProps } from './index'
 
 const ordersUrl = `${API_BASE_URL}/orders`
-
-/** Records every POST /orders body, then falls through to the default handler. */
-function captureOrders() {
-  const bodies: CreateOrderRequest[] = []
-  server.use(
-    http.post(ordersUrl, async ({ request }) => {
-      bodies.push((await request.clone().json()) as CreateOrderRequest)
-    }),
-  )
-  return bodies
-}
 
 function renderModal(
   props: Partial<OrderModalProps> = {},
@@ -38,7 +27,7 @@ function renderModal(
       initialSide="BUY"
       cash={portfolioFixture.cash}
       holdings={portfolioFixture.holdings}
-      portfolioStatus="success"
+      portfolioError={null}
       onRetryPortfolio={vi.fn()}
       onClose={onClose}
       {...props}
@@ -214,6 +203,20 @@ describe('OrderModal', () => {
 
     await user.dblClick(screen.getByRole('button', { name: 'Buy' }))
     expect(screen.getByRole('button', { name: /Submitting/ })).toBeDisabled()
+
+    await screen.findByText('Order #648128')
+    expect(bodies).toHaveLength(1)
+  })
+
+  // A real double-click can land both submits before React re-renders with `isPending`.
+  it('sends a single request when two submits fire in the same tick', async () => {
+    const bodies = captureOrders()
+    const { user } = renderModal()
+    await user.type(quantity(), '1')
+
+    const form = quantity().closest('form')!
+    fireEvent.submit(form)
+    fireEvent.submit(form)
 
     await screen.findByText('Order #648128')
     expect(bodies).toHaveLength(1)

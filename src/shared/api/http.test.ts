@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL, CANDIDATE_STORAGE_KEY } from './config'
-import { ApiError } from './errors'
+import { ApiError, errorKey } from './errors'
 import { http } from './http'
 
 const CANDIDATE = 'test-candidate'
@@ -143,18 +143,7 @@ describe('responses', () => {
 })
 
 describe('failures', () => {
-  it('throws TIMEOUT when the request exceeds timeoutMs', async () => {
-    vi.useFakeTimers()
-    hangingFetch()
-
-    const pending = catchApiError(http.get('/instruments', { timeoutMs: 1_000 }))
-    await vi.advanceTimersByTimeAsync(1_000)
-    const error = await pending
-
-    expect(error.code).toBe('TIMEOUT')
-  })
-
-  it('uses a 15 s default timeout', async () => {
+  it('throws TIMEOUT after 15 s', async () => {
     vi.useFakeTimers()
     hangingFetch()
 
@@ -236,5 +225,14 @@ describe('retries', () => {
     await catchApiError(http.get('/instruments'))
 
     expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('errorKey', () => {
+  it('maps network, timeout and everything else', () => {
+    expect(errorKey(new ApiError('NETWORK', 'x'))).toBe('errors.network')
+    expect(errorKey(new ApiError('TIMEOUT', 'x'))).toBe('errors.timeout')
+    expect(errorKey(new ApiError('HTTP', 'x', { status: 500 }))).toBe('errors.server')
+    expect(errorKey(new Error('x'))).toBe('errors.server')
   })
 })

@@ -7,23 +7,6 @@
   text-align: center;
 }
 
-.icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  margin-bottom: var(--space-2);
-  color: var(--color-text-muted);
-  background: var(--color-surface-2);
-  border-radius: 50%;
-
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 .title {
   font-size: var(--text-lg);
   font-weight: 700;

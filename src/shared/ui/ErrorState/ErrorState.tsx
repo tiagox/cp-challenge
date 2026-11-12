@@ -1,38 +1,28 @@
 import { RotateCw, TriangleAlert } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { cx } from '@/shared/lib/cx'
+import { errorKey } from '@/shared/api/errors'
 import { Button } from '../Button'
 import styles from './ErrorState.module.scss'
 
 export interface ErrorStateProps {
-  title?: string
-  description?: string
-  onRetry?: () => void
-  retryLabel?: string
-  className?: string
+  /** The failed query's error; picks the network, timeout or server message. */
+  error: unknown
+  onRetry: () => void
 }
 
-export function ErrorState({
-  title,
-  description,
-  onRetry,
-  retryLabel,
-  className,
-}: ErrorStateProps) {
+export function ErrorState({ error, onRetry }: ErrorStateProps) {
   const { t } = useTranslation()
 
   return (
-    <div className={cx(styles.state, className)} role="alert">
+    <div className={styles.state} role="alert">
       <span className={styles.icon} aria-hidden="true">
         <TriangleAlert />
       </span>
-      <h2 className={styles.title}>{title ?? t('common.unexpectedErrorTitle')}</h2>
-      <p className={styles.description}>{description ?? t('common.unexpectedErrorDescription')}</p>
-      {onRetry ? (
-        <Button variant="secondary" leftIcon={<RotateCw />} onClick={onRetry}>
-          {retryLabel ?? t('common.retry')}
-        </Button>
-      ) : null}
+      <h2 className={styles.title}>{t('errors.unexpected')}</h2>
+      <p className={styles.description}>{t(errorKey(error))}</p>
+      <Button variant="secondary" leftIcon={<RotateCw />} onClick={onRetry}>
+        {t('common.retry')}
+      </Button>
     </div>
   )
 }

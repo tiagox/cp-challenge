@@ -12,7 +12,6 @@ import {
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
-import { errorKey } from './errorKey'
 import { PlacedOrdersSection } from './PlacedOrdersSection'
 import styles from './PortfolioPage.module.scss'
 
@@ -68,13 +67,7 @@ export default function PortfolioPage() {
       </>
     )
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <PortfolioSkeleton />
   }

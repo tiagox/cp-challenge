@@ -1,7 +1,7 @@
 import type { OrderSide, OrderType } from '@/shared/api/types'
 import { isFiniteNumber, round2 } from '@/shared/lib/math'
 
-export type OrderField = 'quantity' | 'amount' | 'price' | 'form'
+export type OrderField = 'quantity' | 'price' | 'form'
 
 export type OrderValidationCode =
   | 'QUANTITY_REQUIRED'
@@ -18,7 +18,6 @@ export interface OrderValidationInput {
   side: OrderSide
   type: OrderType
   quantity: number | null
-  amount: number | null
   limitPrice: number | null
   lastPrice: number
   cash: number

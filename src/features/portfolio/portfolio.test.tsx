@@ -6,6 +6,7 @@ import { useOrderTicket } from '@/features/order'
 import PortfolioPage from '@/pages/portfolio/PortfolioPage'
 import { API_BASE_URL } from '@/shared/api/config'
 import { capxHolding, dycaHolding } from '@/test/fixtures/portfolio'
+import { rowFor } from '@/test/helpers'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 
@@ -14,12 +15,6 @@ const portfolioUrl = `${API_BASE_URL}/portfolio`
 function TicketState() {
   const { state } = useOrderTicket()
   return <pre data-testid="ticket">{JSON.stringify(state)}</pre>
-}
-
-function rowFor(table: HTMLElement, ticker: string) {
-  const row = within(table).getByRole('rowheader', { name: ticker }).closest('tr')
-  if (!row) throw new Error(`No row for ${ticker}`)
-  return row
 }
 
 function summaryValue(label: string) {
@@ -173,7 +168,6 @@ describe('PortfolioPage', () => {
     await userEvent.click(within(row).getByRole('button', { name: 'Sell CAPX' }))
 
     expect(JSON.parse(screen.getByTestId('ticket').textContent ?? '')).toEqual({
-      isOpen: true,
       presetSide: 'SELL',
       presetQuantity: capxHolding.quantity,
       instrument: {

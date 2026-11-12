@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it } from 'vitest'
@@ -60,6 +60,14 @@ describe('Modal', () => {
     await user.keyboard('{Escape}')
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  })
+
+  it('returns focus to the element that opened it', async () => {
+    const { user } = await openModal()
+
+    await user.keyboard('{Escape}')
+
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Open' })).toHaveFocus())
   })
 
   it('traps focus inside while open', async () => {

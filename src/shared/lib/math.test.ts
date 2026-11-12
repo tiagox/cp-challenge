@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { floorShares, isFiniteNumber, round2 } from './math'
+import { floorShares, isFiniteNumber, round2, signTone } from './math'
 
 describe('isFiniteNumber', () => {
   it('accepts finite numbers only', () => {
@@ -40,5 +40,15 @@ describe('floorShares', () => {
     expect(floorShares(-100, 10)).toBe(0)
     expect(floorShares(NaN, 10)).toBe(0)
     expect(floorShares(100, Infinity)).toBe(0)
+  })
+})
+
+describe('signTone', () => {
+  it('colors by sign and keeps zero and invalid values neutral', () => {
+    expect(signTone(12.5)).toBe('positive')
+    expect(signTone(-0.01)).toBe('negative')
+    expect(signTone(0)).toBe('neutral')
+    expect(signTone(null)).toBe('neutral')
+    expect(signTone(NaN)).toBe('neutral')
   })
 })

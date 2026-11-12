@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest'
 import { useOrderTicket } from '@/features/order'
 import { API_BASE_URL } from '@/shared/api/config'
 import { dyca, instrumentsFixture } from '@/test/fixtures/instruments'
+import { rowFor } from '@/test/helpers'
 import { renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 import InstrumentsPage from './InstrumentsPage'
@@ -53,13 +54,6 @@ function renderPage(route = '/instruments', lang?: 'es') {
 
 const searchbox = () => screen.getByRole('searchbox', { name: 'Search by ticker' })
 const location = () => screen.getByTestId('location').textContent
-
-function rowFor(table: HTMLElement, ticker: string) {
-  const header = within(table).getByRole('rowheader', { name: new RegExp(`^${ticker}`) })
-  const row = header.closest('tr')
-  if (!row) throw new Error(`No row for ${ticker}`)
-  return row
-}
 
 async function expectRows(count: number) {
   await waitFor(() =>
@@ -195,7 +189,6 @@ describe('InstrumentsPage search', () => {
     )
 
     expect(JSON.parse(screen.getByTestId('ticket').textContent ?? '')).toMatchObject({
-      isOpen: true,
       presetSide: 'BUY',
       instrument: { id: dyca.id, ticker: 'DYCA', name: dyca.name, last_price: dyca.last_price },
     })

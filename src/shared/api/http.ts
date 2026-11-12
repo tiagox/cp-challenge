@@ -5,10 +5,9 @@ export interface RequestOptions {
   method?: 'GET' | 'POST'
   body?: unknown
   signal?: AbortSignal
-  timeoutMs?: number
 }
 
-export const DEFAULT_TIMEOUT_MS = 15_000
+const TIMEOUT_MS = 15_000
 
 function combineSignals(signals: AbortSignal[]): AbortSignal {
   const [first] = signals
@@ -27,7 +26,7 @@ function combineSignals(signals: AbortSignal[]): AbortSignal {
 }
 
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, signal: callerSignal, timeoutMs = DEFAULT_TIMEOUT_MS } = options
+  const { method = 'GET', body, signal: callerSignal } = options
   const hasBody = body !== undefined
 
   const headers: Record<string, string> = {
@@ -38,7 +37,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   if (hasBody) headers['Content-Type'] = 'application/json'
 
   const timeoutController = new AbortController()
-  const timer = setTimeout(() => timeoutController.abort(), timeoutMs)
+  const timer = setTimeout(() => timeoutController.abort(), TIMEOUT_MS)
   const signal = combineSignals(
     callerSignal ? [callerSignal, timeoutController.signal] : [timeoutController.signal],
   )
@@ -70,7 +69,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       throw new ApiError('ABORTED', 'Request aborted', { cause: error })
     }
     if (timeoutController.signal.aborted) {
-      throw new ApiError('TIMEOUT', `Request timed out after ${timeoutMs} ms`, { cause: error })
+      throw new ApiError('TIMEOUT', `Request timed out after ${TIMEOUT_MS} ms`, { cause: error })
     }
     if (error instanceof SyntaxError) {
       throw new ApiError('INVALID_RESPONSE', 'Response is not valid JSON', {

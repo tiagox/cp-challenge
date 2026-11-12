@@ -56,14 +56,15 @@ export function renderWithProviders(ui: ReactNode, options: RenderOptions = {}):
 }
 
 /** Renders the real route tree (layout, lazy pages, not-found) at `route`. */
-export function renderApp(options: RenderOptions = {}): RenderResult {
+export function renderApp(options: RenderOptions = {}) {
   void i18n.changeLanguage(options.lang ?? 'en')
   const queryClient = options.queryClient ?? createTestQueryClient()
   const router = createMemoryRouter(routes, { initialEntries: [options.route ?? '/'] })
 
-  return render(
+  const view = render(
     <AppTestProviders queryClient={queryClient}>
       <RouterProvider router={router} />
     </AppTestProviders>,
   )
+  return { ...view, router }
 }

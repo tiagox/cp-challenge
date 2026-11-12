@@ -5,7 +5,7 @@ import styles from './Card.module.scss'
 export interface CardProps {
   children: ReactNode
   className?: string
-  as?: 'div' | 'section' | 'article' | 'li'
+  as?: 'div' | 'article'
 }
 
 export function Card({ children, className, as: Component = 'div' }: CardProps) {

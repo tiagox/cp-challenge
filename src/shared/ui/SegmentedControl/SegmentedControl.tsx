@@ -16,7 +16,6 @@ export interface SegmentedControlProps<T extends string> {
   options: ReadonlyArray<SegmentedOption<T>>
   onChange: (value: T) => void
   name?: string
-  disabled?: boolean
   className?: string
 }
 
@@ -26,14 +25,13 @@ export function SegmentedControl<T extends string>({
   options,
   onChange,
   name,
-  disabled = false,
   className,
 }: SegmentedControlProps<T>) {
   const generatedName = useId()
   const groupName = name ?? generatedName
 
   return (
-    <fieldset className={cx(styles.group, className)} disabled={disabled}>
+    <fieldset className={cx(styles.group, className)}>
       <legend>
         <VisuallyHidden>{label}</VisuallyHidden>
       </legend>

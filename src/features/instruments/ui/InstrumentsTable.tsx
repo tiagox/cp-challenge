@@ -51,10 +51,7 @@ export function InstrumentsTable({ instruments, onSelect }: InstrumentsTableProp
               <MoneyText value={instrument.last_price} />
             </td>
             <td className={styles.numeric}>
-              <PercentText
-                value={returnPercent(instrument.last_price, instrument.close_price)}
-                tone="auto"
-              />
+              <PercentText value={returnPercent(instrument.last_price, instrument.close_price)} />
             </td>
             <td className={styles.action}>
               <Button size="sm" onClick={() => onSelect(instrument)}>

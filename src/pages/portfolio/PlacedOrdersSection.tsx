@@ -10,7 +10,6 @@ import {
 } from '@/features/order'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
-import { errorKey } from './errorKey'
 import styles from './PortfolioPage.module.scss'
 
 /** Loads and fails on its own, so it never blocks the summary or the positions. */
@@ -40,13 +39,7 @@ export function PlacedOrdersSection() {
         />
       )
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <PlacedOrdersSkeleton />
   }

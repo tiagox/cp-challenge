@@ -34,25 +34,12 @@
     bottom: auto;
     left: 50%;
     width: calc(100% - var(--space-6));
+    max-width: 560px;
     max-height: min(90dvh, 760px);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     transform: translate(-50%, -50%);
     animation: fade-in 0.15s ease;
-  }
-}
-
-@include respond-to(md) {
-  .sm {
-    max-width: 400px;
-  }
-
-  .md {
-    max-width: 560px;
-  }
-
-  .lg {
-    max-width: 720px;
   }
 }
 

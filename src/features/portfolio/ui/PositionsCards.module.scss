@@ -1,23 +1,11 @@
 @use '@/app/styles/mixins' as *;
 
 .list {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: 0;
-  margin: 0;
-  list-style: none;
-
-  @include respond-to(md) {
-    display: none;
-  }
+  @include card-list;
 }
 
 .card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-4);
-  padding: var(--space-4);
+  @include card-body;
 }
 
 .ticker {
@@ -26,20 +14,5 @@
 }
 
 .metrics {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin: 0;
-
-  dt {
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-  }
-
-  dd {
-    margin: 0;
-    overflow-wrap: anywhere;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
+  @include card-metrics;
 }

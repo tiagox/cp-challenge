@@ -6,7 +6,6 @@ export const common = {
   cancel: 'Cancel',
   back: 'Back',
   notAvailable: '—',
-  comingSoon: 'Coming soon',
   unexpectedErrorTitle: 'Something went wrong',
   unexpectedErrorDescription: 'Please try again.',
   notFoundTitle: 'Page not found',

@@ -1,3 +1,4 @@
+import { returnPercent } from '@/entities/instrument/model/metrics'
 import { isFiniteNumber } from '@/shared/lib/math'
 import type { Holding } from './types'
 
@@ -20,12 +21,9 @@ export function profitLoss(quantity: number, lastPrice: number, avgCostPrice: nu
   return finiteOrZero((lastPrice - avgCostPrice) * quantity)
 }
 
-/** (last - avg cost) / avg cost * 100. `null` when avg cost is not positive or inputs are invalid. */
-export function returnOnCost(lastPrice: number, avgCostPrice: number): number | null {
-  if (!isFiniteNumber(lastPrice) || !isFiniteNumber(avgCostPrice) || avgCostPrice <= 0) return null
-  const result = ((lastPrice - avgCostPrice) / avgCostPrice) * 100
-  return isFiniteNumber(result) ? result : null
-}
+/** (last - avg cost) / avg cost * 100: the instrument return formula with avg cost as the base. */
+export const returnOnCost: (lastPrice: number, avgCostPrice: number) => number | null =
+  returnPercent
 
 export function aggregatePortfolio(holdings: Holding[]): PortfolioMetrics {
   let totalMarketValue = 0

@@ -7,6 +7,7 @@ import InstrumentsPage from '@/pages/instruments/InstrumentsPage'
 import { API_BASE_URL } from '@/shared/api/config'
 import { queryKeys } from '@/shared/api/queryKeys'
 import { capx, dyca, instrumentsFixture } from '@/test/fixtures/instruments'
+import { rowFor } from '@/test/helpers'
 import { createTestQueryClient, renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 
@@ -15,13 +16,6 @@ const instrumentsUrl = `${API_BASE_URL}/instruments`
 function TicketState() {
   const { state } = useOrderTicket()
   return <pre data-testid="ticket">{JSON.stringify(state)}</pre>
-}
-
-function rowFor(table: HTMLElement, ticker: string) {
-  const header = within(table).getByRole('rowheader', { name: new RegExp(`^${ticker}`) })
-  const row = header.closest('tr')
-  if (!row) throw new Error(`No row for ${ticker}`)
-  return row
 }
 
 // Table and cards are both in the DOM and toggled by CSS, which jsdom does not apply,
@@ -168,7 +162,6 @@ describe('InstrumentsPage', () => {
     await userEvent.click(within(row).getByRole('button', { name: 'Trade' }))
 
     expect(JSON.parse(screen.getByTestId('ticket').textContent ?? '')).toMatchObject({
-      isOpen: true,
       presetSide: 'BUY',
       instrument: { id: capx.id, ticker: 'CAPX', name: capx.name, last_price: capx.last_price },
     })

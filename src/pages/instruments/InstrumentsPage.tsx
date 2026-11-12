@@ -4,19 +4,12 @@ import type { Instrument } from '@/entities/instrument/model/types'
 import { InstrumentsCards, InstrumentsSkeleton, InstrumentsTable } from '@/features/instruments'
 import { useOrderTicket } from '@/features/order'
 import { SearchInput } from '@/features/search'
-import { ApiError } from '@/shared/api/errors'
 import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
 import styles from './InstrumentsPage.module.scss'
 import { useInstrumentList } from './useInstrumentList'
-
-function errorKey(error: unknown) {
-  if (error instanceof ApiError && error.code === 'NETWORK') return 'errors.network'
-  if (error instanceof ApiError && error.code === 'TIMEOUT') return 'errors.timeout'
-  return 'errors.server'
-}
 
 export default function InstrumentsPage() {
   const { t } = useTranslation()
@@ -75,13 +68,7 @@ export default function InstrumentsPage() {
       )
     }
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <InstrumentsSkeleton />
   }
