@@ -120,7 +120,8 @@ describe('Placed orders section', () => {
     ).toBeInTheDocument()
     expect(within(section()).getByText('Orders you place will appear here.')).toBeInTheDocument()
     expect(within(section()).getByText('0 orders')).toBeInTheDocument()
-    expect(within(section()).queryByRole('button')).not.toBeInTheDocument()
+    // No action: the only button is the collapse toggle.
+    expect(within(section()).getAllByRole('button')).toHaveLength(1)
   })
 
   it('still renders when the portfolio request fails', async () => {
@@ -151,6 +152,25 @@ describe('Placed orders section', () => {
     expect(text(within(card).getByText('Total').nextElementSibling)).toBe('ARS 970.00')
     // The ticker is not a heading: position cards own the <h3> tickers.
     expect(within(card).queryByRole('heading')).not.toBeInTheDocument()
+  })
+
+  it('collapses and expands the list from the heading button', async () => {
+    renderWithProviders(<PortfolioPage />)
+    await tableRows()
+    const toggle = within(section()).getByRole('button', { name: 'Placed orders' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+
+    await userEvent.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'false')
+    expect(within(section()).queryByRole('table')).not.toBeInTheDocument()
+    // The heading and count stay visible while collapsed.
+    expect(within(section()).getByText('3 orders')).toBeVisible()
+
+    await userEvent.click(toggle)
+
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    expect(within(section()).getByRole('table')).toBeInTheDocument()
   })
 
   it('renders Spanish copy and formatting', async () => {

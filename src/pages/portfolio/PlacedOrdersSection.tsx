@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useInstruments } from '@/features/instruments'
 import {
@@ -15,6 +16,7 @@ import styles from './PortfolioPage.module.scss'
 /** Loads and fails on its own, so it never blocks the summary or the positions. */
 export function PlacedOrdersSection() {
   const { t } = useTranslation()
+  const [expanded, setExpanded] = useState(true)
   const { data, error, isFetching, refetch } = usePlacedOrders()
   // Instruments only provide tickers; while they load or if they fail, rows show `#id`.
   const { data: instruments } = useInstruments()
@@ -52,14 +54,26 @@ export function PlacedOrdersSection() {
   return (
     <section aria-labelledby="placed-orders-title" className={styles.section}>
       <div className={styles.sectionHeader}>
+        {/* Disclosure: the heading's button names the section and toggles the list. */}
         <h2 id="placed-orders-title" className={styles.sectionTitle}>
-          {t('orders.history.title')}
+          <button
+            type="button"
+            className={styles.toggle}
+            aria-expanded={expanded}
+            aria-controls="placed-orders-content"
+            onClick={() => setExpanded((value) => !value)}
+          >
+            {t('orders.history.title')}
+            <ChevronDown aria-hidden className={styles.chevron} size={20} />
+          </button>
         </h2>
         {data ? (
           <span className={styles.count}>{t('orders.history.count', { count: data.length })}</span>
         ) : null}
       </div>
-      {content}
+      <div id="placed-orders-content" hidden={!expanded}>
+        {content}
+      </div>
     </section>
   )
 }
