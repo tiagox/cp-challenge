@@ -1,0 +1,104 @@
+@use '@/app/styles/mixins' as *;
+
+// Above the mobile bottom nav (60px tabs + safe area) on small screens.
+$offset-mobile: calc(60px + env(safe-area-inset-bottom) + var(--space-3));
+
+.trigger {
+  position: fixed;
+  right: var(--space-3);
+  bottom: $offset-mobile;
+  z-index: var(--z-modal);
+  color: var(--color-text-muted);
+  opacity: 0.6;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+
+  @include respond-to(md) {
+    bottom: var(--space-3);
+  }
+}
+
+// `inset: auto` overrides the UA popover centering.
+.panel {
+  position: fixed;
+  inset: auto;
+  right: var(--space-3);
+  bottom: calc($offset-mobile + 44px);
+  z-index: var(--z-modal);
+  width: min(280px, calc(100vw - 2 * var(--space-3)));
+  padding: var(--space-3);
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+
+  &:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  @include respond-to(md) {
+    bottom: calc(var(--space-3) + 44px);
+  }
+}
+
+.title {
+  font-weight: 700;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.control {
+  width: 100%;
+  min-height: 32px;
+  padding: 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+
+  @include focus-ring;
+
+  &:disabled {
+    opacity: 0.55;
+  }
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.turnOff {
+  align-self: flex-start;
+  padding: 0;
+  font-size: var(--text-xs);
+  color: var(--color-accent-text);
+  text-decoration: underline;
+
+  @include focus-ring;
+}

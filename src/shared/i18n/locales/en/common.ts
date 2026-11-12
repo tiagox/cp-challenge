@@ -12,4 +12,12 @@ export const common = {
   notFoundDescription: 'The page you are looking for does not exist.',
   goToInstruments: 'Go to instruments',
   refresh: 'Refresh',
+  debug: {
+    open: 'Debug tools',
+    title: 'Debug',
+    newCandidate: 'New ID',
+    apply: 'Apply',
+    candidateFromEnv: 'Set by VITE_CANDIDATE_ID; cannot be changed here.',
+    turnOff: 'Turn off debug',
+  },
 }

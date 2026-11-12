@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { RouteFallback } from '@/shared/ui/RouteFallback'
+import { DebugPanel } from '../debug/DebugPanel'
 import styles from './AppLayout.module.scss'
 import { Container } from './Container'
 import { Header } from './Header'
@@ -22,6 +23,7 @@ export function AppLayout() {
       </main>
       <MobileNav />
       <OrderModalContainer />
+      <DebugPanel />
     </div>
   )
 }
