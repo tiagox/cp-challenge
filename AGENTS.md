@@ -31,8 +31,9 @@ There is no application code yet. Do not assume `src/`, `package.json`, `docs/ap
 15. `sessions/13-spec-07-handoff.md` — spec 06 implementation facts and hand-off to spec 07
 16. `sessions/14-spec-08-handoff.md` — spec 07 implementation facts, review changes, hand-off to spec 08
 17. `sessions/15-hardening.md` — spec 08 hardening decisions and what was left as is
-18. The spec you are assigned
-19. The specs it depends on, especially their “Contracts” and “Files owned” sections
+18. `sessions/16-bug-mode-resilience.md` — how the app degrades under API bug modes, LIMIT polling
+19. The spec you are assigned
+20. The specs it depends on, especially their “Contracts” and “Files owned” sections
 
 Do not read only the task description. File ownership and layering rules are enforced by the specs.
 
