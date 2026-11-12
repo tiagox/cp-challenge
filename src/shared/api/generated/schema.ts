@@ -66,7 +66,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * List the candidate's orders
+         * @description Every order the candidate has sent, oldest first. No paging or filters.
+         */
+        get: operations["listOrders"];
         put?: never;
         /**
          * Send a BUY or SELL order
@@ -329,6 +333,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Instrument"][];
+                };
+            };
+            400: components["responses"]["BadRequest"];
+        };
+    };
+    listOrders: {
+        parameters: {
+            query?: never;
+            header: {
+                /**
+                 * @description Bug mode. Mandatory on every request, even when `off`; a missing or
+                 *     invalid value returns 400. The client always sends it.
+                 */
+                "X-Enable-Bugs": components["parameters"]["EnableBugsHeader"];
+                /**
+                 * @description Anonymous candidate key. Scopes cash and holdings. A new candidate
+                 *     starts with {"cash": 1000000, "holdings": []}. The client sends it on
+                 *     every request.
+                 */
+                "X-Candidate-Id": components["parameters"]["CandidateIdHeader"];
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The candidate's orders. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"][];
                 };
             };
             400: components["responses"]["BadRequest"];

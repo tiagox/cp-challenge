@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { formatCurrency, formatPercent, formatQuantity } from './format'
+import { formatCurrency, formatDateTime, formatPercent, formatQuantity } from './format'
 
 /** Intl output uses non-breaking spaces; normalize them before asserting. */
 const normalize = (value: string | null) => value?.replace(/[\u00a0\u202f]/g, ' ') ?? null
@@ -54,5 +54,22 @@ describe('formatQuantity', () => {
   it('returns null for invalid input', () => {
     expect(formatQuantity(null, 'en')).toBeNull()
     expect(formatQuantity(NaN, 'es')).toBeNull()
+  })
+})
+
+describe('formatDateTime', () => {
+  // vitest.config.ts runs tests in UTC.
+  const iso = '2026-11-12T01:53:34.884Z'
+
+  it('formats EN date and time', () => {
+    expect(formatDateTime(iso, 'en')).toBe('Nov 12, 2026, 1:53 AM')
+  })
+
+  it('formats ES date and time', () => {
+    expect(formatDateTime(iso, 'es')).toBe('12 nov 2026, 1:53 a. m.')
+  })
+
+  it.each(['not a date', '', null, undefined])('returns null for %s', (value) => {
+    expect(formatDateTime(value, 'en')).toBeNull()
   })
 })

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { formatCurrency, formatPercent, formatQuantity } from '@/shared/lib/format'
+import { formatCurrency, formatDateTime, formatPercent, formatQuantity } from '@/shared/lib/format'
 import { isAppLocale } from './language'
 import type { AppLocale } from './types'
 
@@ -8,6 +8,7 @@ export function useFormat(): {
   currency: (value: number | null | undefined, options?: { signed?: boolean }) => string | null
   percent: (value: number | null | undefined, options?: { signed?: boolean }) => string | null
   quantity: (value: number | null | undefined) => string | null
+  dateTime: (value: string | null | undefined) => string | null
 } {
   // Subscribing through useTranslation re-renders consumers when the language changes.
   const { i18n } = useTranslation()
@@ -18,5 +19,6 @@ export function useFormat(): {
     currency: (value, options) => formatCurrency(value, locale, options),
     percent: (value, options) => formatPercent(value, locale, options),
     quantity: (value) => formatQuantity(value, locale),
+    dateTime: (value) => formatDateTime(value, locale),
   }
 }

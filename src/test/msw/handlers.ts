@@ -2,7 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { API_BASE_URL } from '@/shared/api/config'
 import type { CreateOrderRequest, Order } from '@/shared/api/types'
 import { instrumentsFixture } from '../fixtures/instruments'
-import { filledOrder } from '../fixtures/orders'
+import { filledOrder, placedOrdersFixture } from '../fixtures/orders'
 import { portfolioFixture } from '../fixtures/portfolio'
 
 const url = (path: string) => `${API_BASE_URL}${path}`
@@ -37,6 +37,10 @@ export const handlers = [
     return HttpResponse.json(
       instrumentsFixture.filter((instrument) => instrument.ticker.toLowerCase().includes(query)),
     )
+  }),
+
+  http.get(url('/orders'), ({ request }) => {
+    return headerError(request) ?? HttpResponse.json(placedOrdersFixture)
   }),
 
   http.post(url('/orders'), async ({ request }) => {

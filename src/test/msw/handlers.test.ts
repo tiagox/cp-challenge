@@ -2,6 +2,7 @@ import { getResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
 import { http } from '@/shared/api/http'
+import { placedOrdersFixture } from '../fixtures/orders'
 import { handlers } from './handlers'
 
 const headers = { 'X-Enable-Bugs': 'off', 'X-Candidate-Id': 'test-candidate' }
@@ -53,5 +54,20 @@ describe('MSW handlers', () => {
       quantity: 3,
     })
     expect(order).toMatchObject({ status: 'FILLED', quantity: 3, side: 'SELL' })
+  })
+
+  it('reject GET /orders without the candidate header', async () => {
+    const { status, body } = await rawGet('/orders', { 'X-Enable-Bugs': 'off' })
+    expect(status).toBe(400)
+    expect(body).toEqual({ error: 'Missing X-Candidate-Id header' })
+  })
+
+  it('reject GET /orders without the bug mode header', async () => {
+    const { status } = await rawGet('/orders', { 'X-Candidate-Id': 'c' })
+    expect(status).toBe(400)
+  })
+
+  it('list the placed orders, oldest first', async () => {
+    expect(await http.get('/orders')).toEqual(placedOrdersFixture)
   })
 })

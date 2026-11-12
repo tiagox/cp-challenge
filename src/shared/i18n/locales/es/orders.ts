@@ -56,4 +56,29 @@ export const orders = {
     unknown: 'No se pudo completar la orden.',
     lastPriceUnavailable: 'El último precio no está disponible. Intentá más tarde.',
   },
+  history: {
+    title: 'Actividad',
+    count_one: '{{count}} orden',
+    count_other: '{{count}} órdenes',
+    caption: 'Órdenes que enviaste, de la más reciente a la más antigua',
+    unknownInstrument: '#{{id}}',
+    side: {
+      BUY: 'Compra',
+      SELL: 'Venta',
+    },
+    columns: {
+      date: 'Fecha',
+      instrument: 'Instrumento',
+      side: 'Operación',
+      type: 'Tipo',
+      quantity: 'Cantidad',
+      price: 'Precio',
+      total: 'Total',
+      status: 'Estado',
+    },
+    empty: {
+      title: 'Todavía no enviaste órdenes',
+      description: 'Las órdenes que envíes van a aparecer acá.',
+    },
+  },
 } satisfies typeof enOrders
