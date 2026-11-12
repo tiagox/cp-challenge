@@ -61,9 +61,10 @@ export function OrderModal({
 
   // The result wins over portfolio state: the refetch it triggers may fail without hiding it.
   let body
+  let result
   let footer = closeButton
   if (mutation.isSuccess || mutation.isError) {
-    body = mutation.isSuccess ? (
+    result = mutation.isSuccess ? (
       <OrderResult order={mutation.data} />
     ) : (
       <OrderResult error={mutation.error} />
@@ -130,6 +131,8 @@ export function OrderModal({
       footer={footer}
     >
       {body}
+      {/* Always mounted: screen readers only announce changes inside an existing live region. */}
+      <div aria-live="polite">{result}</div>
     </Modal>
   )
 }

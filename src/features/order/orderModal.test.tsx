@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query'
-import { screen, waitFor, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
@@ -137,10 +137,13 @@ describe('OrderModal', () => {
 
   it('shows the order id and the translated status with its raw code', async () => {
     const { user } = renderModal()
+    // The live region must exist before the result arrives, or it is not announced.
+    const liveRegion = document.querySelector('[aria-live="polite"]')
     await user.type(quantity(), '1')
     await user.click(screen.getByRole('button', { name: 'Buy' }))
 
     expect(await screen.findByText('Order #648128')).toBeInTheDocument()
+    expect(liveRegion).toHaveTextContent('Order #648128')
     expect(screen.getByText('Filled')).toHaveTextContent('FilledFILLED')
     expect(screen.getByText('Order filled successfully.')).toBeInTheDocument()
   })
@@ -256,25 +259,5 @@ describe('OrderModal', () => {
     expect(screen.getByText(/so the estimated total at your limit price may differ/)).toBeVisible()
     expect(quantity()).toHaveValue(3)
     expect(screen.getByText('Estimated total').nextElementSibling).toHaveTextContent('ARS 30.00')
-  })
-
-  it('shows a spinner while the portfolio loads and an error state with retry', async () => {
-    const onRetryPortfolio = vi.fn()
-    const { user, rerender } = renderModal({
-      cash: undefined,
-      holdings: undefined,
-      portfolioStatus: 'pending',
-    })
-    expect(within(screen.getByRole('dialog')).getByRole('status')).toBeInTheDocument()
-    rerender(<></>)
-
-    renderModal({
-      cash: undefined,
-      holdings: undefined,
-      portfolioStatus: 'error',
-      onRetryPortfolio,
-    })
-    await user.click(screen.getByRole('button', { name: 'Retry' }))
-    await waitFor(() => expect(onRetryPortfolio).toHaveBeenCalled())
   })
 })

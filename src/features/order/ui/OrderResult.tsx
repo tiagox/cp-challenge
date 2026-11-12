@@ -18,7 +18,7 @@ export function OrderResult({ order, error }: OrderResultProps) {
   const serverMessage = error instanceof ApiError ? error.serverMessage : undefined
 
   return (
-    <div className={styles.result} aria-live="polite">
+    <div className={styles.result}>
       {order ? (
         <>
           <h3 className={styles.title}>{t('orders.result.title')}</h3>
