@@ -4,39 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { resolveInitialTheme, THEME_STORAGE_KEY } from '@/app/theme/theme'
 import { ThemeToggle } from '@/app/layout/ThemeToggle'
 import { resolveInitialLanguage } from '@/shared/i18n/language'
-import indexHtml from '../../index.html?raw'
+import { runBootScript, stubPrefersDark } from './helpers'
 import { renderWithProviders } from './render'
-
-type ChangeListener = (event: MediaQueryListEvent) => void
-
-/** jsdom has no `matchMedia`; this stub lets tests flip `prefers-color-scheme`. */
-function stubPrefersDark(initial: boolean) {
-  let matches = initial
-  const listeners = new Set<ChangeListener>()
-  vi.stubGlobal(
-    'matchMedia',
-    vi.fn((query: string) => ({
-      get matches() {
-        return query === '(prefers-color-scheme: dark)' && matches
-      },
-      media: query,
-      addEventListener: (_type: string, listener: ChangeListener) => listeners.add(listener),
-      removeEventListener: (_type: string, listener: ChangeListener) => listeners.delete(listener),
-    })),
-  )
-  return {
-    set(value: boolean) {
-      matches = value
-      for (const listener of listeners) listener({ matches } as MediaQueryListEvent)
-    },
-  }
-}
-
-function runBootScript() {
-  const script = /<script>([\s\S]*?)<\/script>/.exec(indexHtml)?.[1]
-  if (!script) throw new Error('Boot script not found in index.html')
-  new Function(script)()
-}
 
 beforeEach(() => {
   delete document.documentElement.dataset.theme

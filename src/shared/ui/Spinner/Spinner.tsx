@@ -5,18 +5,16 @@ import { VisuallyHidden } from '../VisuallyHidden'
 import styles from './Spinner.module.scss'
 
 interface SpinnerProps {
-  label?: string
   size?: 'sm' | 'md'
-  className?: string
 }
 
-export function Spinner({ label, size = 'md', className }: SpinnerProps) {
+export function Spinner({ size = 'md' }: SpinnerProps) {
   const { t } = useTranslation()
 
   return (
-    <span role="status" className={cx(styles.spinner, styles[size], className)}>
+    <span role="status" className={cx(styles.spinner, styles[size])}>
       <LoaderCircle className={styles.icon} aria-hidden="true" />
-      <VisuallyHidden>{label ?? t('common.loading')}</VisuallyHidden>
+      <VisuallyHidden>{t('common.loading')}</VisuallyHidden>
     </span>
   )
 }

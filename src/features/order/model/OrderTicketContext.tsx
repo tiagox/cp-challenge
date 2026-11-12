@@ -15,7 +15,6 @@ export interface OpenOrderTicketInput {
 }
 
 export interface OrderTicketState {
-  isOpen: boolean
   instrument: OrderInstrument | null
   presetSide: OrderSide
   presetQuantity?: number
@@ -30,7 +29,6 @@ export interface OrderTicketContextValue {
 type OrderTicketAction = { type: 'open'; input: OpenOrderTicketInput } | { type: 'close' }
 
 const initialState: OrderTicketState = {
-  isOpen: false,
   instrument: null,
   presetSide: 'BUY',
 }
@@ -39,7 +37,6 @@ function orderTicketReducer(_state: OrderTicketState, action: OrderTicketAction)
   switch (action.type) {
     case 'open':
       return {
-        isOpen: true,
         instrument: action.input.instrument,
         presetSide: action.input.side ?? 'BUY',
         presetQuantity: action.input.quantity,

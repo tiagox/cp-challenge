@@ -4,31 +4,12 @@ import { http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
 import { queryKeys } from '@/shared/api/queryKeys'
-import type { CreateOrderRequest } from '@/shared/api/types'
 import { pendingLimitOrder } from './fixtures/orders'
+import { captureOrders, rowFor } from './helpers'
 import { createTestQueryClient, renderApp } from './render'
 import { server } from './server'
 
 const ordersUrl = `${API_BASE_URL}/orders`
-
-/** Records every POST /orders body, then falls through to the default handler. */
-function captureOrders() {
-  const bodies: CreateOrderRequest[] = []
-  server.use(
-    http.post(ordersUrl, async ({ request }) => {
-      bodies.push((await request.clone().json()) as CreateOrderRequest)
-    }),
-  )
-  return bodies
-}
-
-function rowFor(table: HTMLElement, ticker: string) {
-  const row = within(table)
-    .getByRole('rowheader', { name: new RegExp(`^${ticker}`) })
-    .closest('tr')
-  if (!row) throw new Error(`No row for ${ticker}`)
-  return row
-}
 
 async function tradeFrom(ticker: string) {
   const table = await screen.findByRole('table', { name: 'Instruments' })

@@ -11,7 +11,6 @@ import {
 
 interface ThemeContextValue {
   theme: Theme
-  setTheme: (theme: Theme) => void
   toggleTheme: () => void
 }
 
@@ -31,17 +30,17 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.theme = theme
   }, [theme])
 
-  const value = useMemo<ThemeContextValue>(() => {
-    const setTheme = (next: Theme) => {
-      setExplicitTheme(next)
-      persistTheme(next)
-    }
-    return {
+  const value = useMemo<ThemeContextValue>(
+    () => ({
       theme,
-      setTheme,
-      toggleTheme: () => setTheme(theme === 'dark' ? 'light' : 'dark'),
-    }
-  }, [theme])
+      toggleTheme: () => {
+        const next = theme === 'dark' ? 'light' : 'dark'
+        setExplicitTheme(next)
+        persistTheme(next)
+      },
+    }),
+    [theme],
+  )
 
   return <ThemeContext value={value}>{children}</ThemeContext>
 }

@@ -29,18 +29,12 @@ export function PortfolioSummary({ portfolio }: PortfolioSummaryProps) {
     {
       key: 'profitLoss',
       label: t('portfolio.summary.profitLoss'),
-      value: (
-        <MoneyText
-          value={metrics.profitLoss}
-          signed
-          tone={metrics.profitLoss >= 0 ? 'positive' : 'negative'}
-        />
-      ),
+      value: <MoneyText value={metrics.profitLoss} signed />,
     },
     {
       key: 'return',
       label: t('portfolio.summary.return'),
-      value: <PercentText value={metrics.returnPercent} tone="auto" />,
+      value: <PercentText value={metrics.returnPercent} />,
     },
   ]
 

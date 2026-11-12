@@ -5,27 +5,16 @@ import { delay, http, HttpResponse } from 'msw'
 import { describe, expect, it, vi } from 'vitest'
 import { API_BASE_URL } from '@/shared/api/config'
 import { queryKeys } from '@/shared/api/queryKeys'
-import type { CreateOrderRequest } from '@/shared/api/types'
 import type { AppLocale } from '@/shared/i18n/types'
 import { dyca } from '@/test/fixtures/instruments'
 import { pendingLimitOrder } from '@/test/fixtures/orders'
 import { portfolioFixture } from '@/test/fixtures/portfolio'
+import { captureOrders } from '@/test/helpers'
 import { createTestQueryClient, renderWithProviders } from '@/test/render'
 import { server } from '@/test/server'
 import { OrderModal, type OrderModalProps } from './index'
 
 const ordersUrl = `${API_BASE_URL}/orders`
-
-/** Records every POST /orders body, then falls through to the default handler. */
-function captureOrders() {
-  const bodies: CreateOrderRequest[] = []
-  server.use(
-    http.post(ordersUrl, async ({ request }) => {
-      bodies.push((await request.clone().json()) as CreateOrderRequest)
-    }),
-  )
-  return bodies
-}
 
 function renderModal(
   props: Partial<OrderModalProps> = {},
@@ -38,7 +27,7 @@ function renderModal(
       initialSide="BUY"
       cash={portfolioFixture.cash}
       holdings={portfolioFixture.holdings}
-      portfolioStatus="success"
+      portfolioError={null}
       onRetryPortfolio={vi.fn()}
       onClose={onClose}
       {...props}

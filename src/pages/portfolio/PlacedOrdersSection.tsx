@@ -8,7 +8,6 @@ import {
   PlacedOrdersTable,
   usePlacedOrders,
 } from '@/features/order'
-import { errorKey } from '@/shared/api/errors'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import styles from './PortfolioPage.module.scss'
@@ -40,13 +39,7 @@ export function PlacedOrdersSection() {
         />
       )
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <PlacedOrdersSkeleton />
   }

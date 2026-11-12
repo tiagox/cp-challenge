@@ -9,7 +9,6 @@ import {
   PositionsTable,
   usePortfolio,
 } from '@/features/portfolio'
-import { errorKey } from '@/shared/api/errors'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
@@ -68,13 +67,7 @@ export default function PortfolioPage() {
       </>
     )
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <PortfolioSkeleton />
   }

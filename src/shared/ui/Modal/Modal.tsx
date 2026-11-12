@@ -2,7 +2,6 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
-import { cx } from '@/shared/lib/cx'
 import { IconButton } from '../IconButton'
 import styles from './Modal.module.scss'
 
@@ -13,20 +12,9 @@ export interface ModalProps {
   description?: string
   children: ReactNode
   footer?: ReactNode
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
 }
 
-export function Modal({
-  open,
-  onOpenChange,
-  title,
-  description,
-  children,
-  footer,
-  size = 'md',
-  className,
-}: ModalProps) {
+export function Modal({ open, onOpenChange, title, description, children, footer }: ModalProps) {
   const { t } = useTranslation()
 
   return (
@@ -34,7 +22,7 @@ export function Modal({
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
         <Dialog.Content
-          className={cx(styles.content, styles[size], className)}
+          className={styles.content}
           // Without a description, opt out explicitly so no orphan `aria-describedby` is set.
           {...(description ? {} : { 'aria-describedby': undefined })}
         >

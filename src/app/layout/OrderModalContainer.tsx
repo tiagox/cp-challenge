@@ -9,7 +9,7 @@ import { usePortfolio } from '@/features/portfolio'
  */
 export function OrderModalContainer() {
   const { state, close } = useOrderTicket()
-  if (!state.isOpen || !state.instrument) return null
+  if (!state.instrument) return null
 
   return (
     <OpenOrderModal
@@ -42,7 +42,7 @@ function OpenOrderModal({
       initialQuantity={quantity}
       cash={portfolio.data?.cash}
       holdings={portfolio.data?.holdings}
-      portfolioStatus={portfolio.status}
+      portfolioError={portfolio.error}
       onRetryPortfolio={() => void portfolio.refetch()}
       onClose={onClose}
     />

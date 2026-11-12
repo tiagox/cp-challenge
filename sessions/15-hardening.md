@@ -20,6 +20,20 @@ related_specs:
 - **Shared list styles are Sass mixins in `src/app/styles/_mixins.scss`**: `data-table` (with `$sticky-head`), `desktop-only`, `mobile-only`, `card-list`, `card-body`, `card-metrics` and `list-skeleton`. The instruments, positions and orders tables, both card lists and both skeletons use them, and each module keeps its own class names. The compiled CSS has the same rules as before. Rejected: a shared UI component (`shared/ui/DataTable`), which would change markup in a hardening spec.
 - **`.env` added to `.gitignore`.** The README now says `cp .env.example .env`; before, only `*.local` was ignored.
 
-## 2. Left as is
+## 2. Simplification pass (whole-code review)
+
+A review of all of `src/` removed code that no caller uses, even where a spec lists it. These change earlier specs' contracts:
+
+- **UI kit (spec 02):** removed Button `ghost`/`danger` variants and `rightIcon`; Modal `size` and `className` (the modal is always 560 px wide); Skeleton `circle`; Spinner `label`/`className`; Badge `icon`/`className`; EmptyState `icon`/`className`; PageHeader `className`; SegmentedControl `disabled`; Card `as="section" | "li"`.
+- **`ErrorState` takes `{ error, onRetry }`.** It shows `errors.unexpected` as the title and maps the error with `errorKey`; `title`, `description`, `retryLabel` and `className` are gone. The order modal now passes the portfolio query's `error` (`portfolioError`) instead of `portfolioStatus`, so its error state reads like the pages' (network/timeout/server message) instead of the generic "Something went wrong / Please try again."
+- **`MoneyText` and `PercentText` color by sign.** `MoneyText signed` shows the sign and colors the value; `PercentText` is always signed and colored. Zero is neutral in both, so a break-even P&L is no longer green. `signTone` in `shared/lib/math.ts` holds the rule.
+- **Ticket state (specs 02 and 06):** `isOpen` removed; the ticket is open when `instrument` is set.
+- **Order validation (spec 06):** `amount` input and the `'amount'` field key removed; validation never read them.
+- **Theme context (spec 02):** `setTheme` removed; only `toggleTheme` is used.
+- **HTTP client (spec 00):** `timeoutMs` option removed; the 15 s timeout is a constant.
+- `returnOnCost` reuses `returnPercent` (same formula, different base). Queries no longer repeat the default `staleTime`. The order side lives only in `OrderModal`; `OrderForm` receives it.
+- Test helpers used in several files (`rowFor`, `captureOrders`, `stubPrefersDark`, `runBootScript`) live in `src/test/helpers.ts`.
+
+## 3. Left as is
 
 - `src/features/instruments/instruments.test.tsx` and `src/features/portfolio/portfolio.test.tsx` import `useOrderTicket` from the order feature. These are tests checking the open-ticket call, not product code; the layer rule holds for `src/` app code.

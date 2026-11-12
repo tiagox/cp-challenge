@@ -5,27 +5,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { THEME_STORAGE_KEY } from '@/app/theme/theme'
 import { API_BASE_URL, CANDIDATE_STORAGE_KEY, resolveCandidateId } from '@/shared/api/config'
 import { resolveInitialLanguage } from '@/shared/i18n/language'
-import indexHtml from '../../index.html?raw'
+import { runBootScript, stubPrefersDark } from './helpers'
 import { renderApp } from './render'
 import { server } from './server'
-
-function stubPrefersDark(matches: boolean) {
-  vi.stubGlobal(
-    'matchMedia',
-    vi.fn((query: string) => ({
-      matches: query === '(prefers-color-scheme: dark)' && matches,
-      media: query,
-      addEventListener: () => {},
-      removeEventListener: () => {},
-    })),
-  )
-}
-
-function runBootScript() {
-  const script = /<script>([\s\S]*?)<\/script>/.exec(indexHtml)?.[1]
-  if (!script) throw new Error('Boot script not found in index.html')
-  new Function(script)()
-}
 
 afterEach(() => {
   vi.unstubAllGlobals()

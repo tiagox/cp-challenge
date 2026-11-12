@@ -44,42 +44,38 @@ export function PositionsTable({ holdings, onSelect }: PositionsTableProps) {
         </tr>
       </thead>
       <tbody>
-        {holdings.map((holding) => {
-          const pnl = profitLoss(holding.quantity, holding.last_price, holding.avg_cost_price)
-
-          return (
-            <tr key={holding.instrument_id} className={styles.row}>
-              <th scope="row" className={styles.ticker}>
-                {holding.ticker}
-              </th>
-              <td className={styles.numeric}>
-                {quantity(holding.quantity) ?? t('common.notAvailable')}
-              </td>
-              <td className={styles.numeric}>
-                <MoneyText value={marketValue(holding.quantity, holding.last_price)} />
-              </td>
-              <td className={styles.numeric}>
-                <MoneyText value={pnl} signed tone={pnl >= 0 ? 'positive' : 'negative'} />
-              </td>
-              <td className={styles.numeric}>
-                <PercentText
-                  value={returnOnCost(holding.last_price, holding.avg_cost_price)}
-                  tone="auto"
-                />
-              </td>
-              <td className={styles.action}>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  aria-label={t('portfolio.actions.sellTicker', { ticker: holding.ticker })}
-                  onClick={() => onSelect(holding)}
-                >
-                  {t('portfolio.actions.sell')}
-                </Button>
-              </td>
-            </tr>
-          )
-        })}
+        {holdings.map((holding) => (
+          <tr key={holding.instrument_id} className={styles.row}>
+            <th scope="row" className={styles.ticker}>
+              {holding.ticker}
+            </th>
+            <td className={styles.numeric}>
+              {quantity(holding.quantity) ?? t('common.notAvailable')}
+            </td>
+            <td className={styles.numeric}>
+              <MoneyText value={marketValue(holding.quantity, holding.last_price)} />
+            </td>
+            <td className={styles.numeric}>
+              <MoneyText
+                value={profitLoss(holding.quantity, holding.last_price, holding.avg_cost_price)}
+                signed
+              />
+            </td>
+            <td className={styles.numeric}>
+              <PercentText value={returnOnCost(holding.last_price, holding.avg_cost_price)} />
+            </td>
+            <td className={styles.action}>
+              <Button
+                size="sm"
+                variant="secondary"
+                aria-label={t('portfolio.actions.sellTicker', { ticker: holding.ticker })}
+                onClick={() => onSelect(holding)}
+              >
+                {t('portfolio.actions.sell')}
+              </Button>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   )

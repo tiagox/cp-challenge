@@ -5,7 +5,6 @@ const base: OrderValidationInput = {
   side: 'BUY',
   type: 'MARKET',
   quantity: 10,
-  amount: null,
   limitPrice: null,
   lastPrice: 50,
   cash: 1000,

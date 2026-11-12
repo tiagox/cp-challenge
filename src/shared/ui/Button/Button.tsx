@@ -3,7 +3,7 @@ import { cx } from '@/shared/lib/cx'
 import { Spinner } from '../Spinner'
 import styles from './Button.module.scss'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
+export type ButtonVariant = 'primary' | 'secondary'
 export type ButtonSize = 'sm' | 'md'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,7 +12,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   fullWidth?: boolean
   isLoading?: boolean
   leftIcon?: ReactNode
-  rightIcon?: ReactNode
   ref?: Ref<HTMLButtonElement>
 }
 
@@ -22,7 +21,6 @@ export function Button({
   fullWidth = false,
   isLoading = false,
   leftIcon,
-  rightIcon,
   type = 'button',
   disabled,
   className,
@@ -45,7 +43,6 @@ export function Button({
     >
       {isLoading ? <Spinner size="sm" /> : leftIcon}
       {children}
-      {rightIcon}
     </button>
   )
 }

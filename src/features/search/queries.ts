@@ -9,6 +9,5 @@ export function useSearchInstruments(query: string) {
     queryKey: queryKeys.search(normalized),
     queryFn: ({ signal }) => searchInstruments(normalized, signal),
     enabled: normalized.length >= 1,
-    staleTime: 30_000,
   })
 }

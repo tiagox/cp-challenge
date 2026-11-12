@@ -33,7 +33,8 @@ const toInput = (value: number | null) => (value === null ? '' : String(value))
 export interface OrderFormProps {
   id: string
   instrument: OrderInstrument
-  initialSide: OrderSide
+  /** Owned by the modal, which also shows it in the title and the submit label. */
+  side: OrderSide
   initialQuantity?: number
   cash: number
   availableShares: number
@@ -44,7 +45,7 @@ export interface OrderFormProps {
 export function OrderForm({
   id,
   instrument,
-  initialSide,
+  side,
   initialQuantity,
   cash,
   availableShares,
@@ -55,7 +56,6 @@ export function OrderForm({
   const { quantity: formatQuantity } = useFormat()
   const lastPrice = instrument.last_price
 
-  const [side, setSide] = useState(initialSide)
   const [type, setType] = useState<OrderType>('MARKET')
   const [quantity, setQuantity] = useState(toInput(initialQuantity ?? null))
   const [amount, setAmount] = useState(() =>
@@ -70,7 +70,6 @@ export function OrderForm({
     side,
     type,
     quantity: parse(quantity),
-    amount: parse(amount),
     limitPrice: parse(limitPrice),
     lastPrice,
     cash,
@@ -100,7 +99,6 @@ export function OrderForm({
   }
 
   const changeSide = (next: OrderSide) => {
-    setSide(next)
     onSideChange(next)
     changeQuantity(quantity, next)
   }

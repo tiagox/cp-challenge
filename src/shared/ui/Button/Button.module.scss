@@ -63,21 +63,3 @@
     background: var(--color-surface-2);
   }
 }
-
-.ghost {
-  color: var(--color-text);
-  background: transparent;
-
-  &:hover:not(:disabled) {
-    background: var(--color-surface-2);
-  }
-}
-
-.danger {
-  color: var(--color-negative);
-  background: var(--color-negative-tint);
-
-  &:hover:not(:disabled) {
-    border-color: var(--color-negative);
-  }
-}

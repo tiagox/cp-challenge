@@ -18,7 +18,8 @@ export interface OrderModalProps {
   initialQuantity?: number
   cash: number | undefined
   holdings: Holding[] | undefined
-  portfolioStatus: 'pending' | 'error' | 'success'
+  /** Set when the portfolio query failed; `cash` is then undefined. */
+  portfolioError: unknown
   onRetryPortfolio: () => void
   onClose: () => void
 }
@@ -29,7 +30,7 @@ export function OrderModal({
   initialQuantity,
   cash,
   holdings,
-  portfolioStatus,
+  portfolioError,
   onRetryPortfolio,
   onClose,
 }: OrderModalProps) {
@@ -66,7 +67,7 @@ export function OrderModal({
       <OrderForm
         id={formId}
         instrument={instrument}
-        initialSide={initialSide}
+        side={side}
         initialQuantity={initialQuantity}
         cash={cash}
         availableShares={availableShares}
@@ -93,8 +94,8 @@ export function OrderModal({
         </Button>
       </>
     )
-  } else if (portfolioStatus === 'error') {
-    body = <ErrorState onRetry={onRetryPortfolio} />
+  } else if (portfolioError) {
+    body = <ErrorState error={portfolioError} onRetry={onRetryPortfolio} />
   } else {
     body = (
       <div className={styles.loading}>

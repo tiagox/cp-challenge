@@ -4,7 +4,6 @@ import type { Instrument } from '@/entities/instrument/model/types'
 import { InstrumentsCards, InstrumentsSkeleton, InstrumentsTable } from '@/features/instruments'
 import { useOrderTicket } from '@/features/order'
 import { SearchInput } from '@/features/search'
-import { errorKey } from '@/shared/api/errors'
 import { Button } from '@/shared/ui/Button'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
@@ -69,13 +68,7 @@ export default function InstrumentsPage() {
       )
     }
   } else if (error && !isFetching) {
-    content = (
-      <ErrorState
-        title={t('errors.unexpected')}
-        description={t(errorKey(error))}
-        onRetry={() => void refetch()}
-      />
-    )
+    content = <ErrorState error={error} onRetry={() => void refetch()} />
   } else {
     content = <InstrumentsSkeleton />
   }

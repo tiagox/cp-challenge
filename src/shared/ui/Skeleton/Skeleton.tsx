@@ -3,7 +3,7 @@ import { cx } from '@/shared/lib/cx'
 import styles from './Skeleton.module.scss'
 
 export interface SkeletonProps {
-  variant?: 'text' | 'rect' | 'circle'
+  variant?: 'text' | 'rect'
   width?: CSSProperties['width']
   height?: CSSProperties['height']
   className?: string

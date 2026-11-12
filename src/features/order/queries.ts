@@ -13,6 +13,5 @@ export function usePlacedOrders() {
     queryKey: queryKeys.orders,
     queryFn: ({ signal }) => getOrders(signal),
     select: newestFirst,
-    staleTime: 30_000,
   })
 }

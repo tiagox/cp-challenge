@@ -143,18 +143,7 @@ describe('responses', () => {
 })
 
 describe('failures', () => {
-  it('throws TIMEOUT when the request exceeds timeoutMs', async () => {
-    vi.useFakeTimers()
-    hangingFetch()
-
-    const pending = catchApiError(http.get('/instruments', { timeoutMs: 1_000 }))
-    await vi.advanceTimersByTimeAsync(1_000)
-    const error = await pending
-
-    expect(error.code).toBe('TIMEOUT')
-  })
-
-  it('uses a 15 s default timeout', async () => {
+  it('throws TIMEOUT after 15 s', async () => {
     vi.useFakeTimers()
     hangingFetch()
 

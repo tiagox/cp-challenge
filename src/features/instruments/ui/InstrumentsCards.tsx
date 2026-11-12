@@ -32,10 +32,7 @@ export function InstrumentsCards({ instruments, onSelect }: InstrumentsCardsProp
               </div>
               <div className={styles.prices}>
                 <MoneyText value={instrument.last_price} className={styles.price} />
-                <PercentText
-                  value={returnPercent(instrument.last_price, instrument.close_price)}
-                  tone="auto"
-                />
+                <PercentText value={returnPercent(instrument.last_price, instrument.close_price)} />
               </div>
             </div>
             <Button fullWidth onClick={() => onSelect(instrument)}>
