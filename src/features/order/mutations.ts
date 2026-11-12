@@ -12,6 +12,7 @@ export function useCreateOrder() {
     retry: false,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: queryKeys.portfolio })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.orders })
     },
   })
 }

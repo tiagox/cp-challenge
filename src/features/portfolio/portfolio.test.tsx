@@ -36,7 +36,7 @@ function summaryValue(label: string) {
 describe('PortfolioPage', () => {
   it('renders summary values from fixtures', async () => {
     renderWithProviders(<PortfolioPage />)
-    await screen.findByRole('table')
+    await screen.findByRole('table', { name: 'Positions' })
 
     // DYCA 10 × 50.07 + CAPX 20 × 49.71 = 1,494.90; cost 450 + 1,100 = 1,550.
     expect(summaryValue('Available cash')).toHaveTextContent('ARS 1,000,000.00')
@@ -47,7 +47,7 @@ describe('PortfolioPage', () => {
 
   it('renders ticker, quantity, market value, P&L and return per position', async () => {
     renderWithProviders(<PortfolioPage />)
-    const row = rowFor(await screen.findByRole('table'), 'DYCA')
+    const row = rowFor(await screen.findByRole('table', { name: 'Positions' }), 'DYCA')
 
     expect(within(row).getByText('10')).toBeInTheDocument()
     expect(within(row).getByText('ARS 500.70')).toBeInTheDocument()
@@ -69,7 +69,7 @@ describe('PortfolioPage', () => {
 
   it('uses positive and negative tones for P&L and return', async () => {
     renderWithProviders(<PortfolioPage />)
-    const table = await screen.findByRole('table')
+    const table = await screen.findByRole('table', { name: 'Positions' })
 
     expect(within(rowFor(table, 'DYCA')).getByText('+ARS 50.70').className).toMatch(/positive/)
     expect(within(rowFor(table, 'DYCA')).getByText('+11.27%').className).toMatch(/positive/)
@@ -85,7 +85,7 @@ describe('PortfolioPage', () => {
       ),
     )
     renderWithProviders(<PortfolioPage />)
-    const row = rowFor(await screen.findByRole('table'), 'DYCA')
+    const row = rowFor(await screen.findByRole('table', { name: 'Positions' }), 'DYCA')
 
     expect(within(row).getByText('—')).toBeInTheDocument()
     expect(summaryValue('Total return')).toHaveTextContent('—')
@@ -116,8 +116,9 @@ describe('PortfolioPage', () => {
   it('renders skeletons while loading', () => {
     renderWithProviders(<PortfolioPage />)
 
-    expect(screen.getByRole('status')).toHaveTextContent('Loading...')
-    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    // The first status is the portfolio skeleton; Placed orders has its own.
+    expect(screen.getAllByRole('status')[0]).toHaveTextContent('Loading...')
+    expect(screen.queryByRole('table', { name: 'Positions' })).not.toBeInTheDocument()
   })
 
   it('renders an error with a retry that refetches', async () => {
@@ -134,7 +135,7 @@ describe('PortfolioPage', () => {
 
     await userEvent.click(within(alert).getByRole('button', { name: 'Retry' }))
 
-    expect(await screen.findByRole('table')).toBeInTheDocument()
+    expect(await screen.findByRole('table', { name: 'Positions' })).toBeInTheDocument()
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
@@ -167,7 +168,7 @@ describe('PortfolioPage', () => {
         <TicketState />
       </>,
     )
-    const row = rowFor(await screen.findByRole('table'), 'CAPX')
+    const row = rowFor(await screen.findByRole('table', { name: 'Positions' }), 'CAPX')
 
     await userEvent.click(within(row).getByRole('button', { name: 'Sell CAPX' }))
 

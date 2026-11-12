@@ -54,4 +54,25 @@ export const orders = {
     unknown: 'The order could not be completed.',
     lastPriceUnavailable: 'The last price is unavailable. Try again later.',
   },
+  history: {
+    title: 'Placed orders',
+    count_one: '{{count}} order',
+    count_other: '{{count}} orders',
+    caption: 'Orders you have placed, newest first',
+    unknownInstrument: '#{{id}}',
+    columns: {
+      date: 'Date',
+      instrument: 'Instrument',
+      side: 'Side',
+      type: 'Type',
+      quantity: 'Quantity',
+      price: 'Price',
+      total: 'Total',
+      status: 'Status',
+    },
+    empty: {
+      title: 'No orders yet',
+      description: 'Orders you place will appear here.',
+    },
+  },
 }

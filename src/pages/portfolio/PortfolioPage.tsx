@@ -9,18 +9,12 @@ import {
   PositionsTable,
   usePortfolio,
 } from '@/features/portfolio'
-import { ApiError } from '@/shared/api/errors'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { ErrorState } from '@/shared/ui/ErrorState'
 import { PageHeader } from '@/shared/ui/PageHeader'
+import { errorKey } from './errorKey'
+import { PlacedOrdersSection } from './PlacedOrdersSection'
 import styles from './PortfolioPage.module.scss'
-
-// Copy of InstrumentsPage's mapping; spec 07 may merge them.
-function errorKey(error: unknown) {
-  if (error instanceof ApiError && error.code === 'NETWORK') return 'errors.network'
-  if (error instanceof ApiError && error.code === 'TIMEOUT') return 'errors.timeout'
-  return 'errors.server'
-}
 
 export default function PortfolioPage() {
   const { t } = useTranslation()
@@ -89,6 +83,7 @@ export default function PortfolioPage() {
     <>
       <PageHeader title={t('portfolio.title')} description={t('portfolio.description')} />
       {content}
+      <PlacedOrdersSection />
     </>
   )
 }
